@@ -7,13 +7,15 @@ import { ComponentsComponent } from './components/home/components.component';
 import { ContactComponent } from './components/contact/contact.component';
 import { ActivityComponent } from './components/activity/activity.component';
 import { UserRegComponent } from './components/user-reg/user-reg.component';
+import { FormDownloadComponent } from './components/form-download/form-download.component';
 
 const routes: Routes =[
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: 'home',             component: ComponentsComponent },
     { path: 'contact',          component: ContactComponent },
     { path: 'activity',         component: ActivityComponent },
-    { path: 'user-reg',         component: UserRegComponent }
+    { path: 'user-reg',         component: UserRegComponent },
+    { path: 'form-download',         component: FormDownloadComponent }
 ];
 
 @NgModule({

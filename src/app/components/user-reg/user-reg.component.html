@@ -35,14 +35,14 @@
                 <div class="col-12">
                   <div class="form-check-radio">
                     <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="opt-join" id="opt-join1" value="1" checked>
+                      <input class="form-check-input" type="radio" name="opt-join" id="opt-join1" value="Y" [(ngModel)]="joinStatus">
                         สนใจ
                       <span class="form-check-sign"></span>
                     </label>
                   </div>
                   <div class="form-check-radio">
                     <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="opt-join" id="opt-join2" value="2">
+                      <input class="form-check-input" type="radio" name="opt-join" id="opt-join2" value="N" [(ngModel)]="joinStatus">
                         ไม่สนใจ
                       <span class="form-check-sign"></span>
                     </label>
@@ -51,7 +51,7 @@
               </div>
             </div>
 
-            <div class="col-6">
+            <div class="col-6" *ngIf="joinStatus == 'Y'">
               <div class="row">
                 <div class="col-12">
                   <div class="tim-title">
@@ -59,7 +59,6 @@
                   </div>
                 </div>
               </div>
-
               <div class="row">
                 <div class="col-12">
                   <div class="form-check-radio">
@@ -79,9 +78,25 @@
                 </div>
               </div>
             </div>
+
+            <div class="col-6" *ngIf="joinStatus == 'N'">
+              <div class="row">
+                <div class="col-12">
+                  <div class="tim-title">
+                    <h5>เหตุผล :</h5>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <input type="text" class="form-control form-control-success" id="txt-description">
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <div class="row">
+          <div class="row" *ngIf="joinStatus == 'Y'">
             <div class="col-12">
               <div class="tim-title">
                 <h5>วันที่สะดวกเข้าร่วม :</h5>
@@ -89,7 +104,7 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="row" *ngIf="joinStatus == 'Y'">
             <div class="col-12">
 
               <div class="row text-center">
@@ -137,8 +152,6 @@
                   [locale]="locale"
                   [activeDayIsOpen]="activeDayIsOpen"
                   (dayClicked)="dayClicked($event.day)"
-                  (eventClicked)="handleEvent('Clicked', $event.event)"
-                  (eventTimesChanged)="eventTimesChanged($event)"
                 >
                 </mwl-calendar-month-view>
               </div>
@@ -162,3 +175,117 @@
     </div>
   </div>
 </div>
+
+<ng-template #modalRegContent let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">กรอกรายละเอียด</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form>
+      <div class="form-group">
+
+        <div class="row">
+          <div class="col-3">
+            ชื่อโรงเรียน :
+          </div>
+          <div class="col-9">
+            <input type="text" class="form-control form-control-success" id="txt-modal-school">
+          </div>
+        </div>
+        <br/>
+        <div class="row">
+          <div class="col-3">
+            ที่อยู่โรงเรียน :
+          </div>
+          <div class="col-9">
+            <textarea class="form-control" id="txt-modal-location" rows="3"></textarea>
+          </div>
+        </div>
+        <br/>
+        <div class="row">
+          <div class="col-3">
+            Email :
+          </div>
+          <div class="col-9">
+            <input type="email" class="form-control form-control-success" id="txt-modal-email">
+          </div>
+        </div>
+        <br/>
+        <div class="row">
+          <div class="col-3">
+            เบอร์ติดต่อ :
+          </div>
+          <div class="col-9">
+            <input type="text" class="form-control form-control-success" id="txt-modal-school-tel">
+          </div>
+        </div>
+        <br/>
+        <div class="row">
+          <div class="col-3">
+            ครูผู้ประสานงาน :
+          </div>
+          <div class="col-9">
+            <input type="text" class="form-control form-control-success" id="txt-modal-teacher">
+          </div>
+        </div>
+        <br/>
+        <div class="row">
+          <div class="col-3">
+            จำนวนนักเรียน :
+          </div>
+          <div class="col-9">
+            <div class="form-check-radio">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount1" value="30" checked>
+                  30 คน
+                <span class="form-check-sign"></span>
+              </label>
+            </div>
+            <div class="form-check-radio">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount2" value="40" >
+                  40 คน
+                <span class="form-check-sign"></span>
+              </label>
+            </div>
+            <div class="form-check-radio">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount3" value="50" >
+                  50 คน
+                <span class="form-check-sign"></span>
+              </label>
+            </div>
+            <div class="form-check-radio">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount4" value="60" >
+                  60 คน
+                <span class="form-check-sign"></span>
+              </label>
+            </div>
+            <div class="form-check-radio">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount5" value="99" >
+                  อื่นๆ
+                <span class="form-check-sign"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <br/>
+        <div class="row">
+          <div class="col-12">
+            <h5>หมายเหตุ : กรุณาส่งรายชื่อนักเรียนที่จะเข้าร่วมค่ายทางไลน์กลุ่มประสาน</h5>
+            <h5 style="color: rgb(255, 0, 0)">** ถายใน 7 วัน **</h5>
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success btn-round" (click)="modal.close('Save click')">ยืนยัน</button>
+  </div>
+</ng-template>

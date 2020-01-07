@@ -17,12 +17,52 @@
                     <a [routerLink]="['/activity']" class="nav-link"><i class="nc-icon nc-album-2"></i> รูปกิจกรรม</a>
                 </li>
                 <li class="nav-item">
+                    <a [routerLink]="['/form-download']" class="nav-link"><i class="nc-icon nc-cloud-download-93"></i> ดาวน์โหลดฟอร์ม</a>
+                </li>
+                <li class="nav-item">
                     <a [routerLink]="['/contact']" class="nav-link"><i class="nc-icon nc-email-85"></i> ติดต่อสอบถาม</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="btn btn-success btn-round">เจ้าหน้าที่</a>
+                    <button type="button" class="btn btn-success btn-block btn-round" (click)="openModal()">เจ้าหน้าที่</button>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
+
+<ng-template #modalLoginContent let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">เข้าสู่ระบบ</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+        <form>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-4">
+                        Username :
+                    </div>
+                    <div class="col-8">
+                      <input type="text" class="form-control form-control-success" id="txt-modal-uid">
+                    </div>
+                  </div>
+                  <br/>
+                  <div class="row">
+                    <div class="col-4">
+                        Password :
+                    </div>
+                    <div class="col-8">
+                      <input type="password" class="form-control form-control-success" id="txt-modal-pwd">
+                    </div>
+                  </div>
+            </div>
+        </form>
+        
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success btn-round" (click)="modal.close('Save click')">เข้าสู่ระบบ</button>
+    </div>
+</ng-template>

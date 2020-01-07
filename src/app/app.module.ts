@@ -22,6 +22,7 @@ import { ContactComponent } from './components/contact/contact.component';
 import { ActivityComponent } from './components/activity/activity.component';
 import { HeaderCompComponent } from './components/header-comp/header-comp.component';
 import { UserRegComponent } from './components/user-reg/user-reg.component';
+import { FormDownloadComponent } from './components/form-download/form-download.component';
 
 registerLocaleData(localeTh);
 
@@ -34,7 +35,8 @@ registerLocaleData(localeTh);
     ActivityComponent,
     HeaderCompComponent,
     ComponentsComponent,
-    UserRegComponent
+    UserRegComponent,
+    FormDownloadComponent
   ],
   imports: [
     BrowserModule,

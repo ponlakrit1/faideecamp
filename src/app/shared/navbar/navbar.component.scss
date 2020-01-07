@@ -1,0 +1,18 @@
+.modal-nav .modal-content{
+    position: relative;
+    animation: animatetop 0.4s
+}
+
+.modal-nav .modal-dialog {
+    max-width: 500px;
+}
+
+@keyframes animatetop{
+    from{
+        top:-300px;
+        opacity:0
+    } to{
+        top:0;
+        opacity:1
+    }
+}

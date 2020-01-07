@@ -1,16 +1,21 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-navbar',
     templateUrl: './navbar.component.html',
+    encapsulation: ViewEncapsulation.None,
     styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit {
+
+    @ViewChild('modalLoginContent', {static: true}) modalContent: TemplateRef<any>;
+    
     private toggleButton: any;
     private sidebarVisible: boolean;
 
-    constructor(public location: Location, private element : ElementRef) {
+    constructor(public location: Location, private element : ElementRef, private modalService: NgbModal) {
         this.sidebarVisible = false;
     }
 
@@ -71,4 +76,8 @@ export class NavbarComponent implements OnInit {
             return false;
         }
     }
+
+    openModal(): void {
+        this.modalService.open(this.modalContent, { windowClass: 'modal-nav' });
+      }
 }
