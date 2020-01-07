@@ -1,0 +1,316 @@
+<div class="wrapper">
+  <app-header-comp></app-header-comp>
+  <div class="main">
+    <div class="section">
+      <div class="container">
+        
+        <div class="typography-line">
+          <h3>รายละเอียด</h3>
+        </div>
+
+        <form>
+
+          <div class="row">
+            <div class="col-2">
+              <h5>ชื่อโรงเรียน :</h5>
+            </div>
+            <div class="col-10">
+              <div class="form-group has-success">
+                <input type="text" class="form-control form-control-success" id="txt-school">
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-6">
+              <div class="row">
+                <div class="col-12">
+                  <div class="tim-title">
+                    <h5>คุณสามารถเข้าร่วมงานได้หรือไม่ ?</h5>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-check-radio">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="radio" name="opt-join" id="opt-join1" value="1" checked>
+                        สนใจ
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                  <div class="form-check-radio">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="radio" name="opt-join" id="opt-join2" value="2">
+                        ไม่สนใจ
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-6">
+              <div class="row">
+                <div class="col-12">
+                  <div class="tim-title">
+                    <h5>หลักสูตร :</h5>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-check-radio">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="radio" name="opt-type" id="opt-type1" value="1" checked>
+                        9 - 12 ปี
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                  <div class="form-check-radio">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="radio" name="opt-type" id="opt-type2" value="2">
+                        13 - 15 ปี
+                      <span class="form-check-sign"></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <div class="tim-title">
+                <h5>วันที่สะดวกเข้าร่วม :</h5>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+
+              <div class="row text-center">
+                <div class="col-md-4">
+                  <div class="btn-group">
+                    <div
+                      class="btn btn-success"
+                      mwlCalendarPreviousView
+                      [view]="view"
+                      [(viewDate)]="viewDate"
+                      (viewDateChange)="closeOpenMonthViewDay()"
+                    >
+                      ก่อนหน้า
+                    </div>
+                    <div
+                      class="btn btn-warning"
+                      mwlCalendarToday
+                      [(viewDate)]="viewDate"
+                    >
+                      วันนี้
+                    </div>
+                    <div
+                      class="btn btn-success"
+                      mwlCalendarNextView
+                      [view]="view"
+                      [(viewDate)]="viewDate"
+                      (viewDateChange)="closeOpenMonthViewDay()"
+                    >
+                      ถัดไป
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
+                </div>
+                <div class="col-md-4">
+                  <div class="btn-group">
+                    <div
+                      class="btn btn-success"
+                      (click)="setView(CalendarView.Month)"
+                      [class.active]="view === CalendarView.Month"
+                    >
+                      เดือน
+                    </div>
+                    <div
+                      class="btn btn-success"
+                      (click)="setView(CalendarView.Week)"
+                      [class.active]="view === CalendarView.Week"
+                    >
+                      สัปดาห์
+                    </div>
+                    <div
+                      class="btn btn-success"
+                      (click)="setView(CalendarView.Day)"
+                      [class.active]="view === CalendarView.Day"
+                    >
+                      วัน
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <br />
+              <div [ngSwitch]="view">
+                <mwl-calendar-month-view
+                  *ngSwitchCase="CalendarView.Month"
+                  [viewDate]="viewDate"
+                  [events]="events"
+                  [refresh]="refresh"
+                  [activeDayIsOpen]="activeDayIsOpen"
+                  (dayClicked)="dayClicked($event.day)"
+                  (eventClicked)="handleEvent('Clicked', $event.event)"
+                  (eventTimesChanged)="eventTimesChanged($event)"
+                >
+                </mwl-calendar-month-view>
+                <mwl-calendar-week-view
+                  *ngSwitchCase="CalendarView.Week"
+                  [viewDate]="viewDate"
+                  [events]="events"
+                  [refresh]="refresh"
+                  (eventClicked)="handleEvent('Clicked', $event.event)"
+                  (eventTimesChanged)="eventTimesChanged($event)"
+                >
+                </mwl-calendar-week-view>
+                <mwl-calendar-day-view
+                  *ngSwitchCase="CalendarView.Day"
+                  [viewDate]="viewDate"
+                  [events]="events"
+                  [refresh]="refresh"
+                  (eventClicked)="handleEvent('Clicked', $event.event)"
+                  (eventTimesChanged)="eventTimesChanged($event)"
+                >
+                </mwl-calendar-day-view>
+              </div>
+
+            </div>
+          </div>
+
+          <br /><br /><br />
+
+          <div class="row">
+            <div class="col-2"></div>
+            <div class="col-8">
+              <button type="button" class="btn btn-success btn-block btn-round">บันทึก</button>
+            </div>
+            <div class="col-2"></div>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Everything you see below is just for the demo, you don't need to include it in your app -->
+
+<!-- <h3>
+  Edit events
+  <button class="btn btn-primary pull-right" (click)="addEvent()">
+    Add new
+  </button>
+  <div class="clearfix"></div>
+</h3>
+
+<div class="table-responsive">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Primary color</th>
+        <th>Secondary color</th>
+        <th>Starts at</th>
+        <th>Ends at</th>
+        <th>Remove</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let event of events">
+        <td>
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="event.title"
+            (keyup)="refresh.next()"
+          />
+        </td>
+        <td>
+          <input
+            type="color"
+            [(ngModel)]="event.color.primary"
+            (change)="refresh.next()"
+          />
+        </td>
+        <td>
+          <input
+            type="color"
+            [(ngModel)]="event.color.secondary"
+            (change)="refresh.next()"
+          />
+        </td>
+        <td>
+          <input
+            class="form-control"
+            type="text"
+            mwlFlatpickr
+            [(ngModel)]="event.start"
+            (ngModelChange)="refresh.next()"
+            [altInput]="true"
+            [convertModelValue]="true"
+            [enableTime]="true"
+            dateFormat="Y-m-dTH:i"
+            altFormat="F j, Y H:i"
+            placeholder="Not set"
+          />
+        </td>
+        <td>
+          <input
+            class="form-control"
+            type="text"
+            mwlFlatpickr
+            [(ngModel)]="event.end"
+            (ngModelChange)="refresh.next()"
+            [altInput]="true"
+            [convertModelValue]="true"
+            [enableTime]="true"
+            dateFormat="Y-m-dTH:i"
+            altFormat="F j, Y H:i"
+            placeholder="Not set"
+          />
+        </td>
+        <td>
+          <button class="btn btn-danger" (click)="deleteEvent(event)">
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #modalContent let-close="close">
+  <div class="modal-header">
+    <h5 class="modal-title">Event action occurred</h5>
+    <button type="button" class="close" (click)="close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div>
+      Action:
+      <pre>{{ modalData?.action }}</pre>
+    </div>
+    <div>
+      Event:
+      <pre>{{ modalData?.event | json }}</pre>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="close()">
+      OK
+    </button>
+  </div>
+</ng-template> -->
