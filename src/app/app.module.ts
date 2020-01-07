@@ -2,6 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { registerLocaleData } from '@angular/common';
+
+import localeTh from '@angular/common/locales/th';
 
 import { AppRoutingModule } from './app-routing.module';
 import { RouterModule } from '@angular/router';
@@ -19,6 +22,8 @@ import { ContactComponent } from './components/contact/contact.component';
 import { ActivityComponent } from './components/activity/activity.component';
 import { HeaderCompComponent } from './components/header-comp/header-comp.component';
 import { UserRegComponent } from './components/user-reg/user-reg.component';
+
+registerLocaleData(localeTh);
 
 @NgModule({
   declarations: [
