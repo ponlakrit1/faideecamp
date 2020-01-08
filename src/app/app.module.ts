@@ -11,6 +11,9 @@ import { RouterModule } from '@angular/router';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireDatabaseModule  } from '@angular/fire/database';
+import { environment } from '../environments/environment.prod';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
@@ -23,6 +26,7 @@ import { HeaderCompComponent } from './components/header-comp/header-comp.compon
 import { UserRegComponent } from './components/user-reg/user-reg.component';
 import { FormDownloadComponent } from './components/form-download/form-download.component';
 import { BookingComponent } from './components/admin-booking/booking.component';
+import { AdminUserComponent } from './components/admin-user/admin-user.component';
 
 registerLocaleData(localeTh);
 
@@ -37,7 +41,8 @@ registerLocaleData(localeTh);
     ComponentsComponent,
     UserRegComponent,
     FormDownloadComponent,
-    BookingComponent
+    BookingComponent,
+    AdminUserComponent
   ],
   imports: [
     BrowserModule,
@@ -45,6 +50,8 @@ registerLocaleData(localeTh);
     AppRoutingModule,
     NgbModule,
     CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
+    AngularFireModule.initializeApp(environment.firebase, 'faideecamp'),
+    AngularFireDatabaseModule,
     RouterModule,
     FormsModule
   ],
