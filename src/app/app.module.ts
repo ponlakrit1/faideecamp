@@ -17,12 +17,12 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { FooterComponent } from './shared/footer/footer.component';
 
 import { ComponentsComponent } from './components/home/components.component';
-import { ExamplesModule } from './examples/examples.module';
 import { ContactComponent } from './components/contact/contact.component';
 import { ActivityComponent } from './components/activity/activity.component';
 import { HeaderCompComponent } from './components/header-comp/header-comp.component';
 import { UserRegComponent } from './components/user-reg/user-reg.component';
 import { FormDownloadComponent } from './components/form-download/form-download.component';
+import { BookingComponent } from './components/admin-booking/booking.component';
 
 registerLocaleData(localeTh);
 
@@ -36,7 +36,8 @@ registerLocaleData(localeTh);
     HeaderCompComponent,
     ComponentsComponent,
     UserRegComponent,
-    FormDownloadComponent
+    FormDownloadComponent,
+    BookingComponent
   ],
   imports: [
     BrowserModule,
@@ -44,7 +45,6 @@ registerLocaleData(localeTh);
     AppRoutingModule,
     NgbModule,
     CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
-    ExamplesModule,
     RouterModule,
     FormsModule
   ],

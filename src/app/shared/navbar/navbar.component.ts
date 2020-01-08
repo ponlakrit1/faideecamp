@@ -1,6 +1,8 @@
 import { Component, OnInit, ElementRef, ViewChild, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { AuthService } from './../../provider/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from "@angular/router";
 
 @Component({
     selector: 'app-navbar',
@@ -15,8 +17,15 @@ export class NavbarComponent implements OnInit {
     private toggleButton: any;
     private sidebarVisible: boolean;
 
-    constructor(public location: Location, private element : ElementRef, private modalService: NgbModal) {
+    username: string;
+    password: string;
+    loginStatus: boolean;
+    alertStatus: boolean;
+
+    constructor(public location: Location, private element : ElementRef, private modalService: NgbModal, private authService: AuthService, private router: Router) {
         this.sidebarVisible = false;
+        this.loginStatus = false;
+        this.alertStatus = false;
     }
 
     ngOnInit() {
@@ -79,5 +88,27 @@ export class NavbarComponent implements OnInit {
 
     openModal(): void {
         this.modalService.open(this.modalContent, { windowClass: 'modal-nav' });
-      }
+    }
+
+    onLogin(){
+        if(this.username == 'admin' && this.password == 'admin'){
+            this.loginStatus = true;
+            this.authService.onViewUid(this.username);
+
+            this.modalService.dismissAll();
+            this.router.navigate(['booking']);
+        } else {
+            this.alertStatus = true;
+        }
+    }
+
+    onLogout(){
+        this.loginStatus = false;
+        this.alertStatus = false;
+        this.username = null;
+        this.password = null;
+        this.authService.onViewUid(null);
+
+        this.router.navigate(['']);
+    }
 }
