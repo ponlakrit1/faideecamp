@@ -3,6 +3,16 @@ import { Location, LocationStrategy, PathLocationStrategy } from '@angular/commo
 import { AuthService } from './../../provider/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from "@angular/router";
+import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+interface UserList {
+    id?: number;
+    key: string;
+    username: string;
+    password: string;
+  }
 
 @Component({
     selector: 'app-navbar',
@@ -22,7 +32,16 @@ export class NavbarComponent implements OnInit {
     loginStatus: boolean;
     alertStatus: boolean;
 
-    constructor(public location: Location, private element : ElementRef, private modalService: NgbModal, private authService: AuthService, private router: Router) {
+    itemsRef: AngularFireList<any>;
+    items: Observable<any[]>;
+
+    constructor(public location: Location, 
+                private element : ElementRef, 
+                private modalService: NgbModal, 
+                private authService: AuthService, 
+                private router: Router,
+                private db: AngularFireDatabase) {
+
         this.sidebarVisible = false;
         this.loginStatus = false;
         this.alertStatus = false;
@@ -91,15 +110,41 @@ export class NavbarComponent implements OnInit {
     }
 
     onLogin(){
-        if(this.username == 'admin' && this.password == 'admin'){
-            this.loginStatus = true;
-            this.authService.onViewUid(this.username);
+        var status = false;
 
-            this.modalService.dismissAll();
-            this.router.navigate(['booking']);
-        } else {
-            this.alertStatus = true;
-        }
+        // Set firebase
+        this.itemsRef = this.db.list(`user-list`, ref => ref.orderByChild('username').equalTo(this.username));
+        this.items = this.itemsRef.snapshotChanges().pipe(
+            map(changes => 
+              changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
+            )
+        );
+
+        // Get data
+        this.items.subscribe(
+            (data: UserList[]) => {
+                if(data.length > 0){
+                    for(let temp of data){
+                        if(temp.password == this.password){
+                            status = true;
+                        }
+                    }
+
+                    // Check correct status
+                    if(status){
+                        this.loginStatus = true;
+                        this.authService.onViewUid(this.username);
+            
+                        this.modalService.dismissAll();
+                        this.router.navigate(['booking']);
+                    } else {
+                        this.alertStatus = true;
+                    }
+                } else {
+                    this.alertStatus = true;
+                }
+            }
+        );
     }
 
     onLogout(){

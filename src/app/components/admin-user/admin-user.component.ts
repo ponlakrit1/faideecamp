@@ -27,9 +27,12 @@ export class AdminUserComponent implements OnInit {
   password: string;
   rePassword: string;
   alertStatus: boolean;
+  dupStatus: boolean;
 
   itemsRef: AngularFireList<any>;
   items: Observable<any[]>;
+  itemsRefCheck: AngularFireList<any>;
+  itemsCheck: Observable<any[]>;
   dataDisplay: UserList[];
   dataSize: number = 0;
 
@@ -43,43 +46,48 @@ export class AdminUserComponent implements OnInit {
     );
 
     this.alertStatus = false;
+    this.dupStatus = false;
   }
 
   ngOnInit() {
-  }
-
-  get userList(): UserList[] {
     this.items.subscribe(
       (data: UserList[]) => {
         this.dataDisplay = data;
         this.dataSize = data.length;
       }
     );
-    
-    if(this.dataSize > 0){
-      return this.dataDisplay
-      .map((dataDisplay, i) => ({id: i + 1, ...dataDisplay}))
-      .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
-    } else {
-      return this.dataDisplay;
-    }
-    
   }
 
   addUser(){
-    var userObj = {
-      username: this.username,
-      password: this.password,
-    }
-
-    if(this.password == this.rePassword){
-      this.itemsRef.push(userObj).then((value) => {
-        this.onResetUserForm();
-        this.modalService.dismissAll();
-      });
-    } else {
-      this.alertStatus = true;
-    }
+    // Set firebase
+    this.itemsRefCheck = this.db.list(`user-list`, ref => ref.orderByChild('username').equalTo(this.username));
+    this.itemsCheck = this.itemsRefCheck.snapshotChanges().pipe(
+        map(changes => 
+          changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
+        )
+    );
+    
+    this.itemsCheck.subscribe(
+      (data: UserList[]) => {
+        if(data.length == 0){
+          var userObj = {
+            username: this.username,
+            password: this.password,
+          }
+      
+          if(this.password == this.rePassword){
+            this.itemsRef.push(userObj).then((value) => {
+              this.onResetUserForm();
+              this.modalService.dismissAll();
+            });
+          } else {
+            this.alertStatus = true;
+          }
+        } else {
+          this.dupStatus = true;
+        }
+      }
+    );
     
   }
 
@@ -90,7 +98,7 @@ export class AdminUserComponent implements OnInit {
   }
 
   openModal(): void {
-    this.modalService.open(this.modalContent, { windowClass: 'modal-nav' });
+    this.modalService.open(this.modalContent);
   }
 
   removeUser(user: UserList){

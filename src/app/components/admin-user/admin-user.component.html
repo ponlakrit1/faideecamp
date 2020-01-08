@@ -24,8 +24,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let user of userList">
-                      <th scope="row">{{ user.id }}</th>
+                    <tr *ngFor="let user of dataDisplay; let i = index">
+                      <th scope="row">{{ i + 1 }}</th>
                       <td>{{ user.username }}</td>
                       <td>
                         <button type="button" class="btn btn-danger btn-sm pull-right" (click)="removeUser(user)"><i class="fa fa-trash"></i></button>
@@ -88,6 +88,9 @@
 
             <p>
                 <ngb-alert [type]="'danger'" (close)="alertStatus = false" *ngIf="alertStatus">รหัสผ่านและยืนยันรหัสผ่านไม่เหมือนกัน !</ngb-alert>
+            </p>
+            <p>
+                <ngb-alert [type]="'danger'" (close)="dupStatus = false" *ngIf="dupStatus">ชื่อผู้ใช้งานซ้ำ !</ngb-alert>
             </p>
         </div>
         
