@@ -3,6 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { registerLocaleData } from '@angular/common';
+import { AuthGuardService } from './provider/AuthGuardService';
 
 import localeTh from '@angular/common/locales/th';
 
@@ -55,7 +56,7 @@ registerLocaleData(localeTh);
     RouterModule,
     FormsModule
   ],
-  providers: [],
+  providers: [AuthGuardService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

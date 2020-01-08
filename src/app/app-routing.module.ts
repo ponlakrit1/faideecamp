@@ -10,6 +10,7 @@ import { UserRegComponent } from './components/user-reg/user-reg.component';
 import { FormDownloadComponent } from './components/form-download/form-download.component';
 import { BookingComponent } from './components/admin-booking/booking.component';
 import { AdminUserComponent } from './components/admin-user/admin-user.component';
+import { AuthGuardService } from './provider/AuthGuardService';
 
 const routes: Routes =[
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -18,8 +19,8 @@ const routes: Routes =[
     { path: 'activity',         component: ActivityComponent },
     { path: 'user-reg',         component: UserRegComponent },
     { path: 'form-download',    component: FormDownloadComponent },
-    { path: 'booking',          component: BookingComponent },
-    { path: 'admin-user',       component: AdminUserComponent }
+    { path: 'booking',          component: BookingComponent, canActivate: [AuthGuardService]},
+    { path: 'admin-user',       component: AdminUserComponent, canActivate: [AuthGuardService] }
 ];
 
 @NgModule({
