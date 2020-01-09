@@ -8,10 +8,10 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 interface UserList {
-    id?: number;
     key: string;
     username: string;
     password: string;
+    uid_pwd: string;
   }
 
 @Component({
@@ -67,6 +67,7 @@ export class NavbarComponent implements OnInit {
 
         this.sidebarVisible = true;
     };
+
     sidebarClose() {
         const html = document.getElementsByTagName('html')[0];
         // console.log(html);
@@ -74,6 +75,7 @@ export class NavbarComponent implements OnInit {
         this.sidebarVisible = false;
         html.classList.remove('nav-open');
     };
+
     sidebarToggle() {
         // const toggleButton = this.toggleButton;
         // const body = document.getElementsByTagName('body')[0];
@@ -83,71 +85,34 @@ export class NavbarComponent implements OnInit {
             this.sidebarClose();
         }
     };
-    isHome() {
-      var titlee = this.location.prepareExternalUrl(this.location.path());
-      if(titlee.charAt(0) === '#'){
-          titlee = titlee.slice( 1 );
-      }
-        if( titlee === '/home' ) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-    isDocumentation() {
-      var titlee = this.location.prepareExternalUrl(this.location.path());
-      if(titlee.charAt(0) === '#'){
-          titlee = titlee.slice( 1 );
-      }
-        if( titlee === '/documentation' ) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
 
     openModal(): void {
         this.modalService.open(this.modalContent, { windowClass: 'modal-nav' });
     }
 
     onLogin(){
-        var status = false;
-
-        // Set firebase
-        this.itemsRef = this.db.list(`user-list`, ref => ref.orderByChild('username').equalTo(this.username));
+        this.itemsRef = this.db.list(`user-list`, ref => ref.orderByChild('uid_pwd').equalTo(this.username+"_"+this.password));
         this.items = this.itemsRef.snapshotChanges().pipe(
             map(changes => 
               changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
             )
         );
 
-        // Get data
         this.items.subscribe(
             (data: UserList[]) => {
                 if(data.length > 0){
-                    for(let temp of data){
-                        if(temp.password == this.password){
-                            status = true;
-                        }
-                    }
-
-                    // Check correct status
-                    if(status){
-                        this.loginStatus = true;
-                        this.authService.onViewUid(this.username);
-            
-                        this.modalService.dismissAll();
-                        this.router.navigate(['booking']);
-                    } else {
-                        this.alertStatus = true;
-                    }
+                    this.loginStatus = true;
+                    this.authService.onViewUid(this.username);
+        
+                    this.modalService.dismissAll();
+                    this.router.navigate(['admin-user']);
                 } else {
                     this.alertStatus = true;
                 }
             }
         );
+
+        this.hindAlertStatus();
     }
 
     onLogout(){
@@ -160,5 +125,9 @@ export class NavbarComponent implements OnInit {
         this.authService.onViewUid(null);
 
         this.router.navigate(['']);
+    }
+
+    hindAlertStatus(){
+        setTimeout(() => this.alertStatus = false, 3000);
     }
 }

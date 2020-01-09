@@ -8,6 +8,7 @@ interface UserList {
   key: string;
   username: string;
   password: string;
+  uid_pwd: string;
 }
 
 @Component({
@@ -21,6 +22,8 @@ export class AdminUserComponent implements OnInit {
 
   page = 1;
   pageSize = 10;
+
+  dataItem: UserList;
 
   username: string;
   password: string;
@@ -58,36 +61,41 @@ export class AdminUserComponent implements OnInit {
   }
 
   addUser(){
-    // Set firebase
-    this.itemsRefCheck = this.db.list(`user-list`, ref => ref.orderByChild('username').equalTo(this.username));
-    this.itemsCheck = this.itemsRefCheck.snapshotChanges().pipe(
+    if(this.password == this.rePassword){
+      this.itemsRefCheck = this.db.list(`user-list`, ref => ref.orderByChild('username').equalTo(this.username));
+      this.itemsCheck = this.itemsRefCheck.snapshotChanges().pipe(
         map(changes => 
           changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
         )
-    );
-    
-    this.itemsCheck.subscribe(
-      (data: UserList[]) => {
-        if(data.length == 0){
-          var userObj = {
-            username: this.username,
-            password: this.password,
-          }
-      
-          if(this.password == this.rePassword){
-            this.itemsRef.push(userObj).then((value) => {
+      );
+
+      this.itemsCheck.subscribe(
+        (data: UserList[]) => {
+          if(data.length > 0){
+            // For wait data
+            setTimeout(() => this.dupStatus = true, 1000);
+          } else {
+            this.dataItem = {
+              key: null,
+              username: this.username,
+              password: this.password,
+              uid_pwd: this.username+"_"+this.password
+            };
+
+            this.itemsRef.push(this.dataItem).then((value) => {
               this.onResetUserForm();
               this.modalService.dismissAll();
             });
-          } else {
-            this.alertStatus = true;
           }
-        } else {
-          this.dupStatus = true;
         }
-      }
-    );
-    
+      );
+      
+    } else {
+      this.alertStatus = true;
+    }
+
+    // Hind alert
+    this.hindAlertStatus();
   }
 
   onResetUserForm(){
@@ -101,9 +109,14 @@ export class AdminUserComponent implements OnInit {
   }
 
   removeUser(user: UserList){
-    this.itemsRef.remove(`user-list/${user.key}`).then((value) => {
-      // action
+    this.itemsRef.remove(user.key).then((value) => {
+      console.log(value);
     });
+  }
+
+  hindAlertStatus(){
+    setTimeout(() => this.alertStatus = false, 3000);
+    setTimeout(() => this.dupStatus = false, 3000);
   }
 
 }
