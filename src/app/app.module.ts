@@ -3,7 +3,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { registerLocaleData } from '@angular/common';
-import { AuthGuardService } from './provider/AuthGuardService';
 
 import localeTh from '@angular/common/locales/th';
 
@@ -28,6 +27,9 @@ import { UserRegComponent } from './components/user-reg/user-reg.component';
 import { FormDownloadComponent } from './components/form-download/form-download.component';
 import { BookingComponent } from './components/admin-booking/booking.component';
 import { AdminUserComponent } from './components/admin-user/admin-user.component';
+
+import { AuthGuardService } from './provider/AuthGuardService';
+import { AuthService } from './provider/auth.service';
 
 registerLocaleData(localeTh);
 
@@ -56,7 +58,10 @@ registerLocaleData(localeTh);
     RouterModule,
     FormsModule
   ],
-  providers: [AuthGuardService],
+  providers: [
+    AuthGuardService,
+    AuthService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

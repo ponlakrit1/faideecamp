@@ -33,6 +33,7 @@ export class UserRegComponent implements OnInit {
   locale: string = 'th';
 
   joinStatus: string = "";
+  studentAmount: string = "";
 
   modalData: {
     action: string;
@@ -53,6 +54,7 @@ export class UserRegComponent implements OnInit {
 
   constructor(private modalService: NgbModal) {
     this.joinStatus = "Y";
+    this.studentAmount = "30";
   }
 
   ngOnInit() {}

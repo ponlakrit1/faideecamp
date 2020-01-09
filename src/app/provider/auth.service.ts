@@ -7,7 +7,7 @@ import { Observable, ReplaySubject, Subject } from 'rxjs';
 export class AuthService {
 
   private viewUid: ReplaySubject<string>;
-  public currentViewUid: Observable<string>; 
+  public currentViewUid: Observable<string>;
 
   constructor() {
     this.viewUid = new ReplaySubject(1);
@@ -15,6 +15,11 @@ export class AuthService {
   }
 
   public onViewUid(token: string) {
+    sessionStorage.setItem("username", token);
     this.viewUid.next(token);
+  }
+
+  public removeToken(token: string) {
+    sessionStorage.clear();
   }
 }

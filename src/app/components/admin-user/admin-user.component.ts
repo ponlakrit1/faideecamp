@@ -98,7 +98,7 @@ export class AdminUserComponent implements OnInit {
   }
 
   openModal(): void {
-    this.modalService.open(this.modalContent);
+    this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top' });
   }
 
   removeUser(user: UserList){

@@ -5,21 +5,13 @@ import { AuthService } from './auth.service';
 @Injectable()
 export class AuthGuardService implements CanActivate {
 
-  constructor(private userService: AuthService, private router: Router) {}
+  constructor(private userService: AuthService, private router: Router) {
+      
+  }
   
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    var status = false;
-    this.userService.currentViewUid.subscribe(
-        data => {
-            if(data != null){
-                status = true;
-            } else {
-                status = false;
-            }
-        }
-    );
-
-    if (status) {
+    let activeUser = sessionStorage.getItem("username");
+    if (activeUser != null) {
         return true;
     } else {
         this.router.navigate(['']);
