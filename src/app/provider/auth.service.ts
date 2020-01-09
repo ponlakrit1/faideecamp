@@ -19,21 +19,17 @@ export class AuthService {
     this.viewUid.next(token);
   }
 
-  public removeSession() {
-    sessionStorage.clear();
+  public removeUserSession() {
+    sessionStorage.removeItem("username");
   }
 
   public isActive(): boolean{
     let activeUser = sessionStorage.getItem("username");
-    
-    console.log("tine = "+activeUser);
 
-    if (activeUser !== null) {
-      console.log("true = "+activeUser);
-      return true;
-    } else {
-      console.log("false = "+activeUser);
+    if (activeUser == null || activeUser == 'null') {
       return false;
+    } else {
+      return true;
     }
   }
 }

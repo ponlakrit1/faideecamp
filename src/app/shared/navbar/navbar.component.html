@@ -29,26 +29,6 @@
                 <li class="nav-item" *ngIf="loginStatus">
                     <a [routerLink]="['/admin-user']" class="nav-link"><i class="fa fa-user"></i> จัดการผู้ใช้งาน</a>
                 </li>
-                <!-- <li class="nav-item dropdown" *ngIf="loginStatus">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-list"></i> เมนูผู้ใช้งาน</a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a [routerLink]="['/user-reg']" class="nav-link"><i class="nc-icon nc-book-bookmark"></i> ตอบแบบสอบถามและลงทะเบียน</a>
-                        <a [routerLink]="['/activity']" class="nav-link"><i class="nc-icon nc-album-2"></i> รูปกิจกรรม</a>
-                        <a [routerLink]="['/form-download']" class="nav-link"><i class="nc-icon nc-cloud-download-93"></i> ดาวน์โหลดฟอร์ม</a>
-                        <a [routerLink]="['/contact']" class="nav-link"><i class="nc-icon nc-email-85"></i> ติดต่อสอบถาม</a>
-                    </div>
-                </li> -->
-                <li class="nav-item dropdown" dropdown>
-                    <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>
-                    Basic dropdown<span class="caret"></span></a>
-                    <div *dropdownMenu class="dropdown-menu dropdown dropdown-primary" role="menu">
-                        <a class="dropdown-item waves-light" mdbWavesEffect href="#">Action</a>
-                        <a class="dropdown-item waves-light" mdbWavesEffect href="#">Another action</a>
-                        <a class="dropdown-item waves-light" mdbWavesEffect href="#">Something else here</a>
-                        <div class="divider dropdown-divider"></div>
-                        <a class="dropdown-item waves-light" mdbWavesEffect href="#">Separated link</a>
-                    </div>
-                </li>
                 
                 <li class="nav-item" *ngIf="!loginStatus">
                     <button type="button" class="btn btn-success btn-block btn-round" (click)="openModal()">เจ้าหน้าที่</button>

@@ -52,9 +52,8 @@ export class NavbarComponent implements OnInit {
         this.toggleButton = navbar.getElementsByClassName('navbar-toggler')[0];
 
         this.loginStatus = this.authService.isActive();
-        console.log(this.loginStatus);
-        
     }
+
     sidebarOpen() {
         const toggleButton = this.toggleButton;
         const html = document.getElementsByTagName('html')[0];
@@ -157,7 +156,7 @@ export class NavbarComponent implements OnInit {
         this.username = null;
         this.password = null;
 
-        this.authService.removeSession();
+        this.authService.removeUserSession();
         this.authService.onViewUid(null);
 
         this.router.navigate(['']);
