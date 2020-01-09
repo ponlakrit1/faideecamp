@@ -28,7 +28,7 @@ import { FormDownloadComponent } from './components/form-download/form-download.
 import { BookingComponent } from './components/admin-booking/booking.component';
 import { AdminUserComponent } from './components/admin-user/admin-user.component';
 
-import { AuthGuardService } from './provider/AuthGuardService';
+import { AuthGuardService } from './provider/authGuardService';
 import { AuthService } from './provider/auth.service';
 
 registerLocaleData(localeTh);

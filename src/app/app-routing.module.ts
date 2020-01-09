@@ -10,7 +10,7 @@ import { UserRegComponent } from './components/user-reg/user-reg.component';
 import { FormDownloadComponent } from './components/form-download/form-download.component';
 import { BookingComponent } from './components/admin-booking/booking.component';
 import { AdminUserComponent } from './components/admin-user/admin-user.component';
-import { AuthGuardService } from './provider/AuthGuardService';
+import { AuthGuardService } from './provider/authGuardService';
 
 const routes: Routes =[
     { path: '', redirectTo: 'home', pathMatch: 'full' },

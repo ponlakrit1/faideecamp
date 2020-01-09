@@ -50,6 +50,10 @@ export class NavbarComponent implements OnInit {
     ngOnInit() {
         const navbar: HTMLElement = this.element.nativeElement;
         this.toggleButton = navbar.getElementsByClassName('navbar-toggler')[0];
+
+        this.loginStatus = this.authService.isActive();
+        console.log(this.loginStatus);
+        
     }
     sidebarOpen() {
         const toggleButton = this.toggleButton;
@@ -152,6 +156,8 @@ export class NavbarComponent implements OnInit {
         this.alertStatus = false;
         this.username = null;
         this.password = null;
+
+        this.authService.removeSession();
         this.authService.onViewUid(null);
 
         this.router.navigate(['']);
