@@ -4,11 +4,61 @@
         <div class="section">
             <div class="container">
 
-                <div class="typography-line">
-                    <h3>booking page work!</h3>
+                <div class="row">
+                    <div class="col-9">
+                        <div class="typography-line">
+                            <h3>ข้อมูลกิจกรรมค่ายใฝ่ดี</h3>
+                        </div>
+                    </div>
+                    <div class="col-3">
+                        <button type="button" class="btn btn-success btn-round pull-right" (click)="openModal()"><i class="fa fa-plus"></i> เพิ่มใหม่</button>
+                    </div>
+                </div>
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">ชื่อผู้ใช้งาน</th>
+                      <th scope="col" style="width: 10%;"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                  
+                <div class="d-flex justify-content-between p-2">
+                    <ngb-pagination [collectionSize]="dataSize" [(page)]="page" [pageSize]="pageSize"></ngb-pagination>
+                  
+                    <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+                        <option [ngValue]="5">5 หน้า</option>
+                        <option [ngValue]="10">10 หน้า</option>
+                        <option [ngValue]="15">15 หน้า</option>
+                    </select>
                 </div>
 
             </div>
         </div>
     </div>
 </div>
+
+<ng-template #modalBooking let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">กรอกข้อมูลกิจกรรมค่ายใฝ่ดี</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+        <div class="form-group">
+            
+
+
+        </div>
+        
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success btn-round" (click)="addBooking()">ยืนยัน</button>
+    </div>
+</ng-template>

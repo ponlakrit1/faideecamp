@@ -5,7 +5,6 @@ import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 interface UserList {
-  id?: number;
   key: string;
   username: string;
   password: string;
