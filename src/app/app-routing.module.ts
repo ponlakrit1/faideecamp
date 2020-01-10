@@ -10,6 +10,8 @@ import { UserRegComponent } from './components/user-reg/user-reg.component';
 import { FormDownloadComponent } from './components/form-download/form-download.component';
 import { BookingComponent } from './components/admin-booking/booking.component';
 import { AdminUserComponent } from './components/admin-user/admin-user.component';
+import { AdminActivityComponent } from './components/admin-activity/admin-activity.component';
+import { AdminInfoComponent } from './components/admin-info/admin-info.component';
 import { AuthGuardService } from './provider/authGuardService';
 
 const routes: Routes =[
@@ -19,8 +21,10 @@ const routes: Routes =[
     { path: 'activity',         component: ActivityComponent },
     { path: 'user-reg',         component: UserRegComponent },
     { path: 'form-download',    component: FormDownloadComponent },
-    { path: 'booking',          component: BookingComponent, canActivate: [AuthGuardService]},
-    { path: 'admin-user',       component: AdminUserComponent, canActivate: [AuthGuardService] }
+    { path: 'booking',          component: BookingComponent, canActivate: [AuthGuardService] },
+    { path: 'admin-user',       component: AdminUserComponent, canActivate: [AuthGuardService] },
+    { path: 'admin-activity',   component: AdminActivityComponent, canActivate: [AuthGuardService] },
+    { path: 'admin-info',       component: AdminInfoComponent, canActivate: [AuthGuardService] }
 ];
 
 @NgModule({

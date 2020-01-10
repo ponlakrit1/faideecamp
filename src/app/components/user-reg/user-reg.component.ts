@@ -3,6 +3,10 @@ import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMo
 import { Subject } from 'rxjs';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
+import { BookingList } from './../../data-model/booking.model';
+import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 const colors: any = {
   red: {
@@ -29,35 +33,68 @@ export class UserRegComponent implements OnInit {
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
   viewDate: Date = new Date();
-
   locale: string = 'th';
 
   joinStatus: string = "";
   studentAmount: string = "";
 
-  modalData: {
-    action: string;
-    event: CalendarEvent;
-  };
+  itemsRefDisplay: AngularFireList<any>;
+  itemsDisplay: Observable<any[]>;
+  dataDisplay: BookingList[];
 
+  events: CalendarEvent[] = [];
   refresh: Subject<any> = new Subject();
-
-  events: CalendarEvent[] = [
-    {
-      start: startOfDay(new Date()),
-      title: 'โรงเรียนทดสอบ',
-      color: colors.red
-    }
-  ];
 
   activeDayIsOpen: boolean = false;
 
-  constructor(private modalService: NgbModal) {
+  constructor(private modalService: NgbModal, private db: AngularFireDatabase) {
+    // Set firebase
+    this.itemsRefDisplay = this.db.list(`booking-list`, ref => ref.orderByChild('year').equalTo("2020"));
+    this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
+      map(changes => 
+        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
+      )
+    );
+
     this.joinStatus = "Y";
     this.studentAmount = "30";
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.itemsDisplay.subscribe(
+      (data: BookingList[]) => {
+        this.dataDisplay = data;
+
+        console.log(this.dataDisplay);
+
+        for(let temp of this.dataDisplay){
+          let event: CalendarEvent;
+
+          if(temp.school == null){
+            event = {
+              start: startOfDay(new Date(temp.year+"-"+temp.month+"-"+temp.day)),
+              title: 'โรงเรียนทดสอบ',
+              color: colors.red
+            };
+          } else {
+            event = {
+              start: startOfDay(new Date(temp.year+"-"+temp.month+"-"+temp.day)),
+              title: 'โรงเรียนทดสอบ',
+              color: colors.green
+            };
+          }
+
+          // Check event is not null
+          if(event != null){
+            this.events.push(event);
+          }
+        }
+
+        this.refresh.next();
+        
+      }
+    );
+  }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     let status = false;

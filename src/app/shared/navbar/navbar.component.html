@@ -27,6 +27,12 @@
                     <a [routerLink]="['/booking']" class="nav-link"><i class="nc-icon nc-atom"></i> จัดการวันกิจกรรม</a>
                 </li>
                 <li class="nav-item" *ngIf="loginStatus">
+                    <a [routerLink]="['/admin-info']" class="nav-link"><i class="nc-icon nc-email-85"></i> จัดการข่าวสาร</a>
+                </li>
+                <li class="nav-item" *ngIf="loginStatus">
+                    <a [routerLink]="['/admin-activity']" class="nav-link"><i class="nc-icon nc-album-2"></i> จัดการรูปภาพ</a>
+                </li>
+                <li class="nav-item" *ngIf="loginStatus">
                     <a [routerLink]="['/admin-user']" class="nav-link"><i class="nc-icon nc-single-02"></i> จัดการผู้ใช้งาน</a>
                 </li>
                 

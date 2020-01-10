@@ -30,6 +30,8 @@ import { AdminUserComponent } from './components/admin-user/admin-user.component
 
 import { AuthGuardService } from './provider/authGuardService';
 import { AuthService } from './provider/auth.service';
+import { AdminActivityComponent } from './components/admin-activity/admin-activity.component';
+import { AdminInfoComponent } from './components/admin-info/admin-info.component';
 
 registerLocaleData(localeTh);
 
@@ -45,7 +47,9 @@ registerLocaleData(localeTh);
     UserRegComponent,
     FormDownloadComponent,
     BookingComponent,
-    AdminUserComponent
+    AdminUserComponent,
+    AdminActivityComponent,
+    AdminInfoComponent
   ],
   imports: [
     BrowserModule,
