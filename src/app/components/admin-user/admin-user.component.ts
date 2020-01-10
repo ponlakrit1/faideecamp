@@ -31,17 +31,17 @@ export class AdminUserComponent implements OnInit {
   alertStatus: boolean;
   dupStatus: boolean;
 
+  itemsRefDisplay: AngularFireList<any>;
+  itemsDisplay: Observable<any[]>;
   itemsRef: AngularFireList<any>;
   items: Observable<any[]>;
-  itemsRefCheck: AngularFireList<any>;
-  itemsCheck: Observable<any[]>;
   dataDisplay: UserList[];
   dataSize: number = 0;
 
   constructor(private db: AngularFireDatabase, private modalService: NgbModal) {
     // Set firebase
-    this.itemsRef = this.db.list(`user-list`);
-    this.items = this.itemsRef.snapshotChanges().pipe(
+    this.itemsRefDisplay = this.db.list(`user-list`);
+    this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
       map(changes => 
         changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
       )
@@ -52,7 +52,7 @@ export class AdminUserComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.items.subscribe(
+    this.itemsDisplay.subscribe(
       (data: UserList[]) => {
         this.dataDisplay = data;
         this.dataSize = data.length;
@@ -62,14 +62,14 @@ export class AdminUserComponent implements OnInit {
 
   addUser(){
     if(this.password == this.rePassword){
-      this.itemsRefCheck = this.db.list(`user-list`, ref => ref.orderByChild('username').equalTo(this.username));
-      this.itemsCheck = this.itemsRefCheck.snapshotChanges().pipe(
+      this.itemsRef = this.db.list(`user-list`, ref => ref.orderByChild('username').equalTo(this.username));
+      this.items = this.itemsRef.snapshotChanges().pipe(
         map(changes => 
           changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
         )
       );
 
-      this.itemsCheck.subscribe(
+      this.items.subscribe(
         (data: UserList[]) => {
           if(data.length > 0){
             // For wait data
@@ -82,6 +82,7 @@ export class AdminUserComponent implements OnInit {
               uid_pwd: this.username+"_"+this.password
             };
 
+            this.itemsRef = this.db.list(`user-list`);
             this.itemsRef.push(this.dataItem).then((value) => {
               this.onResetUserForm();
               this.modalService.dismissAll();
@@ -109,6 +110,7 @@ export class AdminUserComponent implements OnInit {
   }
 
   removeUser(user: UserList){
+    this.itemsRef = this.db.list(`user-list`);
     this.itemsRef.remove(user.key).then((value) => {
       console.log(value);
     });

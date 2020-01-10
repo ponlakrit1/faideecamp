@@ -105,7 +105,7 @@ export class NavbarComponent implements OnInit {
                     this.authService.onViewUid(this.username);
         
                     this.modalService.dismissAll();
-                    this.router.navigate(['admin-user']);
+                    this.router.navigate(['booking']);
                 } else {
                     this.alertStatus = true;
                 }

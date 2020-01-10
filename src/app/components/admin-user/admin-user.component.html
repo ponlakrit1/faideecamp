@@ -24,13 +24,13 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let user of dataDisplay; let i = index">
-                      <th scope="row">{{ i + 1 }}</th>
-                      <td>{{ user.username }}</td>
-                      <td>
-                        <button type="button" class="btn btn-danger btn-sm pull-right" (click)="removeUser(user)"><i class="fa fa-trash"></i></button>
-                      </td>
-                    </tr>
+                        <tr *ngFor="let user of dataDisplay; let i = index">
+                            <th scope="row">{{ i + 1 }}</th>
+                            <td>{{ user.username }}</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm pull-right" (click)="removeUser(user)"><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
                   

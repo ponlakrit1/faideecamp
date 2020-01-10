@@ -30,6 +30,7 @@
     "i18n": "^0.8.4",
     "jquery": "^3.4.1",
     "jw-bootstrap-switch-ng2": "^2.0.5",
+    "moment": "^2.24.0",
     "ng2-nouislider": "^1.8.2",
     "nouislider": "^14.1.1",
     "popper.js": "^1.14.3",
