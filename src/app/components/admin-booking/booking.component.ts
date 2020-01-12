@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { NgbModal, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { BookingList } from './../../data-model/booking.model';
 
+declare var require: any
 @Component({
   selector: 'app-booking',
   templateUrl: './booking.component.html',
@@ -16,6 +17,7 @@ export class BookingComponent implements OnInit {
 
   page = 1;
   pageSize = 10;
+  moment = require('moment');
 
   dataItem: BookingList;
 
@@ -33,7 +35,7 @@ export class BookingComponent implements OnInit {
 
   constructor(private db: AngularFireDatabase, private modalService: NgbModal) {
     // Set firebase
-    this.itemsRefDisplay = this.db.list(`booking-list`, ref => ref.orderByChild('year').equalTo("2020"));
+    this.itemsRefDisplay = this.db.list(`booking-list`, ref => ref.orderByChild('year').equalTo(this.moment().format("YYYY")));
     this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
       map(changes => 
         changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
@@ -69,10 +71,10 @@ export class BookingComponent implements OnInit {
         } else {
           this.dataItem = {
             year: String(this.dateModel.year),
-            month: String(this.dateModel.month),
+            month: this.paddingLeftNumber(this.dateModel.month),
             day: String(this.dateModel.day),
-            year_month: String(this.dateModel.year)+"_"+String(this.dateModel.month),
-            year_month_day: String(this.dateModel.year)+"_"+String(this.dateModel.month)+"_"+String(this.dateModel.day),
+            year_month: String(this.dateModel.year)+"_"+(this.paddingLeftNumber(this.dateModel.month)),
+            year_month_day: String(this.dateModel.year)+"_"+(this.paddingLeftNumber(this.dateModel.month))+"_"+String(this.dateModel.day),
             amount: 60,
             course: this.course,
             description: this.description
@@ -111,6 +113,15 @@ export class BookingComponent implements OnInit {
     this.itemsRef.remove(booking.key).then((value) => {
       console.log(value);
     });
+  }
+
+  paddingLeftNumber(num: number): string{
+    let result = "";
+    if(num < 10){
+      return "0"+String(num);
+    } else {
+      return String(num);
+    }
   }
 
 }

@@ -16,7 +16,7 @@
             </div>
             <div class="col-10">
               <div class="form-group has-success">
-                <input type="text" class="form-control form-control-success" id="txt-school">
+                <input type="text" class="form-control form-control-success" id="txt-school" [(ngModel)]="schoolDetail.name" name="schoolDetail-name">
               </div>
             </div>
           </div>
@@ -63,14 +63,14 @@
                 <div class="col-12">
                   <div class="form-check-radio">
                     <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="opt-type" id="opt-type1" value="1" checked>
+                      <input class="form-check-input" type="radio" name="opt-type" id="opt-type1" value="1" [(ngModel)]="couseType">
                         9 - 12 ปี
                       <span class="form-check-sign"></span>
                     </label>
                   </div>
                   <div class="form-check-radio">
                     <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="opt-type" id="opt-type2" value="2">
+                      <input class="form-check-input" type="radio" name="opt-type" id="opt-type2" value="2" [(ngModel)]="couseType">
                         13 - 15 ปี
                       <span class="form-check-sign"></span>
                     </label>
@@ -127,6 +127,7 @@
                       class="btn btn-warning"
                       mwlCalendarToday
                       [(viewDate)]="viewDate"
+                      (viewDateChange)="closeOpenMonthViewDay()"
                     >
                       วันนี้
                     </div>
@@ -193,7 +194,7 @@
             ชื่อโรงเรียน :
           </div>
           <div class="col-9">
-            <input type="text" class="form-control form-control-success" id="txt-modal-school">
+            <input type="text" class="form-control form-control-success" id="txt-modal-school" [(ngModel)]="schoolDetail.name" name="schoolDetail-name">
           </div>
         </div>
         <br/>
@@ -202,7 +203,7 @@
             ที่อยู่โรงเรียน :
           </div>
           <div class="col-9">
-            <textarea class="form-control" id="txt-modal-location" rows="3"></textarea>
+            <textarea class="form-control" id="txt-modal-location" rows="3" [(ngModel)]="schoolDetail.location" name="schoolDetail-location"></textarea>
           </div>
         </div>
         <br/>
@@ -211,7 +212,7 @@
             Email :
           </div>
           <div class="col-9">
-            <input type="email" class="form-control form-control-success" id="txt-modal-email">
+            <input type="email" class="form-control form-control-success" id="txt-modal-email" [(ngModel)]="schoolDetail.email" name="schoolDetail-email">
           </div>
         </div>
         <br/>
@@ -220,7 +221,7 @@
             เบอร์ติดต่อ :
           </div>
           <div class="col-9">
-            <input type="text" class="form-control form-control-success" id="txt-modal-school-tel">
+            <input type="text" class="form-control form-control-success" id="txt-modal-school-tel" [(ngModel)]="schoolDetail.tel" name="schoolDetail-tel">
           </div>
         </div>
         <br/>
@@ -228,11 +229,17 @@
           <div class="col-3">
             ครูผู้ประสานงาน(หลัก) :
           </div>
+          <div class="col-9">
+            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-name1" [(ngModel)]="schoolDetail.teacherMainName" name="schoolDetail-teacherMainName" placeholder="ชื่อ">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-3"></div>
           <div class="col-5">
-            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-tel1" placeholder="เบอร์ติดต่อ">
+            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-tel1" [(ngModel)]="schoolDetail.teacherMainTel" name="schoolDetail-teacherMainTel" placeholder="เบอร์ติดต่อ">
           </div>
           <div class="col-4">
-            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-line1" placeholder="ไลน์">
+            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-line1" [(ngModel)]="schoolDetail.teacherMainLine" name="schoolDetail-teacherMainLine" placeholder="ไลน์">
           </div>
         </div>
         <br/>
@@ -240,11 +247,17 @@
           <div class="col-3">
             ครูผู้ประสานงาน(รอง) :
           </div>
+          <div class="col-9">
+            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-name2" [(ngModel)]="schoolDetail.teacherSubName" name="schoolDetail-teacherSubName" placeholder="ชื่อ">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-3"></div>
           <div class="col-5">
-            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-tel2" placeholder="เบอร์ติดต่อ">
+            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-tel2" [(ngModel)]="schoolDetail.teacherSubTel" name="schoolDetail-teacherSubTel" placeholder="เบอร์ติดต่อ">
           </div>
           <div class="col-4">
-            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-line2" placeholder="ไลน์">
+            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-line2" [(ngModel)]="schoolDetail.teacherSubLine" name="schoolDetail-teacherSubLine" placeholder="ไลน์">
           </div>
         </div>
         <br/>
@@ -255,26 +268,32 @@
           <div class="col-9">
             <div class="form-check-radio">
               <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount1" value="30" [(ngModel)]="studentAmount">
+                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount1" value="30" [(ngModel)]="schoolDetail.amount" (change)="onChangeAmountStatus('30')">
                   30 คน
                 <span class="form-check-sign"></span>
               </label>
             </div>
             <div class="form-check-radio">
               <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount4" value="60" [(ngModel)]="studentAmount">
+                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount4" value="60" [(ngModel)]="schoolDetail.amount" (change)="onChangeAmountStatus('60')">
                   60 คน
                 <span class="form-check-sign"></span>
               </label>
             </div>
             <div class="form-check-radio">
               <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount5" value="99" [(ngModel)]="studentAmount">
+                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount5" value="99" (change)="onChangeAmountStatus('99')">
                   อื่นๆ
                 <span class="form-check-sign"></span>
               </label>
             </div>
-            <input type="text" class="form-control form-control-success" id="txt-modal-stu-amt" placeholder="จำนวนนักเรียน" *ngIf="studentAmount == '99'">
+            <input type="text" 
+                  class="form-control form-control-success" 
+                  id="txt-modal-stu-amt" 
+                  placeholder="จำนวนนักเรียน" 
+                  [(ngModel)]="schoolDetail.amount" 
+                  name="schoolDetail-amount"
+                  *ngIf="amountStatus">
           </div>
         </div>
         <br/>
@@ -289,6 +308,6 @@
     </form>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-success btn-round" (click)="modal.close('Save click')">บันทึก</button>
+    <button type="button" class="btn btn-success btn-round" (click)="saveBooking()">บันทึก</button>
   </div>
 </ng-template>

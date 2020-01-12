@@ -4,6 +4,7 @@ export class SchoolList {
     location: string;
     amount: string;
     email: string;
+    tel: string;
     teacherMainName: string;
     teacherMainTel: string;
     teacherMainLine: string;
