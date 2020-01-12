@@ -1,7 +1,7 @@
 import { SchoolList } from './school.model';
 
 export class BookingList {
-    key: string;
+    key?: string;
     year: string;
     month: string;
     day: string;
@@ -10,5 +10,5 @@ export class BookingList {
     amount: number;
     course: string;
     description: string;
-    school: SchoolList[];
+    school?: SchoolList[];
 }

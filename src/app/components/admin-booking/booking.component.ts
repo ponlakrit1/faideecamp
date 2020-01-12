@@ -68,7 +68,6 @@ export class BookingComponent implements OnInit {
           setTimeout(() => this.dupStatus = true, 1000);
         } else {
           this.dataItem = {
-            key: null,
             year: String(this.dateModel.year),
             month: String(this.dateModel.month),
             day: String(this.dateModel.day),
@@ -76,8 +75,7 @@ export class BookingComponent implements OnInit {
             year_month_day: String(this.dateModel.year)+"_"+String(this.dateModel.month)+"_"+String(this.dateModel.day),
             amount: 60,
             course: this.course,
-            description: this.description,
-            school: null
+            description: this.description
           };
 
           // Set firebase

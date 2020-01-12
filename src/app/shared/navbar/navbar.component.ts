@@ -6,13 +6,7 @@ import { Router } from "@angular/router";
 import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
-interface UserList {
-    key: string;
-    username: string;
-    password: string;
-    uid_pwd: string;
-  }
+import { UserList } from './../../data-model/user.model';
 
 @Component({
     selector: 'app-navbar',

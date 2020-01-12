@@ -1,5 +1,5 @@
 export class SchoolList {
-    key: string;
+    key?: string;
     name: string;
     location: string;
     amount: string;

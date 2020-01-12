@@ -3,13 +3,7 @@ import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
-interface UserList {
-  key: string;
-  username: string;
-  password: string;
-  uid_pwd: string;
-}
+import { UserList } from './../../data-model/user.model';
 
 @Component({
   selector: 'app-admin-user',
@@ -76,7 +70,6 @@ export class AdminUserComponent implements OnInit {
             setTimeout(() => this.dupStatus = true, 1000);
           } else {
             this.dataItem = {
-              key: null,
               username: this.username,
               password: this.password,
               uid_pwd: this.username+"_"+this.password

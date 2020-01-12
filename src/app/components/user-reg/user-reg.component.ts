@@ -42,6 +42,7 @@ export class UserRegComponent implements OnInit {
   itemsDisplay: Observable<any[]>;
   dataDisplay: BookingList[];
 
+  eventSelected: CalendarEvent;
   events: CalendarEvent[] = [];
   refresh: Subject<any> = new Subject();
 
@@ -70,16 +71,16 @@ export class UserRegComponent implements OnInit {
         for(let temp of this.dataDisplay){
           let event: CalendarEvent;
 
-          if(temp.school == null){
+          if(temp.amount <= 0){
             event = {
               start: startOfDay(new Date(temp.year+"-"+temp.month+"-"+temp.day)),
-              title: 'โรงเรียนทดสอบ',
+              title: `${temp.amount}`,
               color: colors.red
             };
           } else {
             event = {
               start: startOfDay(new Date(temp.year+"-"+temp.month+"-"+temp.day)),
-              title: 'โรงเรียนทดสอบ',
+              title: `${temp.amount}`,
               color: colors.green
             };
           }
@@ -97,21 +98,23 @@ export class UserRegComponent implements OnInit {
   }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
-    let status = false;
+    let eventTitle = "";
 
-    for (let ev of events) {
-      if(ev.color == colors.red){
-        status = true;
+    if(events.length > 0){
+      for (let ev of events) {
+        eventTitle = ev.title;
       }
-    }
-
-    if (isSameMonth(date, this.viewDate)) {
-      if(events.length === 0 || status == false){
-        this.openModal();
-      } else {
-        this.activeDayIsOpen == true ? this.activeDayIsOpen = false : this.activeDayIsOpen = true;
+  
+      this.eventSelected = {
+        start: date,
+        title: eventTitle
       }
+  
+      this.openModal();
+    } else {
+      console.log("No booking events");
     }
+    
   }
 
   setView(view: CalendarView) {

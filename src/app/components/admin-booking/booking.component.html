@@ -96,9 +96,9 @@
                     <div class="form-group">
                         <div class="input-group date">
                             <input class="form-control" placeholder="YYYY-MM-DD" dateFormat="YYYY-MM-DD" 
-                                name="dp" [(ngModel)]="dateModel" ngbDatepicker #d="ngbDatepicker" (click)="d.toggle()" (focus)="focus=true" (blur)="focus=false" />
+                                name="dp" [(ngModel)]="dateModel" ngbDatepicker #d="ngbDatepicker" (click)="d.toggle()" />
                             <div class="input-group-append">
-                                <span class="glyphicon glyphicon-calendar input-group-text">
+                                <span class="glyphicon glyphicon-calendar input-group-text" (click)="d.toggle()">
                                   <i class="fa fa-calendar" aria-hidden="true"></i>
                                 </span>
                             </div>
