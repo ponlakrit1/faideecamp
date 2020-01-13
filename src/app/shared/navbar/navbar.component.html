@@ -85,3 +85,21 @@
         <button type="button" class="btn btn-success btn-round" (click)="onLogin()">เข้าสู่ระบบ</button>
     </div>
 </ng-template>
+
+<ng-template #modalLogout let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">แจ้งเตือน</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="typography-line">
+            <h3>คุณต้องการออกจากระบบหรือไม่ ?</h3>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success btn-round" (click)="onConfirmLogout()">ตกลง</button>
+        <button type="button" class="btn btn-danger btn-round" (click)="modal.dismiss('Cross click')">ปิด</button>
+    </div>
+</ng-template>

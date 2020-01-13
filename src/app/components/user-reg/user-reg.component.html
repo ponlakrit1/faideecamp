@@ -7,7 +7,7 @@
         <div class="typography-line">
           <h3>รายละเอียด</h3>
         </div>
-
+        
         <form>
 
           <div class="row">
@@ -63,14 +63,14 @@
                 <div class="col-12">
                   <div class="form-check-radio">
                     <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="opt-type" id="opt-type1" value="1" [(ngModel)]="couseType">
+                      <input class="form-check-input" type="radio" name="opt-type" id="opt-type1" value="1" [(ngModel)]="couseType" (change)="onRefreshEventCalendar()">
                         9 - 12 ปี
                       <span class="form-check-sign"></span>
                     </label>
                   </div>
                   <div class="form-check-radio">
                     <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="opt-type" id="opt-type2" value="2" [(ngModel)]="couseType">
+                      <input class="form-check-input" type="radio" name="opt-type" id="opt-type2" value="2" [(ngModel)]="couseType" (change)="onRefreshEventCalendar()">
                         13 - 15 ปี
                       <span class="form-check-sign"></span>
                     </label>
@@ -183,10 +183,6 @@
   <div class="modal-body">
     <form>
       <div class="form-group">
-
-        <p>
-          <ngb-alert [type]="'danger'" (close)="notEnoughModalStatus = false" *ngIf="notEnoughModalStatus">จำนวนนักเรียนคงเหลือ ไม่เพียงพอ !</ngb-alert>
-        </p>
 
         <div class="row">
           <div class="col-3">
@@ -302,12 +298,31 @@
             <h5 style="color: rgb(255, 0, 0)">** ภายใน 7 วัน **</h5>
           </div>
         </div>
+        <br/>
+
+        <p>
+          <ngb-alert [type]="'danger'" (close)="notEnoughModalStatus = false" *ngIf="notEnoughModalStatus">จำนวนนักเรียนคงเหลือ ไม่เพียงพอ !</ngb-alert>
+        </p>
 
       </div>
     </form>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-success btn-round" (click)="saveBooking()">บันทึก</button>
+  </div>
+</ng-template>
+
+<ng-template #modalBookingComplted let-modal>
+  <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">แจ้งเตือน</h4>
+      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+  <div class="modal-body">
+    <div class="typography-line">
+      <h3>บันทึกสำเร็จ !</h3>
+    </div>
   </div>
 </ng-template>
 

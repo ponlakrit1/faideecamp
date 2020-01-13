@@ -11,11 +11,14 @@ export class AuthGuardService implements CanActivate {
   
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     let activeUser = sessionStorage.getItem("username");
-    if (activeUser != null) {
-        return true;
+    if(activeUser == null){
+      this.router.navigate(['']);
+      return false;
+    } else if(activeUser == "null"){
+      this.router.navigate(['']);
+      return false;
     } else {
-        this.router.navigate(['']);
-        return false;
+      return true;
     }
   }
   

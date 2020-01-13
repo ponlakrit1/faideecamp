@@ -17,6 +17,7 @@ import { UserList } from './../../data-model/user.model';
 export class NavbarComponent implements OnInit {
 
     @ViewChild('modalLoginContent', {static: true}) modalContent: TemplateRef<any>;
+    @ViewChild('modalLogout', {static: true}) modalConfirm: TemplateRef<any>;
     
     private toggleButton: any;
     private sidebarVisible: boolean;
@@ -110,6 +111,14 @@ export class NavbarComponent implements OnInit {
     }
 
     onLogout(){
+        this.modalService.open(this.modalConfirm, { windowClass: 'modal-nav' });
+    }
+
+    hindAlertStatus(){
+        setTimeout(() => this.alertStatus = false, 3000);
+    }
+
+    onConfirmLogout(){
         this.loginStatus = false;
         this.alertStatus = false;
         this.username = null;
@@ -118,10 +127,7 @@ export class NavbarComponent implements OnInit {
         this.authService.removeUserSession();
         this.authService.onViewUid(null);
 
+        this.modalService.dismissAll();
         this.router.navigate(['']);
-    }
-
-    hindAlertStatus(){
-        setTimeout(() => this.alertStatus = false, 3000);
     }
 }

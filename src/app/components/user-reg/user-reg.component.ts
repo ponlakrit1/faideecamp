@@ -31,6 +31,7 @@ declare var require: any
 export class UserRegComponent implements OnInit {
 
   @ViewChild('modalRegContent', {static: true}) modalContent: TemplateRef<any>;
+  @ViewChild('modalBookingComplted', {static: true}) modalSuccess: TemplateRef<any>;
 
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
@@ -119,6 +120,10 @@ export class UserRegComponent implements OnInit {
     this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top' });
   }
 
+  openModalSuccess(): void {
+    this.modalService.open(this.modalSuccess, { windowClass: 'w3-animate-top' });
+  }
+
   onChangeAmountStatus(num: string): void {
     if(num == '99'){
       this.schoolDetail.amount = '';
@@ -165,13 +170,14 @@ export class UserRegComponent implements OnInit {
               this.itemsRef = this.db.list(`booking-list`);
               this.itemsRef.update(eventTemp.key, eventTemp).then((value) => {
                 this.onResetUserForm();
-                this.modalService.dismissAll();
               });
             } else {
               this.notEnoughStatus = true;
               setTimeout(() => this.notEnoughStatus = false, 3000);
-              this.modalService.dismissAll();
             }
+
+            this.modalService.dismissAll();
+            this.openModalSuccess();
         }
       );
     } else {
@@ -211,18 +217,20 @@ export class UserRegComponent implements OnInit {
         for(let temp of this.dataDisplay){
           let event: CalendarEvent;
 
-          if(temp.amount <= 0){
-            event = {
-              start: startOfDay(new Date(temp.year+"-"+temp.month+"-"+temp.day)),
-              title: `${temp.amount}`,
-              color: colors.red
-            };
-          } else {
-            event = {
-              start: startOfDay(new Date(temp.year+"-"+temp.month+"-"+temp.day)),
-              title: `${temp.amount}`,
-              color: colors.green
-            };
+          if(temp.course == this.couseType){
+            if(temp.amount <= 0){
+              event = {
+                start: startOfDay(new Date(temp.year+"-"+temp.month+"-"+temp.day)),
+                title: `${temp.amount}`,
+                color: colors.red
+              };
+            } else {
+              event = {
+                start: startOfDay(new Date(temp.year+"-"+temp.month+"-"+temp.day)),
+                title: `${temp.amount}`,
+                color: colors.green
+              };
+            }
           }
 
           // Check event is not null
@@ -238,7 +246,9 @@ export class UserRegComponent implements OnInit {
   }
 
   onResetUserForm(){
-
+    this.couseType = "1";
+    this.schoolDetail.amount = '30';
+    this.schoolDetail = new SchoolList();
   }
 
 }
