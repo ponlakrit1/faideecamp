@@ -42,9 +42,12 @@ export class UserRegComponent implements OnInit {
   couseType: string = "";
   amountStatus: boolean;
   notEnoughStatus: boolean;
+  notEnoughModalStatus: boolean;
 
   itemsRefDisplay: AngularFireList<any>;
   itemsDisplay: Observable<any[]>;
+  itemsRef: AngularFireList<any>;
+  items: Observable<any[]>;
   dataDisplay: BookingList[];
   schoolDetail: SchoolList;
 
@@ -69,6 +72,7 @@ export class UserRegComponent implements OnInit {
     this.amountStatus = false;
     this.schoolDetail.amount = '30';
     this.notEnoughStatus = false;
+    this.notEnoughModalStatus = false;
   }
 
   ngOnInit() {
@@ -127,27 +131,55 @@ export class UserRegComponent implements OnInit {
   saveBooking(){
     var eventTemp: BookingList;
 
+    // Get bookingList from event(click)
     for (let ev of this.dataDisplay) {
       if(ev.day == String(this.eventSelected.start.getDate())){
         eventTemp = ev;
+        eventTemp.amount = eventTemp.amount - Number(this.schoolDetail.amount);
         break;
       }
     }
 
-    console.log(eventTemp.amount);
-
+    // Check student amount(Typing)
     if(eventTemp.amount > 0){
-      if(eventTemp.school == null){
-        eventTemp.school = [];
-      }
-      eventTemp.school.push(this.schoolDetail);
-    } else {
 
+      // Init firebase
+      this.itemsRef = this.db.list(`booking-list`, ref => ref.orderByChild('year_month_day').equalTo(this.moment(this.eventSelected.start).format('YYYY_MM_DD')));
+      this.items = this.itemsRef.snapshotChanges().pipe(
+        map(changes => 
+          changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
+        )
+      );
+
+      // Get firebase data
+      this.items.subscribe(
+        (data: BookingList[]) => {
+
+            // Check student amount from DB
+            if(data[0].amount > 0){
+              if(eventTemp.school == null){
+                eventTemp.school = [];
+              }
+              eventTemp.school.push(this.schoolDetail);
+
+              this.itemsRef = this.db.list(`booking-list`);
+              this.itemsRef.update(eventTemp.key, eventTemp).then((value) => {
+                this.onResetUserForm();
+                this.modalService.dismissAll();
+              });
+            } else {
+              this.notEnoughStatus = true;
+              setTimeout(() => this.notEnoughStatus = false, 3000);
+              this.modalService.dismissAll();
+            }
+        }
+      );
+    } else {
+      this.notEnoughModalStatus = true;
+      setTimeout(() => this.notEnoughModalStatus = false, 3000);
     }
 
-    console.log(eventTemp);
 
-    this.modalService.dismissAll();
   }
 
   paddingLeftNumber(year: number, month: number): string{
@@ -174,7 +206,7 @@ export class UserRegComponent implements OnInit {
       (data: BookingList[]) => {
         this.dataDisplay = data;
 
-        console.log(this.dataDisplay);
+        // console.log(this.dataDisplay);
 
         for(let temp of this.dataDisplay){
           let event: CalendarEvent;
@@ -203,6 +235,10 @@ export class UserRegComponent implements OnInit {
         
       }
     );
+  }
+
+  onResetUserForm(){
+
   }
 
 }

@@ -104,6 +104,10 @@
             </div>
           </div>
 
+          <p>
+            <ngb-alert [type]="'danger'" (close)="notEnoughStatus = false" *ngIf="notEnoughStatus">จำนวนนักเรียนคงเหลือ ไม่เพียงพอ !</ngb-alert>
+          </p>
+
           <div class="row" *ngIf="joinStatus == 'Y'">
             <div class="col-12">
 
@@ -151,6 +155,7 @@
                   [events]="events"
                   [refresh]="refresh"
                   [locale]="locale"
+                  [cellTemplate]="customCellTemplate"
                   [activeDayIsOpen]="activeDayIsOpen"
                   (dayClicked)="dayClicked($event.day)"
                 >
@@ -158,16 +163,6 @@
               </div>
 
             </div>
-          </div>
-
-          <br /><br /><br />
-
-          <div class="row">
-            <div class="col-2"></div>
-            <div class="col-8">
-              <button type="button" class="btn btn-success btn-block btn-round">บันทึก</button>
-            </div>
-            <div class="col-2"></div>
           </div>
 
         </form>
@@ -180,7 +175,7 @@
 <ng-template #modalRegContent let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">กรอกรายละเอียด</h4>
-    <h6 class="modal-title" id="modal-basic-title">จำนวนคงเหลือ {{eventSelected.title}} คน</h6>
+    <h6 class="modal-title" id="modal-basic-title">จำนวนนักเรียนคงเหลือ {{eventSelected.title}} คน</h6>
     <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -188,6 +183,10 @@
   <div class="modal-body">
     <form>
       <div class="form-group">
+
+        <p>
+          <ngb-alert [type]="'danger'" (close)="notEnoughModalStatus = false" *ngIf="notEnoughModalStatus">จำนวนนักเรียนคงเหลือ ไม่เพียงพอ !</ngb-alert>
+        </p>
 
         <div class="row">
           <div class="col-3">
@@ -287,7 +286,7 @@
                 <span class="form-check-sign"></span>
               </label>
             </div>
-            <input type="text" 
+            <input type="number" 
                   class="form-control form-control-success" 
                   id="txt-modal-stu-amt" 
                   placeholder="จำนวนนักเรียน" 
@@ -309,5 +308,20 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-success btn-round" (click)="saveBooking()">บันทึก</button>
+  </div>
+</ng-template>
+
+<!-- Cel templete -->
+<ng-template #customCellTemplate let-day="day" let-locale="locale">
+  <div class="cell-h100" *ngIf="day.events.length > 0">
+    <div class="cal-cell-top cell-h100" [style.background-color] = "day.badgeTotal > 0 && day.events[0].color.primary == '#00b300' ? '#77dd77' : '#ff6961'">
+      <span class="cal-day-number">{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span>
+    </div>
+  </div>
+
+  <div class="cell-h100" *ngIf="day.events.length == 0">
+    <div class="cal-cell-top cell-h100">
+      <span class="cal-day-number">{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span>
+    </div>
   </div>
 </ng-template>
