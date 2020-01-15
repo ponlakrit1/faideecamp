@@ -10,5 +10,4 @@ export class BookingList {
     amount: number;
     course: string;
     description: string;
-    school?: SchoolList[];
 }

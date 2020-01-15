@@ -14,6 +14,7 @@ declare var require: any
 export class BookingComponent implements OnInit {
 
   @ViewChild('modalBooking', {static: true}) modalContent: TemplateRef<any>;
+  @ViewChild('modalBookingView', {static: true}) modalView: TemplateRef<any>;
 
   page = 1;
   pageSize = 10;
@@ -57,7 +58,7 @@ export class BookingComponent implements OnInit {
 
   addBooking(){
     // Set firebase
-    this.itemsRef = this.db.list(`booking-list`, ref => ref.orderByChild('year_month_day').equalTo(String(this.dateModel.year)+"_"+String(this.dateModel.month)+"_"+String(this.dateModel.day)));
+    this.itemsRef = this.db.list(`booking-list`, ref => ref.orderByChild('year_month_day').equalTo(String(this.dateModel.year)+"_"+this.paddingLeftNumber(this.dateModel.month)+"_"+String(this.dateModel.day)));
     this.items = this.itemsRef.snapshotChanges().pipe(
       map(changes => 
         changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
@@ -66,6 +67,8 @@ export class BookingComponent implements OnInit {
 
     this.items.subscribe(
       (data: BookingList[]) => {
+        console.log(data);
+
         if(data.length > 0){
           setTimeout(() => this.dupStatus = true, 1000);
         } else {

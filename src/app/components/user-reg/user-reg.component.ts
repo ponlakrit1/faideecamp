@@ -8,6 +8,7 @@ import { SchoolList } from './../../data-model/school.model';
 import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Router } from "@angular/router";
 
 const colors: any = {
   red: {
@@ -41,14 +42,17 @@ export class UserRegComponent implements OnInit {
 
   joinStatus: string = "";
   couseType: string = "";
+  schoolAmount: string;
   amountStatus: boolean;
-  notEnoughStatus: boolean;
   notEnoughModalStatus: boolean;
+  countTemp: number = 0;
 
   itemsRefDisplay: AngularFireList<any>;
   itemsDisplay: Observable<any[]>;
   itemsRef: AngularFireList<any>;
   items: Observable<any[]>;
+  itemsRefTemp: AngularFireList<any>;
+
   dataDisplay: BookingList[];
   schoolDetail: SchoolList;
 
@@ -58,7 +62,7 @@ export class UserRegComponent implements OnInit {
 
   activeDayIsOpen: boolean = false;
 
-  constructor(private modalService: NgbModal, private db: AngularFireDatabase) {
+  constructor(private modalService: NgbModal, private db: AngularFireDatabase, private router: Router) {
     // Set firebase
     this.itemsRefDisplay = this.db.list(`booking-list`, ref => ref.orderByChild('year_month').equalTo(this.moment().format("YYYY_MM")));
     this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
@@ -71,8 +75,7 @@ export class UserRegComponent implements OnInit {
     this.couseType = "1";
     this.schoolDetail = new SchoolList();
     this.amountStatus = false;
-    this.schoolDetail.amount = '30';
-    this.notEnoughStatus = false;
+    this.schoolAmount = '30';
     this.notEnoughModalStatus = false;
   }
 
@@ -126,7 +129,7 @@ export class UserRegComponent implements OnInit {
 
   onChangeAmountStatus(num: string): void {
     if(num == '99'){
-      this.schoolDetail.amount = '';
+      this.schoolAmount = '';
       this.amountStatus = true;
     } else {
       this.amountStatus = false;
@@ -135,57 +138,40 @@ export class UserRegComponent implements OnInit {
 
   saveBooking(){
     var eventTemp: BookingList;
+    var calculateAmount = 0;
 
     // Get bookingList from event(click)
     for (let ev of this.dataDisplay) {
       if(ev.day == String(this.eventSelected.start.getDate())){
         eventTemp = ev;
-        eventTemp.amount = eventTemp.amount - Number(this.schoolDetail.amount);
+        calculateAmount = eventTemp.amount - Number(this.schoolAmount);
         break;
       }
     }
 
-    // Check student amount(Typing)
-    if(eventTemp.amount > 0){
+    // Check student amount(Typing) - amount
+    if(calculateAmount >= 0){
+      eventTemp.amount = calculateAmount;
 
-      // Init firebase
-      this.itemsRef = this.db.list(`booking-list`, ref => ref.orderByChild('year_month_day').equalTo(this.moment(this.eventSelected.start).format('YYYY_MM_DD')));
-      this.items = this.itemsRef.snapshotChanges().pipe(
-        map(changes => 
-          changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-        )
-      );
+      this.itemsRef = this.db.list(`booking-list`);
+      this.itemsRef.update(eventTemp.key, eventTemp).then((value) => {
+        console.log("update booking");
+      });
 
-      // Get firebase data
-      this.items.subscribe(
-        (data: BookingList[]) => {
+      this.itemsRef = this.db.list(`school-list`);
+      this.itemsRef.push(this.schoolDetail).then((value) => {
+        console.log("update school");
+      });
 
-            // Check student amount from DB
-            if(data[0].amount > 0){
-              if(eventTemp.school == null){
-                eventTemp.school = [];
-              }
-              eventTemp.school.push(this.schoolDetail);
+      // After update data
+      this.onResetUserForm();
+      this.modalService.dismissAll();
+      this.openModalSuccess();
 
-              this.itemsRef = this.db.list(`booking-list`);
-              this.itemsRef.update(eventTemp.key, eventTemp).then((value) => {
-                this.onResetUserForm();
-              });
-            } else {
-              this.notEnoughStatus = true;
-              setTimeout(() => this.notEnoughStatus = false, 3000);
-            }
-
-            this.modalService.dismissAll();
-            this.openModalSuccess();
-        }
-      );
     } else {
       this.notEnoughModalStatus = true;
       setTimeout(() => this.notEnoughModalStatus = false, 3000);
     }
-
-
   }
 
   paddingLeftNumber(year: number, month: number): string{
@@ -211,8 +197,6 @@ export class UserRegComponent implements OnInit {
     this.itemsDisplay.subscribe(
       (data: BookingList[]) => {
         this.dataDisplay = data;
-
-        // console.log(this.dataDisplay);
 
         for(let temp of this.dataDisplay){
           let event: CalendarEvent;
@@ -247,7 +231,8 @@ export class UserRegComponent implements OnInit {
 
   onResetUserForm(){
     this.couseType = "1";
-    this.schoolDetail.amount = '30';
+    this.schoolAmount = '30';
+    this.amountStatus = false;
     this.schoolDetail = new SchoolList();
   }
 

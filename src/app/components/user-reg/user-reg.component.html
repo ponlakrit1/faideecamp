@@ -104,10 +104,6 @@
             </div>
           </div>
 
-          <p>
-            <ngb-alert [type]="'danger'" (close)="notEnoughStatus = false" *ngIf="notEnoughStatus">จำนวนนักเรียนคงเหลือ ไม่เพียงพอ !</ngb-alert>
-          </p>
-
           <div class="row" *ngIf="joinStatus == 'Y'">
             <div class="col-12">
 
@@ -263,14 +259,14 @@
           <div class="col-9">
             <div class="form-check-radio">
               <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount1" value="30" [(ngModel)]="schoolDetail.amount" (change)="onChangeAmountStatus('30')">
+                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount1" value="30" [(ngModel)]="schoolAmount" (change)="onChangeAmountStatus('30')">
                   30 คน
                 <span class="form-check-sign"></span>
               </label>
             </div>
             <div class="form-check-radio">
               <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount4" value="60" [(ngModel)]="schoolDetail.amount" (change)="onChangeAmountStatus('60')">
+                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount4" value="60" [(ngModel)]="schoolAmount" (change)="onChangeAmountStatus('60')">
                   60 คน
                 <span class="form-check-sign"></span>
               </label>
@@ -286,7 +282,7 @@
                   class="form-control form-control-success" 
                   id="txt-modal-stu-amt" 
                   placeholder="จำนวนนักเรียน" 
-                  [(ngModel)]="schoolDetail.amount" 
+                  [(ngModel)]="schoolAmount" 
                   name="schoolDetail-amount"
                   *ngIf="amountStatus">
           </div>
