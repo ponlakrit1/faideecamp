@@ -67,8 +67,6 @@ export class BookingComponent implements OnInit {
 
     this.items.subscribe(
       (data: BookingList[]) => {
-        console.log(data);
-
         if(data.length > 0){
           setTimeout(() => this.dupStatus = true, 1000);
         } else {
@@ -101,7 +99,7 @@ export class BookingComponent implements OnInit {
   }
 
   onResetUserForm(){
-    this.course = null;
+    this.course = "1";
     this.dateModel = null;
     this.description = null;
     this.dupStatus = null;
@@ -119,7 +117,6 @@ export class BookingComponent implements OnInit {
   }
 
   paddingLeftNumber(num: number): string{
-    let result = "";
     if(num < 10){
       return "0"+String(num);
     } else {

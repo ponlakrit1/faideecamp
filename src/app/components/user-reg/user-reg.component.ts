@@ -45,13 +45,11 @@ export class UserRegComponent implements OnInit {
   schoolAmount: string;
   amountStatus: boolean;
   notEnoughModalStatus: boolean;
-  countTemp: number = 0;
 
   itemsRefDisplay: AngularFireList<any>;
   itemsDisplay: Observable<any[]>;
   itemsRef: AngularFireList<any>;
   items: Observable<any[]>;
-  itemsRefTemp: AngularFireList<any>;
 
   dataDisplay: BookingList[];
   schoolDetail: SchoolList;
@@ -59,8 +57,6 @@ export class UserRegComponent implements OnInit {
   eventSelected: CalendarEvent;
   events: CalendarEvent[] = [];
   refresh: Subject<any> = new Subject();
-
-  activeDayIsOpen: boolean = false;
 
   constructor(private modalService: NgbModal, private db: AngularFireDatabase, private router: Router) {
     // Set firebase
@@ -116,7 +112,6 @@ export class UserRegComponent implements OnInit {
     );
 
     this.onRefreshEventCalendar();
-    // this.activeDayIsOpen = false;
   }
 
   openModal(): void {
@@ -157,6 +152,10 @@ export class UserRegComponent implements OnInit {
       this.itemsRef.update(eventTemp.key, eventTemp).then((value) => {
         console.log("update booking");
       });
+
+      // Set school obj
+      this.schoolDetail.year_month_day = eventTemp.year_month_day;
+      this.schoolDetail.amount = this.schoolAmount;
 
       this.itemsRef = this.db.list(`school-list`);
       this.itemsRef.push(this.schoolDetail).then((value) => {
