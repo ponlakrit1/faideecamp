@@ -1,0 +1,32 @@
+<div class="wrapper">
+    <app-header-comp></app-header-comp>
+    <div class="main">
+      <div class="section">
+        <div class="container">
+
+            <div class="nav-tabs-navigation">
+                <div class="nav-tabs-wrapper">
+                    <ngb-tabset [justify]="'center'">
+                        <ngb-tab title="จัดการรูปกิจกรรม">
+                            <ng-template ngbTabContent>
+                                <app-admin-activity></app-admin-activity>
+                            </ng-template>
+                        </ngb-tab>
+                        <ngb-tab title="จัดการข่าวสาร">
+                            <ng-template ngbTabContent>
+                                <app-admin-info></app-admin-info>
+                            </ng-template>
+                        </ngb-tab>
+                        <ngb-tab title="จัดการผู้ใช้งาน">
+                            <ng-template ngbTabContent>
+                                <app-admin-user></app-admin-user>
+                            </ng-template>
+                        </ngb-tab>
+                    </ngb-tabset>
+                </div>
+            </div>
+  
+        </div>
+      </div>
+    </div>
+</div>

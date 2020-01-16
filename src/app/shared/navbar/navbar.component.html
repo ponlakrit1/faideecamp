@@ -24,16 +24,13 @@
                 </li>
 
                 <li class="nav-item" *ngIf="loginStatus">
-                    <a [routerLink]="['/booking']" class="nav-link"><i class="nc-icon nc-atom"></i> จัดการวันกิจกรรม</a>
+                    <a [routerLink]="['/admin-booking']" class="nav-link"><i class="nc-icon nc-atom"></i> จัดการวันกิจกรรม</a>
                 </li>
                 <li class="nav-item" *ngIf="loginStatus">
-                    <a [routerLink]="['/admin-info']" class="nav-link"><i class="nc-icon nc-email-85"></i> จัดการข่าวสาร</a>
+                    <a [routerLink]="['/admin-school']" class="nav-link"><i class="nc-icon nc-bank"></i> จัดการโรงเรียน</a>
                 </li>
                 <li class="nav-item" *ngIf="loginStatus">
-                    <a [routerLink]="['/admin-activity']" class="nav-link"><i class="nc-icon nc-album-2"></i> จัดการรูปภาพ</a>
-                </li>
-                <li class="nav-item" *ngIf="loginStatus">
-                    <a [routerLink]="['/admin-user']" class="nav-link"><i class="nc-icon nc-single-02"></i> จัดการผู้ใช้งาน</a>
+                    <a [routerLink]="['/admin-general']" class="nav-link"><i class="nc-icon nc-settings-gear-65"></i> จัดทั่วไป</a>
                 </li>
                 
                 <li class="nav-item" *ngIf="!loginStatus">

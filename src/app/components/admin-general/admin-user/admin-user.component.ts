@@ -3,7 +3,7 @@ import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { UserList } from './../../data-model/user.model';
+import { UserList } from '../../../data-model/user.model';
 
 @Component({
   selector: 'app-admin-user',

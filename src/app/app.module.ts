@@ -26,12 +26,14 @@ import { HeaderCompComponent } from './components/header-comp/header-comp.compon
 import { UserRegComponent } from './components/user-reg/user-reg.component';
 import { FormDownloadComponent } from './components/form-download/form-download.component';
 import { BookingComponent } from './components/admin-booking/booking.component';
-import { AdminUserComponent } from './components/admin-user/admin-user.component';
+import { AdminUserComponent } from './components/admin-general/admin-user/admin-user.component';
 
 import { AuthGuardService } from './provider/authGuardService';
 import { AuthService } from './provider/auth.service';
-import { AdminActivityComponent } from './components/admin-activity/admin-activity.component';
-import { AdminInfoComponent } from './components/admin-info/admin-info.component';
+import { AdminActivityComponent } from './components/admin-general/admin-activity/admin-activity.component';
+import { AdminInfoComponent } from './components/admin-general/admin-info/admin-info.component';
+import { AdminSchoolComponent } from './components/admin-school/admin-school.component';
+import { AdminGeneralComponent } from './components/admin-general/admin-general.component';
 
 registerLocaleData(localeTh);
 
@@ -49,7 +51,9 @@ registerLocaleData(localeTh);
     BookingComponent,
     AdminUserComponent,
     AdminActivityComponent,
-    AdminInfoComponent
+    AdminInfoComponent,
+    AdminSchoolComponent,
+    AdminGeneralComponent
   ],
   imports: [
     BrowserModule,

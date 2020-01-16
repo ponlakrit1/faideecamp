@@ -9,9 +9,8 @@ import { ActivityComponent } from './components/activity/activity.component';
 import { UserRegComponent } from './components/user-reg/user-reg.component';
 import { FormDownloadComponent } from './components/form-download/form-download.component';
 import { BookingComponent } from './components/admin-booking/booking.component';
-import { AdminUserComponent } from './components/admin-user/admin-user.component';
-import { AdminActivityComponent } from './components/admin-activity/admin-activity.component';
-import { AdminInfoComponent } from './components/admin-info/admin-info.component';
+import { AdminSchoolComponent } from './components/admin-school/admin-school.component';
+import { AdminGeneralComponent } from './components/admin-general/admin-general.component';
 import { AuthGuardService } from './provider/authGuardService';
 
 const routes: Routes =[
@@ -21,10 +20,9 @@ const routes: Routes =[
     { path: 'activity',         component: ActivityComponent },
     { path: 'user-reg',         component: UserRegComponent },
     { path: 'form-download',    component: FormDownloadComponent },
-    { path: 'booking',          component: BookingComponent, canActivate: [AuthGuardService] },
-    { path: 'admin-user',       component: AdminUserComponent, canActivate: [AuthGuardService] },
-    { path: 'admin-activity',   component: AdminActivityComponent, canActivate: [AuthGuardService] },
-    { path: 'admin-info',       component: AdminInfoComponent, canActivate: [AuthGuardService] }
+    { path: 'admin-booking',    component: BookingComponent, canActivate: [AuthGuardService] },
+    { path: 'admin-school',     component: AdminSchoolComponent, canActivate: [AuthGuardService] },
+    { path: 'admin-general',    component: AdminGeneralComponent, canActivate: [AuthGuardService] }
 ];
 
 @NgModule({
