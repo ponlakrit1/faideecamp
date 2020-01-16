@@ -4,40 +4,20 @@
         <div class="section">
             <div class="container">
 
-                <div class="row">
+                <div class="row" *ngFor="let item of dataDisplay">
                     <div class="col-md-12">
                       <div class="card ">
                         <div class="card-header ">
-                            <h5 class="card-title">หัวข้อ 1</h5>
+                            <h5 class="card-title">{{ item.title }}</h5>
                         </div>
-                        <div class="card-body ">
-                            เนื้อหา ...
-                        </div>
-                        <div class="card-footer ">
+                        <div class="card-body">{{ item.description }}</div>
+                        <div class="card-footer">
                           <hr>
                           <div class="stats">
-                            <i class="fa fa-calendar-o"></i> 09/11/2562
+                            <i class="fa fa-calendar-o"></i> {{ item.year_month_day }}
                           </div>
                         </div>
                       </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card ">
-                        <div class="card-header ">
-                            <h5 class="card-title">หัวข้อ 2</h5>
-                        </div>
-                        <div class="card-body ">
-                            เนื้อหา ...
-                        </div>
-                        <div class="card-footer ">
-                            <hr>
-                            <div class="stats">
-                            <i class="fa fa-calendar-o"></i> 10/11/2562
-                            </div>
-                        </div>
-                        </div>
                     </div>
                 </div>
 

@@ -1,5 +1,3 @@
-import { SchoolList } from './school.model';
-
 export class BookingList {
     key?: string;
     year: string;

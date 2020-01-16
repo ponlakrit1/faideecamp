@@ -8,3 +8,110 @@
         <button type="button" class="btn btn-success btn-round pull-right" (click)="openModal()"><i class="fa fa-plus"></i> เพิ่มใหม่</button>
     </div>
 </div>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">หัวข้อ</th>
+      <th scope="col">วันที่ลง</th>
+      <th scope="col" style="width: 10%;"></th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let info of dataDisplay; let i = index" (click)="onRowSelected(info)">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>{{ info.title }}</td>
+            <td>{{ info.description }}</td>
+            <td>
+              <button type="button" class="btn btn-danger btn-sm pull-right" (click)="removeInfo(info)"><i class="fa fa-trash"></i></button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+  
+<div class="d-flex justify-content-between p-2">
+    <ngb-pagination [collectionSize]="dataSize" [(page)]="page" [pageSize]="pageSize"></ngb-pagination>
+  
+    <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+        <option [ngValue]="5">5 หน้า</option>
+        <option [ngValue]="10">10 หน้า</option>
+        <option [ngValue]="15">15 หน้า</option>
+    </select>
+</div>
+
+<ng-template #modalInfo let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">กรอกรายละเอียด</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+        <div class="form-group">
+
+            <div class="row">
+                <div class="col-4">
+                    หัวข้อ :
+                </div>
+                <div class="col-8">
+                    <input type="text" class="form-control form-control-success" id="txt-modal-title" [(ngModel)]="title" autocomplete="false">
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-4">
+                    รายละเอียด :
+                </div>
+                <div class="col-8">
+                    <textarea class="form-control" id="txt-modal-location" rows="3" id="txt-modal-pwd" [(ngModel)]="desc"></textarea>
+                </div>
+            </div>
+            
+        </div>
+        
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success btn-round" (click)="addInfoData()">บันทึก</button>
+    </div>
+</ng-template>
+
+<ng-template #modalInfoComplted let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">แจ้งเตือน</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+      <div class="typography-line">
+        <h5>บันทึกสำเร็จ !</h5>
+      </div>
+    </div>
+</ng-template>
+
+<ng-template #modalInfoView let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">รายละเอียด</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-4">หัวข้อ :</div>
+                <div class="col-8">{{ dataItem.title }}</div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-4">รายละเอียด :</div>
+                <div class="col-8">{{ dataItem.description }}</div>
+            </div>
+        </div>
+        
+    </div>
+</ng-template>
+
