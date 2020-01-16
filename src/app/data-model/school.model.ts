@@ -12,4 +12,6 @@ export class SchoolList {
     teacherSubTel: string;
     teacherSubLine: string;
     year_month_day: string;
+    year: string;
+    course: string;
 }

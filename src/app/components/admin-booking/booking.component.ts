@@ -14,7 +14,7 @@ declare var require: any
 export class BookingComponent implements OnInit {
 
   @ViewChild('modalBooking', {static: true}) modalContent: TemplateRef<any>;
-  @ViewChild('modalBookingView', {static: true}) modalView: TemplateRef<any>;
+  @ViewChild('modalAddBookingComplted', {static: true}) modalCompleted: TemplateRef<any>;
 
   page = 1;
   pageSize = 10;
@@ -86,6 +86,8 @@ export class BookingComponent implements OnInit {
           this.itemsRef.push(this.dataItem).then((value) => {
             this.onResetUserForm();
             this.modalService.dismissAll();
+
+            this.openModalSuccess();
           });
         }
     });
@@ -96,6 +98,10 @@ export class BookingComponent implements OnInit {
 
   openModal(): void {
     this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top' });
+  }
+
+  openModalSuccess(): void {
+    this.modalService.open(this.modalCompleted, { windowClass: 'w3-animate-top' });
   }
 
   onResetUserForm(){

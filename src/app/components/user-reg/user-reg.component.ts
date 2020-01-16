@@ -156,6 +156,8 @@ export class UserRegComponent implements OnInit {
       // Set school obj
       this.schoolDetail.year_month_day = eventTemp.year_month_day;
       this.schoolDetail.amount = this.schoolAmount;
+      this.schoolDetail.year = eventTemp.year;
+      this.schoolDetail.course = eventTemp.course;
 
       this.itemsRef = this.db.list(`school-list`);
       this.itemsRef.push(this.schoolDetail).then((value) => {

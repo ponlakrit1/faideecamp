@@ -13,6 +13,7 @@ import { UserList } from '../../../data-model/user.model';
 export class AdminUserComponent implements OnInit {
 
   @ViewChild('modalUserReg', {static: true}) modalContent: TemplateRef<any>;
+  @ViewChild('modalUserComplted', {static: true}) modalSuccess: TemplateRef<any>;
 
   page = 1;
   pageSize = 10;
@@ -79,6 +80,8 @@ export class AdminUserComponent implements OnInit {
             this.itemsRef.push(this.dataItem).then((value) => {
               this.onResetUserForm();
               this.modalService.dismissAll();
+
+              this.openModalCompleted();
             });
           }
         }
@@ -100,6 +103,10 @@ export class AdminUserComponent implements OnInit {
 
   openModal(): void {
     this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top' });
+  }
+
+  openModalCompleted(): void {
+    this.modalService.open(this.modalSuccess, { windowClass: 'w3-animate-top' });
   }
 
   removeUser(user: UserList){
