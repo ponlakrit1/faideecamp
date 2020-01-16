@@ -5,23 +5,17 @@
       <div class="container">
         <div class="row">
 
-          <div class="section" id="carousel">
+          <div class="section" *ngFor="let item of dataDisplay">
             <div class="container">
                 <div class="tim-title">
-                    <h3>กิจกรรมที่ 1</h3>
+                    <h3>{{ item.title }}</h3>
                 </div>
                 <div class="row">
                     <div class="col-md-12 mr-auto ml-auto">
                         <div class="card page-carousel">
-                            <ngb-carousel>
+                            <ngb-carousel *ngFor="let path of item.path">
                                 <ng-template ngbSlide>
-                                    <img src="https://docs.google.com/uc?id=1u5WbPsBICvJT0Ba4YOP-Nm4Frh_gzbCD" style="height: 500px;width: 1000px">
-                                </ng-template>
-                                <ng-template ngbSlide>
-                                    <img src="https://docs.google.com/uc?id=1twWHPW93g1FzWWmD4dxjea91Q4pGJS0j" style="height: 500px;width: 1000px">
-                                </ng-template>
-                                <ng-template ngbSlide>
-                                    <img src="https://docs.google.com/uc?id=1gI6SePfyf2kK1ciQ28KWlY0kRk6liaqf" style="height: 500px;width: 1000px">
+                                  <img [src]="'https://docs.google.com/uc?id='+path" style="height: 500px;width: 1000px">
                                 </ng-template>
                             </ngb-carousel>
                         </div>

@@ -1,0 +1,22 @@
+.typography-line {
+    padding-left: 0 !important;
+}
+
+h3 {
+    margin: 0px 0 0px !important;
+}
+
+.w3-animate-top .modal-content{
+    position: relative;
+    animation: animatetop 0.4s
+}
+
+@keyframes animatetop{
+    from{
+        top:-300px;
+        opacity:0
+    } to{
+        top:0;
+        opacity:1
+    }
+}
