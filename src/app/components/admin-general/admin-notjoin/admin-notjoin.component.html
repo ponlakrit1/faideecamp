@@ -1,0 +1,38 @@
+<div class="row">
+    <div class="col-12">
+        <div class="typography-line">
+            <h3>ตารางเหตุผลที่ไม่เข้าร่วม</h3>
+        </div>
+    </div>
+</div>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">ชื่อโรงเรียน</th>
+        <th scope="col">เหตุผล</th>
+        <th scope="col" style="width: 10%;"></th>
+    </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let notjoin of dataDisplay; let i = index">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>{{ notjoin.school}}</td>
+            <td>{{ notjoin.cause }}</td>
+            <td>
+                <button type="button" class="btn btn-danger btn-sm pull-right" (click)="removeNotjoin(notjoin)"><i class="fa fa-trash"></i></button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+    
+<div class="d-flex justify-content-between p-2">
+    <ngb-pagination [collectionSize]="dataSize" [(page)]="page" [pageSize]="pageSize"></ngb-pagination>
+    
+    <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
+        <option [ngValue]="5">5 หน้า</option>
+        <option [ngValue]="10">10 หน้า</option>
+        <option [ngValue]="15">15 หน้า</option>
+    </select>
+</div>

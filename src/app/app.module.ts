@@ -34,6 +34,7 @@ import { AdminActivityComponent } from './components/admin-general/admin-activit
 import { AdminInfoComponent } from './components/admin-general/admin-info/admin-info.component';
 import { AdminSchoolComponent } from './components/admin-school/admin-school.component';
 import { AdminGeneralComponent } from './components/admin-general/admin-general.component';
+import { AdminNotjoinComponent } from './components/admin-general/admin-notjoin/admin-notjoin.component';
 
 registerLocaleData(localeTh);
 
@@ -53,7 +54,8 @@ registerLocaleData(localeTh);
     AdminActivityComponent,
     AdminInfoComponent,
     AdminSchoolComponent,
-    AdminGeneralComponent
+    AdminGeneralComponent,
+    AdminNotjoinComponent
   ],
   imports: [
     BrowserModule,

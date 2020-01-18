@@ -89,7 +89,7 @@
               </div>
               <div class="row">
                 <div class="col-12">
-                  <input type="text" class="form-control form-control-success" id="txt-description">
+                  <input type="text" class="form-control form-control-success" id="txt-not-join" name="txt-not-join" [(ngModel)]="notJoinCause">
                 </div>
               </div>
             </div>
@@ -157,6 +157,15 @@
                 </mwl-calendar-month-view>
               </div>
 
+            </div>
+          </div>
+
+          <br/><br/>
+
+          <div class="row" *ngIf="joinStatus == 'N'">
+            <div class="col-10"></div>
+            <div class="col-2">
+              <button type="button" class="btn btn-success btn-round btn-block" (click)="saveNotJoin()">บันทึก</button>
             </div>
           </div>
 

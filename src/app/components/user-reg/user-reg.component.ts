@@ -5,6 +5,7 @@ import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
 import { BookingList } from './../../data-model/booking.model';
 import { SchoolList } from './../../data-model/school.model';
+import { NotJoinList } from './../../data-model/notjoin.model';
 import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -42,6 +43,7 @@ export class UserRegComponent implements OnInit {
 
   joinStatus: string = "";
   couseType: string = "";
+  notJoinCause: string = "";
   schoolAmount: string;
   amountStatus: boolean;
   notEnoughModalStatus: boolean;
@@ -53,6 +55,7 @@ export class UserRegComponent implements OnInit {
 
   dataDisplay: BookingList[];
   schoolDetail: SchoolList;
+  notJoinDetail: NotJoinList;
 
   eventSelected: CalendarEvent;
   events: CalendarEvent[] = [];
@@ -162,12 +165,12 @@ export class UserRegComponent implements OnInit {
       this.itemsRef = this.db.list(`school-list`);
       this.itemsRef.push(this.schoolDetail).then((value) => {
         console.log("update school");
-      });
 
-      // After update data
-      this.onResetUserForm();
-      this.modalService.dismissAll();
-      this.openModalSuccess();
+        // After update data
+        this.onResetUserForm();
+        this.modalService.dismissAll();
+        this.openModalSuccess();
+      });
 
     } else {
       this.notEnoughModalStatus = true;
@@ -233,8 +236,25 @@ export class UserRegComponent implements OnInit {
   onResetUserForm(){
     this.couseType = "1";
     this.schoolAmount = '30';
+    this.notJoinCause = "";
     this.amountStatus = false;
     this.schoolDetail = new SchoolList();
+  }
+
+  saveNotJoin(){
+    this.notJoinDetail = {
+      school: this.schoolDetail.name,
+      cause: this.notJoinCause,
+      year: this.moment().format("YYYY")
+    }
+    
+    this.itemsRef = this.db.list(`notjoin-list`);
+    this.itemsRef.push(this.notJoinDetail).then((value) => {
+      // After update data
+      this.onResetUserForm();
+      this.modalService.dismissAll();
+      this.openModalSuccess();
+    });
   }
 
 }

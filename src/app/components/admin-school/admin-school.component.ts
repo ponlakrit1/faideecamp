@@ -29,9 +29,6 @@ export class AdminSchoolComponent implements OnInit {
   dataSize: number = 0;
 
   constructor(private db: AngularFireDatabase, private modalService: NgbModal) {
-    console.log(this.moment().format("YYYY"));
-    
-
     // Set firebase
     this.itemsRefDisplay = this.db.list(`school-list`, ref => ref.orderByChild('year').equalTo(this.moment().format("YYYY")));
     this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
@@ -44,8 +41,6 @@ export class AdminSchoolComponent implements OnInit {
   ngOnInit() {
     this.itemsDisplay.subscribe(
       (data: SchoolList[]) => {
-        console.log(data);
-
         this.dataDisplay = data;
         this.dataSize = data.length;
       }
@@ -53,7 +48,7 @@ export class AdminSchoolComponent implements OnInit {
   }
 
   removeSchool(school: SchoolList){
-  this.itemsRef = this.db.list(`school-list`);
+    this.itemsRef = this.db.list(`school-list`);
     this.itemsRef.remove(school.key).then((value) => {
       console.log(value);
     });
