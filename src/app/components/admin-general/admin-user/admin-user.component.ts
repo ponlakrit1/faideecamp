@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserList } from '../../../data-model/user.model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-admin-user',
@@ -18,22 +19,29 @@ export class AdminUserComponent implements OnInit {
   page = 1;
   pageSize = 10;
 
-  dataItem: UserList;
-
+  // Variable
   username: string;
   password: string;
   rePassword: string;
   alertStatus: boolean;
   dupStatus: boolean;
 
+  // Firebase
   itemsRefDisplay: AngularFireList<any>;
   itemsDisplay: Observable<any[]>;
   itemsRef: AngularFireList<any>;
   items: Observable<any[]>;
+
+  // Table
   dataDisplay: UserList[];
   dataSize: number = 0;
+  dataItem: UserList;
 
-  constructor(private db: AngularFireDatabase, private modalService: NgbModal) {
+  // Form group
+  userRegisterForm: FormGroup;
+  submitted = false;
+
+  constructor(private db: AngularFireDatabase, private modalService: NgbModal, private formBuilder: FormBuilder) {
     // Set firebase
     this.itemsRefDisplay = this.db.list(`user-list`);
     this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
@@ -53,9 +61,27 @@ export class AdminUserComponent implements OnInit {
         this.dataSize = data.length;
       }
     );
+
+    this.initRegisterFormGroup();
   }
 
+  initRegisterFormGroup(){
+    this.userRegisterForm = this.formBuilder.group({
+      uid: ['', Validators.required],
+      pwd1: ['', Validators.required],
+      pwd2: ['', Validators.required]
+    });
+  }
+
+  get f() { return this.userRegisterForm.controls; }
+
   addUser(){
+    // stop here if form is invalid
+    this.submitted = true;
+    if (this.userRegisterForm.invalid) {
+        return;
+    }
+
     if(this.password == this.rePassword){
       this.itemsRef = this.db.list(`user-list`, ref => ref.orderByChild('username').equalTo(this.username));
       this.items = this.itemsRef.snapshotChanges().pipe(
@@ -99,6 +125,7 @@ export class AdminUserComponent implements OnInit {
     this.username = null;
     this.password = null;
     this.rePassword = null;
+    this.submitted = false;
   }
 
   openModal(): void {

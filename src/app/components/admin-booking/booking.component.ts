@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { NgbModal, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { BookingList } from './../../data-model/booking.model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 declare var require: any
 @Component({
@@ -20,21 +21,28 @@ export class BookingComponent implements OnInit {
   pageSize = 10;
   moment = require('moment');
 
-  dataItem: BookingList;
-
+  // Firebase
   itemsRef: AngularFireList<any>;
   items: Observable<any[]>;
   itemsRefDisplay: AngularFireList<any>;
   itemsDisplay: Observable<any[]>;
+
+  // Table
   dataDisplay: BookingList[];
   dataSize: number = 0;
+  dataItem: BookingList;
 
+  // Variable
   course: string;
   dateModel: NgbDateStruct;
   description: string;
   dupStatus: boolean;
 
-  constructor(private db: AngularFireDatabase, private modalService: NgbModal) {
+  // Form group
+  bookingForm: FormGroup;
+  submitted = false;
+
+  constructor(private db: AngularFireDatabase, private modalService: NgbModal, private formBuilder: FormBuilder) {
     // Set firebase
     this.itemsRefDisplay = this.db.list(`booking-list`, ref => ref.orderByChild('year').equalTo(this.moment().format("YYYY")));
     this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
@@ -54,9 +62,27 @@ export class BookingComponent implements OnInit {
         this.dataSize = data.length;
       }
     );
+
+    this.initBookingFormGroup();
   }
 
+  initBookingFormGroup(){
+    this.bookingForm = this.formBuilder.group({
+      couseType: [''],
+      dateBooking: ['', Validators.required],
+      description: ['', Validators.required]
+    });
+  }
+
+  get f() { return this.bookingForm.controls; }
+
   addBooking(){
+    // stop here if form is invalid
+    this.submitted = true;
+    if (this.bookingForm.invalid) {
+        return;
+    }
+
     // Set firebase
     this.itemsRef = this.db.list(`booking-list`, ref => ref.orderByChild('year_month_day').equalTo(String(this.dateModel.year)+"_"+this.paddingLeftNumber(this.dateModel.month)+"_"+String(this.dateModel.day)));
     this.items = this.itemsRef.snapshotChanges().pipe(
@@ -109,6 +135,7 @@ export class BookingComponent implements OnInit {
     this.dateModel = null;
     this.description = null;
     this.dupStatus = null;
+    this.submitted = false;
   }
 
   hindAlertStatus(){

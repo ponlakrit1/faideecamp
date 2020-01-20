@@ -9,7 +9,6 @@ import { NotJoinList } from './../../data-model/notjoin.model';
 import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { Router } from "@angular/router";
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 const colors: any = {

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { NgbModal, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { InfoList } from './../../../data-model/info.model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 declare var require: any
 @Component({
@@ -21,19 +22,26 @@ export class AdminInfoComponent implements OnInit {
   pageSize = 10;
   moment = require('moment');
 
-  dataItem: InfoList;
-
+  // Firebase
   itemsRef: AngularFireList<any>;
   items: Observable<any[]>;
   itemsRefDisplay: AngularFireList<any>;
   itemsDisplay: Observable<any[]>;
+
+  // Table
   dataDisplay: InfoList[];
   dataSize: number = 0;
+  dataItem: InfoList;
 
+  // Variable
   title: string;
   desc: string;
 
-  constructor(private db: AngularFireDatabase, private modalService: NgbModal) {
+  // Form group
+  InfoForm: FormGroup;
+  submitted = false;
+
+  constructor(private db: AngularFireDatabase, private modalService: NgbModal, private formBuilder: FormBuilder) {
     // Set firebase
     this.itemsRefDisplay = this.db.list(`info-list`);
     this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
@@ -50,7 +58,18 @@ export class AdminInfoComponent implements OnInit {
         this.dataSize = data.length;
       }
     );
+
+    this.initInfoFormGroup();
   }
+
+  initInfoFormGroup(){
+    this.InfoForm = this.formBuilder.group({
+      title: ['', Validators.required],
+      desc: ['', Validators.required]
+    });
+  }
+
+  get f() { return this.InfoForm.controls; }
 
   openModal(): void {
     this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top' });
@@ -72,6 +91,12 @@ export class AdminInfoComponent implements OnInit {
   }
 
   addInfoData(){
+    // stop here if form is invalid
+    this.submitted = true;
+    if (this.InfoForm.invalid) {
+        return;
+    }
+
     this.dataItem = {
       title: this.title,
       description: this.desc,
@@ -91,6 +116,7 @@ export class AdminInfoComponent implements OnInit {
   onResetUserForm(){
     this.title = null;
     this.desc = null;
+    this.submitted = false;
   }
 
   onRowSelected(info: InfoList){

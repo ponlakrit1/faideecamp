@@ -48,41 +48,61 @@
     </div>
     <div class="modal-body">
 
-        <div class="form-group">
-            <div class="row">
-                <div class="col-4">
-                    ชื่อผู้ใช้งาน :
+        <form [formGroup]="userRegisterForm">
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-4">
+                        ชื่อผู้ใช้งาน :
+                    </div>
+                    <div class="col-8">
+                        <input type="text" 
+                                class="form-control form-control-success" 
+                                id="txt-modal-uid" 
+                                [(ngModel)]="username" 
+                                autocomplete="false"
+                                formControlName="uid" 
+                                [ngClass]="{ 'is-invalid': submitted && f.uid.errors }">
+                    </div>
                 </div>
-                <div class="col-8">
-                    <input type="text" class="form-control form-control-success" id="txt-modal-uid" [(ngModel)]="username" autocomplete="false">
+                <br/>
+                <div class="row">
+                    <div class="col-4">
+                        รหัสผ่าน :
+                    </div>
+                    <div class="col-8">
+                        <input type="password" 
+                                class="form-control form-control-success" 
+                                id="txt-modal-pwd" 
+                                [(ngModel)]="password" 
+                                autocomplete="false"
+                                formControlName="pwd1" 
+                                [ngClass]="{ 'is-invalid': submitted && f.pwd1.errors }">
+                    </div>
                 </div>
+                <br/>
+                <div class="row">
+                    <div class="col-4">
+                        ยืนยันรหัสผ่าน :
+                    </div>
+                    <div class="col-8">
+                        <input type="password" 
+                                class="form-control form-control-success" 
+                                id="txt-modal-repwd" 
+                                [(ngModel)]="rePassword" 
+                                autocomplete="false"
+                                formControlName="pwd2" 
+                                [ngClass]="{ 'is-invalid': submitted && f.pwd2.errors }">
+                    </div>
+                </div>
+                <br/>
+                <p>
+                    <ngb-alert [type]="'danger'" (close)="alertStatus = false" *ngIf="alertStatus">รหัสผ่านและยืนยันรหัสผ่านไม่เหมือนกัน !</ngb-alert>
+                </p>
+                <p>
+                    <ngb-alert [type]="'danger'" (close)="dupStatus = false" *ngIf="dupStatus">ชื่อผู้ใช้งานซ้ำ !</ngb-alert>
+                </p>
             </div>
-            <br/>
-            <div class="row">
-                <div class="col-4">
-                    รหัสผ่าน :
-                </div>
-                <div class="col-8">
-                    <input type="password" class="form-control form-control-success" id="txt-modal-pwd" [(ngModel)]="password" autocomplete="false">
-                </div>
-            </div>
-            <br/>
-            <div class="row">
-                <div class="col-4">
-                    ยืนยันรหัสผ่าน :
-                </div>
-                <div class="col-8">
-                    <input type="password" class="form-control form-control-success" id="txt-modal-repwd" [(ngModel)]="rePassword" autocomplete="false">
-                </div>
-            </div>
-            <br/>
-            <p>
-                <ngb-alert [type]="'danger'" (close)="alertStatus = false" *ngIf="alertStatus">รหัสผ่านและยืนยันรหัสผ่านไม่เหมือนกัน !</ngb-alert>
-            </p>
-            <p>
-                <ngb-alert [type]="'danger'" (close)="dupStatus = false" *ngIf="dupStatus">ชื่อผู้ใช้งานซ้ำ !</ngb-alert>
-            </p>
-        </div>
+        </form>
         
     </div>
     <div class="modal-footer">

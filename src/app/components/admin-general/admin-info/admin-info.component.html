@@ -49,27 +49,41 @@
     </div>
     <div class="modal-body">
 
-        <div class="form-group">
+        <form [formGroup]="InfoForm">
+            <div class="form-group">
 
-            <div class="row">
-                <div class="col-4">
-                    หัวข้อ :
+                <div class="row">
+                    <div class="col-4">
+                        หัวข้อ :
+                    </div>
+                    <div class="col-8">
+                        <input type="text" 
+                                class="form-control form-control-success" 
+                                id="txt-modal-title" 
+                                [(ngModel)]="title" 
+                                autocomplete="false"
+                                formControlName="title" 
+                                [ngClass]="{ 'is-invalid': submitted && f.title.errors }">
+                    </div>
                 </div>
-                <div class="col-8">
-                    <input type="text" class="form-control form-control-success" id="txt-modal-title" [(ngModel)]="title" autocomplete="false">
+                <br/>
+                <div class="row">
+                    <div class="col-4">
+                        รายละเอียด :
+                    </div>
+                    <div class="col-8">
+                        <textarea class="form-control" 
+                                    id="txt-modal-location" 
+                                    rows="3" 
+                                    id="txt-modal-pwd" 
+                                    [(ngModel)]="desc"
+                                    formControlName="desc" 
+                                    [ngClass]="{ 'is-invalid': submitted && f.desc.errors }"></textarea>
+                    </div>
                 </div>
+                
             </div>
-            <br/>
-            <div class="row">
-                <div class="col-4">
-                    รายละเอียด :
-                </div>
-                <div class="col-8">
-                    <textarea class="form-control" id="txt-modal-location" rows="3" id="txt-modal-pwd" [(ngModel)]="desc"></textarea>
-                </div>
-            </div>
-            
-        </div>
+        </form>
         
     </div>
     <div class="modal-footer">
