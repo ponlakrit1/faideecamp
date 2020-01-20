@@ -100,4 +100,8 @@ export class AdminActivityComponent implements OnInit {
     this.onResetUserForm();
   }
 
+  removeActPath(i: number){
+    this.path.splice(i, 1);
+  }
+
 }

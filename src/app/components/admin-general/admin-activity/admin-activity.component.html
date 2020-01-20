@@ -65,10 +65,22 @@
                     Path {{ i + 1 }} :
                 </div>
                 <div class="col-7">
-                    <input type="text" class="form-control form-control-success" [(ngModel)]="path[i]" autocomplete="false">
+                    <input type="text" class="form-control form-control-success" [(ngModel)]="path[i]" #name="ngModel" name="name{{i}}">
                 </div>
                 <div class="col-2">
-                    <button type="button" class="btn btn-success btn-sm pull-right" (click)="addActPath()"><i class="fa fa-plus"></i></button>
+                    <button type="button" 
+                            class="btn btn-danger btn-sm pull-right" 
+                            (click)="removeActPath(i)"
+                            *ngIf="(i + 1) != path.length">
+                        <i class="fa fa-trash"></i>
+                    </button>
+
+                    <button type="button" 
+                            class="btn btn-success btn-sm pull-right" 
+                            (click)="addActPath()"
+                            *ngIf="(i + 1) == path.length">
+                        <i class="fa fa-plus"></i>
+                    </button>
                 </div>
             </div>
             
