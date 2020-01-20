@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy, ViewChild, TemplateRef, OnInit, ViewEncapsulation } from '@angular/core';
-import { startOfDay, endOfDay, subDays, addDays, endOfMonth, isSameDay, isSameMonth, addHours } from 'date-fns';
+import { startOfDay} from 'date-fns';
 import { Subject } from 'rxjs';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { CalendarEvent, CalendarEventAction, CalendarEventTimesChangedEvent, CalendarView } from 'angular-calendar';
+import { CalendarEvent, CalendarView } from 'angular-calendar';
 import { BookingList } from './../../data-model/booking.model';
 import { SchoolList } from './../../data-model/school.model';
 import { NotJoinList } from './../../data-model/notjoin.model';
@@ -10,6 +10,7 @@ import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Router } from "@angular/router";
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 const colors: any = {
   red: {
@@ -35,33 +36,47 @@ export class UserRegComponent implements OnInit {
   @ViewChild('modalRegContent', {static: true}) modalContent: TemplateRef<any>;
   @ViewChild('modalBookingComplted', {static: true}) modalSuccess: TemplateRef<any>;
 
+  // Calendar
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
   viewDate: Date = new Date();
   locale: string = 'th';
   moment = require('moment');
 
+  // Calendar event
+  eventSelected: CalendarEvent;
+  events: CalendarEvent[] = [];
+  refresh: Subject<any> = new Subject();
+
+  // Variable
   joinStatus: string = "";
   couseType: string = "";
   notJoinCause: string = "";
   schoolAmount: string;
   amountStatus: boolean;
-  notEnoughModalStatus: boolean;
 
+  // Modal
+  notEnoughModalStatus: boolean;
+  modalTxt: string;
+
+  // Firebase
   itemsRefDisplay: AngularFireList<any>;
   itemsDisplay: Observable<any[]>;
   itemsRef: AngularFireList<any>;
   items: Observable<any[]>;
 
+  // Object
   dataDisplay: BookingList[];
   schoolDetail: SchoolList;
   notJoinDetail: NotJoinList;
 
-  eventSelected: CalendarEvent;
-  events: CalendarEvent[] = [];
-  refresh: Subject<any> = new Subject();
+  // Form group
+  schoolBookingForm: FormGroup;
+  notJoinForm: FormGroup;
+  submitted = false;
+  submitModal = false;
 
-  constructor(private modalService: NgbModal, private db: AngularFireDatabase, private router: Router) {
+  constructor(private modalService: NgbModal, private db: AngularFireDatabase, private formBuilder: FormBuilder) {
     // Set firebase
     this.itemsRefDisplay = this.db.list(`booking-list`, ref => ref.orderByChild('year_month').equalTo(this.moment().format("YYYY_MM")));
     this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
@@ -80,7 +95,38 @@ export class UserRegComponent implements OnInit {
 
   ngOnInit() {
     this.onRefreshEventCalendar();
+    this.initSchoolFormGroup();
+    this.initNotJoinFormGroup();
   }
+
+  initSchoolFormGroup(){
+    this.schoolBookingForm = this.formBuilder.group({
+      schoolName: ['', Validators.required],
+      schoolLocation: ['', Validators.required],
+      schoolemail: ['', [Validators.required, Validators.email]],
+      schoolTel: ['', Validators.required],
+      teacherMainName: ['', Validators.required],
+      teacherMainTel: ['', Validators.required],
+      teacherMainLine: ['', Validators.required],
+      teacherSubName: ['', Validators.required],
+      teacherSubTel: ['', Validators.required],
+      teacherSubLine: ['', Validators.required],
+      schoolAmount1: ['', Validators.required]
+    });
+  }
+
+  initNotJoinFormGroup(){
+    this.notJoinForm = this.formBuilder.group({
+      schoolName1: ['', Validators.required],
+      joinStatus: [''],
+      couseType: [''],
+      notJoinCause: ['', Validators.required]
+    });
+  }
+
+  get f() { return this.schoolBookingForm.controls; }
+
+  get j() { return this.notJoinForm.controls; }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     let eventTitle = "";
@@ -135,6 +181,12 @@ export class UserRegComponent implements OnInit {
   }
 
   saveBooking(){
+    // stop here if form is invalid
+    this.submitModal = true;
+    if (this.schoolBookingForm.invalid) {
+        return;
+    }
+
     var eventTemp: BookingList;
     var calculateAmount = 0;
 
@@ -173,6 +225,7 @@ export class UserRegComponent implements OnInit {
       });
 
     } else {
+      this.submitted = false;
       this.notEnoughModalStatus = true;
       setTimeout(() => this.notEnoughModalStatus = false, 3000);
     }
@@ -238,10 +291,18 @@ export class UserRegComponent implements OnInit {
     this.schoolAmount = '30';
     this.notJoinCause = "";
     this.amountStatus = false;
+    this.submitModal = false;
+    this.submitted = false;
     this.schoolDetail = new SchoolList();
   }
 
   saveNotJoin(){
+    // stop here if form is invalid
+    this.submitted = true;
+    if (this.notJoinForm.invalid) {
+        return;
+    }
+
     this.notJoinDetail = {
       school: this.schoolDetail.name,
       cause: this.notJoinCause,
@@ -255,6 +316,11 @@ export class UserRegComponent implements OnInit {
       this.modalService.dismissAll();
       this.openModalSuccess();
     });
+  }
+
+  closeModal(){
+    this.modalService.dismissAll();
+    this.onResetUserForm();
   }
 
 }

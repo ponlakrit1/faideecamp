@@ -8,16 +8,20 @@
           <h3>รายละเอียด</h3>
         </div>
         
-        <form>
+        <form [formGroup]="notJoinForm">
 
           <div class="row">
             <div class="col-2">
               <h5>ชื่อโรงเรียน :</h5>
             </div>
             <div class="col-10">
-              <div class="form-group has-success">
-                <input type="text" class="form-control form-control-success" id="txt-school" [(ngModel)]="schoolDetail.name" name="schoolDetail-name">
-              </div>
+              <input type="text" 
+                    class="form-control form-control-success" 
+                    id="txt-school" 
+                    [(ngModel)]="schoolDetail.name" 
+                    name="schoolDetail-name"
+                    formControlName="schoolName1"
+                    [ngClass]="{ 'is-invalid': submitted && j.schoolName1.errors }">
             </div>
           </div>
 
@@ -35,14 +39,14 @@
                 <div class="col-12">
                   <div class="form-check-radio">
                     <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="opt-join" id="opt-join1" value="Y" [(ngModel)]="joinStatus">
+                      <input class="form-check-input" type="radio" name="joinStatus" id="opt-join1" value="Y" [(ngModel)]="joinStatus" formControlName="joinStatus">
                         สนใจ
                       <span class="form-check-sign"></span>
                     </label>
                   </div>
                   <div class="form-check-radio">
                     <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="opt-join" id="opt-join2" value="N" [(ngModel)]="joinStatus">
+                      <input class="form-check-input" type="radio" name="joinStatus" id="opt-join2" value="N" [(ngModel)]="joinStatus" formControlName="joinStatus">
                         ไม่สนใจ
                       <span class="form-check-sign"></span>
                     </label>
@@ -63,14 +67,14 @@
                 <div class="col-12">
                   <div class="form-check-radio">
                     <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="opt-type" id="opt-type1" value="1" [(ngModel)]="couseType" (change)="onRefreshEventCalendar()">
+                      <input class="form-check-input" type="radio" name="couseType" id="opt-type1" value="1" [(ngModel)]="couseType" (change)="onRefreshEventCalendar()" formControlName="couseType">
                         9 - 12 ปี
                       <span class="form-check-sign"></span>
                     </label>
                   </div>
                   <div class="form-check-radio">
                     <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="opt-type" id="opt-type2" value="2" [(ngModel)]="couseType" (change)="onRefreshEventCalendar()">
+                      <input class="form-check-input" type="radio" name="couseType" id="opt-type2" value="2" [(ngModel)]="couseType" (change)="onRefreshEventCalendar()" formControlName="couseType">
                         13 - 15 ปี
                       <span class="form-check-sign"></span>
                     </label>
@@ -89,79 +93,20 @@
               </div>
               <div class="row">
                 <div class="col-12">
-                  <input type="text" class="form-control form-control-success" id="txt-not-join" name="txt-not-join" [(ngModel)]="notJoinCause">
+                  <input type="text" 
+                        class="form-control form-control-success" 
+                        id="txt-not-join" 
+                        name="txt-not-join" 
+                        [(ngModel)]="notJoinCause"
+                        formControlName="notJoinCause"
+                        [ngClass]="{ 'is-invalid': submitted && j.notJoinCause.errors }">
                 </div>
               </div>
             </div>
 
           </div>
 
-          <div class="row" *ngIf="joinStatus == 'Y'">
-            <div class="col-12">
-              <div class="tim-title">
-                <h5>วันที่สะดวกเข้าร่วม :</h5>
-              </div>
-            </div>
-          </div>
-
-          <div class="row" *ngIf="joinStatus == 'Y'">
-            <div class="col-12">
-
-              <div class="row text-center">
-                <div class="col-md-4"></div>
-                <div class="col-md-4">
-                  <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):locale }}</h3>
-                </div>
-                <div class="col-md-4">
-                  <div class="btn-group">
-                    <div
-                      class="btn btn-success"
-                      mwlCalendarPreviousView
-                      [view]="view"
-                      [(viewDate)]="viewDate"
-                      (viewDateChange)="closeOpenMonthViewDay()"
-                    >
-                      ก่อนหน้า
-                    </div>
-                    <div
-                      class="btn btn-warning"
-                      mwlCalendarToday
-                      [(viewDate)]="viewDate"
-                      (viewDateChange)="closeOpenMonthViewDay()"
-                    >
-                      วันนี้
-                    </div>
-                    <div
-                      class="btn btn-success"
-                      mwlCalendarNextView
-                      [view]="view"
-                      [(viewDate)]="viewDate"
-                      (viewDateChange)="closeOpenMonthViewDay()"
-                    >
-                      ถัดไป
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <br />
-              <div [ngSwitch]="view">
-                <mwl-calendar-month-view
-                  *ngSwitchCase="CalendarView.Month"
-                  [viewDate]="viewDate"
-                  [events]="events"
-                  [refresh]="refresh"
-                  [locale]="locale"
-                  [cellTemplate]="customCellTemplate"
-                  (dayClicked)="dayClicked($event.day)"
-                >
-                </mwl-calendar-month-view>
-              </div>
-
-            </div>
-          </div>
-
-          <br/><br/>
-
+          <!-- Button submit -->
           <div class="row" *ngIf="joinStatus == 'N'">
             <div class="col-10"></div>
             <div class="col-2">
@@ -170,6 +115,70 @@
           </div>
 
         </form>
+
+        <div class="row" *ngIf="joinStatus == 'Y'">
+          <div class="col-12">
+            <div class="tim-title">
+              <h5>วันที่สะดวกเข้าร่วม :</h5>
+            </div>
+          </div>
+        </div>
+
+        <div class="row" *ngIf="joinStatus == 'Y'">
+          <div class="col-12">
+
+            <div class="row text-center">
+              <div class="col-md-4"></div>
+              <div class="col-md-4">
+                <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):locale }}</h3>
+              </div>
+              <div class="col-md-4">
+                <div class="btn-group">
+                  <div
+                    class="btn btn-success"
+                    mwlCalendarPreviousView
+                    [view]="view"
+                    [(viewDate)]="viewDate"
+                    (viewDateChange)="closeOpenMonthViewDay()"
+                  >
+                    ก่อนหน้า
+                  </div>
+                  <div
+                    class="btn btn-warning"
+                    mwlCalendarToday
+                    [(viewDate)]="viewDate"
+                    (viewDateChange)="closeOpenMonthViewDay()"
+                  >
+                    วันนี้
+                  </div>
+                  <div
+                    class="btn btn-success"
+                    mwlCalendarNextView
+                    [view]="view"
+                    [(viewDate)]="viewDate"
+                    (viewDateChange)="closeOpenMonthViewDay()"
+                  >
+                    ถัดไป
+                  </div>
+                </div>
+              </div>
+            </div>
+            <br />
+            <div [ngSwitch]="view">
+              <mwl-calendar-month-view
+                *ngSwitchCase="CalendarView.Month"
+                [viewDate]="viewDate"
+                [events]="events"
+                [refresh]="refresh"
+                [locale]="locale"
+                [cellTemplate]="customCellTemplate"
+                (dayClicked)="dayClicked($event.day)"
+              >
+              </mwl-calendar-month-view>
+            </div>
+
+          </div>
+        </div>
 
       </div>
     </div>
@@ -180,12 +189,12 @@
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">กรอกรายละเอียด</h4>
     <h6 class="modal-title" id="modal-basic-title">จำนวนนักเรียนคงเหลือ {{eventSelected.title}} คน</h6>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <form>
+    <form [formGroup]="schoolBookingForm">
       <div class="form-group">
 
         <div class="row">
@@ -193,7 +202,13 @@
             ชื่อโรงเรียน :
           </div>
           <div class="col-9">
-            <input type="text" class="form-control form-control-success" id="txt-modal-school" [(ngModel)]="schoolDetail.name" name="schoolDetail-name">
+            <input type="text" 
+                  class="form-control form-control-success" 
+                  id="txt-modal-school" 
+                  [(ngModel)]="schoolDetail.name" 
+                  name="schoolDetail-name"
+                  formControlName="schoolName"
+                  [ngClass]="{ 'is-invalid': submitModal && f.schoolName.errors }">
           </div>
         </div>
         <br/>
@@ -202,7 +217,13 @@
             ที่อยู่โรงเรียน :
           </div>
           <div class="col-9">
-            <textarea class="form-control" id="txt-modal-location" rows="3" [(ngModel)]="schoolDetail.location" name="schoolDetail-location"></textarea>
+            <textarea class="form-control" 
+                    id="txt-modal-location" 
+                    rows="3" 
+                    [(ngModel)]="schoolDetail.location" 
+                    name="schoolDetail-location"
+                    formControlName="schoolLocation"
+                    [ngClass]="{ 'is-invalid': submitModal && f.schoolLocation.errors }"></textarea>
           </div>
         </div>
         <br/>
@@ -211,7 +232,13 @@
             Email :
           </div>
           <div class="col-9">
-            <input type="email" class="form-control form-control-success" id="txt-modal-email" [(ngModel)]="schoolDetail.email" name="schoolDetail-email">
+            <input type="email" 
+                  class="form-control form-control-success" 
+                  id="txt-modal-email" 
+                  [(ngModel)]="schoolDetail.email" 
+                  name="schoolDetail-email"
+                  formControlName="schoolemail"
+                  [ngClass]="{ 'is-invalid': submitModal && f.schoolemail.errors }">
           </div>
         </div>
         <br/>
@@ -220,7 +247,13 @@
             เบอร์ติดต่อ :
           </div>
           <div class="col-9">
-            <input type="text" class="form-control form-control-success" id="txt-modal-school-tel" [(ngModel)]="schoolDetail.tel" name="schoolDetail-tel">
+            <input type="text" 
+                  class="form-control form-control-success" 
+                  id="txt-modal-school-tel" 
+                  [(ngModel)]="schoolDetail.tel" 
+                  name="schoolDetail-tel"
+                  formControlName="schoolTel"
+                  [ngClass]="{ 'is-invalid': submitModal && f.schoolTel.errors }">
           </div>
         </div>
         <br/>
@@ -229,16 +262,37 @@
             ครูผู้ประสานงาน(หลัก) :
           </div>
           <div class="col-9">
-            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-name1" [(ngModel)]="schoolDetail.teacherMainName" name="schoolDetail-teacherMainName" placeholder="ชื่อ">
+            <input type="text" 
+                  class="form-control form-control-success" 
+                  id="txt-modal-teacher-name1" 
+                  [(ngModel)]="schoolDetail.teacherMainName" 
+                  name="schoolDetail-teacherMainName" 
+                  placeholder="ชื่อ"
+                  formControlName="teacherMainName"
+                  [ngClass]="{ 'is-invalid': submitModal && f.teacherMainName.errors }">
           </div>
         </div>
         <div class="row">
           <div class="col-3"></div>
           <div class="col-5">
-            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-tel1" [(ngModel)]="schoolDetail.teacherMainTel" name="schoolDetail-teacherMainTel" placeholder="เบอร์ติดต่อ">
+            <input type="text" 
+                  class="form-control form-control-success" 
+                  id="txt-modal-teacher-tel1" 
+                  [(ngModel)]="schoolDetail.teacherMainTel" 
+                  name="schoolDetail-teacherMainTel" 
+                  placeholder="เบอร์ติดต่อ"
+                  formControlName="teacherMainTel"
+                  [ngClass]="{ 'is-invalid': submitModal && f.teacherMainTel.errors }">
           </div>
           <div class="col-4">
-            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-line1" [(ngModel)]="schoolDetail.teacherMainLine" name="schoolDetail-teacherMainLine" placeholder="ไลน์">
+            <input type="text" 
+                  class="form-control form-control-success" 
+                  id="txt-modal-teacher-line1" 
+                  [(ngModel)]="schoolDetail.teacherMainLine" 
+                  name="schoolDetail-teacherMainLine" 
+                  placeholder="ไลน์"
+                  formControlName="teacherMainLine"
+                  [ngClass]="{ 'is-invalid': submitModal && f.teacherMainLine.errors }">
           </div>
         </div>
         <br/>
@@ -247,16 +301,37 @@
             ครูผู้ประสานงาน(รอง) :
           </div>
           <div class="col-9">
-            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-name2" [(ngModel)]="schoolDetail.teacherSubName" name="schoolDetail-teacherSubName" placeholder="ชื่อ">
+            <input type="text" 
+                  class="form-control form-control-success" 
+                  id="txt-modal-teacher-name2" 
+                  [(ngModel)]="schoolDetail.teacherSubName" 
+                  name="schoolDetail-teacherSubName" 
+                  placeholder="ชื่อ"
+                  formControlName="teacherSubName"
+                  [ngClass]="{ 'is-invalid': submitModal && f.teacherSubName.errors }">
           </div>
         </div>
         <div class="row">
           <div class="col-3"></div>
           <div class="col-5">
-            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-tel2" [(ngModel)]="schoolDetail.teacherSubTel" name="schoolDetail-teacherSubTel" placeholder="เบอร์ติดต่อ">
+            <input type="text" 
+                  class="form-control form-control-success" 
+                  id="txt-modal-teacher-tel2" 
+                  [(ngModel)]="schoolDetail.teacherSubTel" 
+                  name="schoolDetail-teacherSubTel" 
+                  placeholder="เบอร์ติดต่อ"
+                  formControlName="teacherSubTel"
+                  [ngClass]="{ 'is-invalid': submitModal && f.teacherSubTel.errors }">
           </div>
           <div class="col-4">
-            <input type="text" class="form-control form-control-success" id="txt-modal-teacher-line2" [(ngModel)]="schoolDetail.teacherSubLine" name="schoolDetail-teacherSubLine" placeholder="ไลน์">
+            <input type="text" 
+                  class="form-control form-control-success" 
+                  id="txt-modal-teacher-line2" 
+                  [(ngModel)]="schoolDetail.teacherSubLine" 
+                  name="schoolDetail-teacherSubLine" 
+                  placeholder="ไลน์"
+                  formControlName="teacherSubLine"
+                  [ngClass]="{ 'is-invalid': submitModal && f.teacherSubLine.errors }">
           </div>
         </div>
         <br/>
@@ -267,21 +342,21 @@
           <div class="col-9">
             <div class="form-check-radio">
               <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount1" value="30" [(ngModel)]="schoolAmount" (change)="onChangeAmountStatus('30')">
+                <input class="form-check-input" type="radio" name="schoolAmount1" id="opt-amount1" value="30" [(ngModel)]="schoolAmount" (change)="onChangeAmountStatus('30')" formControlName="schoolAmount1">
                   30 คน
                 <span class="form-check-sign"></span>
               </label>
             </div>
             <div class="form-check-radio">
               <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount4" value="60" [(ngModel)]="schoolAmount" (change)="onChangeAmountStatus('60')">
+                <input class="form-check-input" type="radio" name="schoolAmount1" id="opt-amount4" value="60" [(ngModel)]="schoolAmount" (change)="onChangeAmountStatus('60')" formControlName="schoolAmount1">
                   60 คน
                 <span class="form-check-sign"></span>
               </label>
             </div>
             <div class="form-check-radio">
               <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="opt-amount" id="opt-amount5" value="99" (change)="onChangeAmountStatus('99')">
+                <input class="form-check-input" type="radio" name="schoolAmount1" id="opt-amount5" value="99" (change)="onChangeAmountStatus('99')">
                   อื่นๆ
                 <span class="form-check-sign"></span>
               </label>
@@ -292,6 +367,8 @@
                   placeholder="จำนวนนักเรียน" 
                   [(ngModel)]="schoolAmount" 
                   name="schoolDetail-amount"
+                  formControlName="schoolAmount1"
+                  [ngClass]="{ 'is-invalid': submitModal && f.schoolAmount1.errors }"
                   *ngIf="amountStatus">
           </div>
         </div>
@@ -309,10 +386,9 @@
         </p>
 
       </div>
+
+      <button type="button" class="btn btn-success btn-round" (click)="saveBooking()">บันทึก</button>
     </form>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-success btn-round" (click)="saveBooking()">บันทึก</button>
   </div>
 </ng-template>
 

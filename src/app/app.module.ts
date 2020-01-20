@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { registerLocaleData } from '@angular/common';
 
 import localeTh from '@angular/common/locales/th';
@@ -66,7 +66,8 @@ registerLocaleData(localeTh);
     AngularFireModule.initializeApp(environment.firebase, 'faideecamp'),
     AngularFireDatabaseModule,
     RouterModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     AuthGuardService,
