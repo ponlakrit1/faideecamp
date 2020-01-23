@@ -11,6 +11,12 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
+/*
+  CalendarEvent :
+    cssClass = key
+    title = amount
+*/
+
 const colors: any = {
   red: {
     primary: '#ad2121',
@@ -127,12 +133,14 @@ export class UserRegComponent implements OnInit {
 
   get j() { return this.notJoinForm.controls; }
 
-  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }) {
     let eventTitle = "";
+    let bookingKey = "";
 
-    if(events.length > 0){
+    if(events.length > 0 && events[0].color.primary != '#ad2121'){
       for (let ev of events) {
         eventTitle = ev.title;
+        bookingKey = ev.cssClass;
       }
   
       this.eventSelected = {
@@ -140,6 +148,8 @@ export class UserRegComponent implements OnInit {
         title: eventTitle
       }
   
+      // fetch data
+      this.checkBookingAmount(bookingKey);
       this.openModal();
     } else {
       console.log("No booking events");
@@ -187,16 +197,19 @@ export class UserRegComponent implements OnInit {
     }
 
     var eventTemp: BookingList;
-    var calculateAmount = 0;
+    var calculateAmount: number = 0;
 
     // Get bookingList from event(click)
     for (let ev of this.dataDisplay) {
       if(ev.day == String(this.eventSelected.start.getDate())){
         eventTemp = ev;
-        calculateAmount = eventTemp.amount - Number(this.schoolAmount);
+        // calculateAmount = eventTemp.amount - Number(this.schoolAmount);
         break;
       }
     }
+
+    // calculate amount
+    calculateAmount = Number(this.eventSelected.title) - Number(this.schoolAmount);
 
     // Check student amount(Typing) - amount
     if(calculateAmount >= 0){
@@ -228,6 +241,27 @@ export class UserRegComponent implements OnInit {
       this.notEnoughModalStatus = true;
       setTimeout(() => this.notEnoughModalStatus = false, 3000);
     }
+
+    this.onRefreshEventCalendar();
+  }
+
+  async checkBookingAmount(key: string){
+    this.itemsRef = this.db.list(`booking-list`, ref => ref.orderByChild('key').equalTo(key));
+    this.items = this.itemsRef.snapshotChanges().pipe(
+      map(changes => 
+        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
+      )
+    );
+
+    // get item
+    await this.items.subscribe(
+      (data: BookingList[]) => {
+        if(data.length > 0){
+          // set new amount
+          this.eventSelected.title = String(data[0].amount);
+        }
+      }
+    );
   }
 
   paddingLeftNumber(year: number, month: number): string{
@@ -262,12 +296,14 @@ export class UserRegComponent implements OnInit {
               event = {
                 start: startOfDay(new Date(temp.year+"-"+temp.month+"-"+temp.day)),
                 title: `${temp.amount}`,
+                cssClass: `${temp.key}`,
                 color: colors.red
               };
             } else {
               event = {
                 start: startOfDay(new Date(temp.year+"-"+temp.month+"-"+temp.day)),
                 title: `${temp.amount}`,
+                cssClass: `${temp.key}`,
                 color: colors.green
               };
             }

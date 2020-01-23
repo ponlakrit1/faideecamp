@@ -121,6 +121,9 @@
             <div class="tim-title">
               <h5>วันที่สะดวกเข้าร่วม :</h5>
             </div>
+            <span class="badge badge-pill badge-danger">จองเต็มแล้ว</span>&nbsp;
+            <span class="badge badge-pill badge-success">สามารถจองได้</span>&nbsp;
+            <span class="badge badge-pill badge-warning">วันนี้</span>&nbsp;
           </div>
         </div>
 
@@ -412,6 +415,7 @@
   <div class="cell-h100" *ngIf="day.events.length > 0">
     <div class="cal-cell-top cell-h100" [style.background-color] = "day.badgeTotal > 0 && day.events[0].color.primary == '#00b300' ? '#77dd77' : '#ff6961'">
       <span class="cal-day-number">{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span>
+      <span class="cal-day-badge" *ngIf="day.events[0].title != '0'">เหลือ {{day.events[0].title}} คน</span>
     </div>
   </div>
 
