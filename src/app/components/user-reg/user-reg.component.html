@@ -375,14 +375,14 @@
                   *ngIf="amountStatus">
           </div>
         </div>
-        <br/>
+        <!-- <br/>
         <div class="row">
           <div class="col-12">
             <h5>หมายเหตุ : กรุณาส่งรายชื่อนักเรียนที่จะเข้าร่วมค่ายทางไลน์กลุ่มประสาน</h5>
-            <h5 style="color: rgb(255, 0, 0)">** ภายใน 7 วัน **</h5>
+            <h5 style="color: rgb(255, 0, 0)">* ภายใน 7 วัน</h5>
           </div>
         </div>
-        <br/>
+        <br/> -->
 
         <p>
           <ngb-alert [type]="'danger'" (close)="notEnoughModalStatus = false" *ngIf="notEnoughModalStatus">จำนวนนักเรียนคงเหลือ ไม่เพียงพอ !</ngb-alert>
@@ -406,6 +406,7 @@
   <div class="modal-body">
     <div class="typography-line">
       <h5>บันทึกสำเร็จ !</h5>
+      <h5 style="color: rgb(255, 0, 0)">* ทางเราจะส่งผลการลงทะเบียนผ่านอีเมล์ของ ครูผู้ประสานงาน(หลัก)</h5>
     </div>
   </div>
 </ng-template>

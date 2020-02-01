@@ -72,11 +72,11 @@ export class AdminInfoComponent implements OnInit {
   get f() { return this.InfoForm.controls; }
 
   openModal(): void {
-    this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top' });
+    this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top', size: 'xl' });
   }
 
   openModalView(): void {
-    this.modalService.open(this.modalView, { windowClass: 'w3-animate-top' });
+    this.modalService.open(this.modalView, { windowClass: 'w3-animate-top', size: 'xl' });
   }
 
   openModalSuccess(): void {

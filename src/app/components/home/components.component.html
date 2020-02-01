@@ -10,7 +10,10 @@
                         <div class="card-header ">
                             <h5 class="card-title">{{ item.title }}</h5>
                         </div>
-                        <div class="card-body">{{ item.description }}</div>
+                        <div class="card-body">
+                          <!-- {{ item.description }} -->
+                          <div [innerHTML]="item.description"></div>
+                        </div>
                         <div class="card-footer">
                           <hr>
                           <div class="stats">
