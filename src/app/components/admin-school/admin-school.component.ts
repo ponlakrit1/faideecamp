@@ -99,7 +99,7 @@ export class AdminSchoolComponent implements OnInit {
   }
 
   openModal(): void {
-    this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top' });
+    this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top', size: 'lg' });
   }
 
   openModalRemove(school: SchoolList): void {

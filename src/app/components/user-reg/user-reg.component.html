@@ -357,7 +357,7 @@
                 <span class="form-check-sign"></span>
               </label>
             </div>
-            <div class="form-check-radio">
+            <!-- <div class="form-check-radio">
               <label class="form-check-label">
                 <input class="form-check-input" type="radio" name="schoolAmount1" id="opt-amount5" value="99" (change)="onChangeAmountStatus('99')">
                   อื่นๆ
@@ -372,7 +372,7 @@
                   name="schoolDetail-amount"
                   formControlName="schoolAmount1"
                   [ngClass]="{ 'is-invalid': submitModal && f.schoolAmount1.errors }"
-                  *ngIf="amountStatus">
+                  *ngIf="amountStatus"> -->
           </div>
         </div>
         <!-- <br/>
@@ -406,7 +406,7 @@
   <div class="modal-body">
     <div class="typography-line">
       <h5>บันทึกสำเร็จ !</h5>
-      <h5 style="color: rgb(255, 0, 0)">* ทางเราจะส่งผลการลงทะเบียนผ่านอีเมล์ของ ครูผู้ประสานงาน(หลัก)</h5>
+      <h5 style="color: rgb(255, 0, 0)">* ทางเราจะส่งผลการลงทะเบียนผ่านอีเมล์ของโรงเรียน</h5>
     </div>
   </div>
 </ng-template>
