@@ -14,6 +14,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule  } from '@angular/fire/database';
 import { environment } from '../environments/environment.prod';
+import { NgxLoadingModule } from 'ngx-loading';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
@@ -67,7 +68,8 @@ registerLocaleData(localeTh);
     AngularFireDatabaseModule,
     RouterModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxLoadingModule
   ],
   providers: [
     AuthGuardService,

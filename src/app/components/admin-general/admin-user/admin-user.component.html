@@ -9,20 +9,23 @@
     </div>
 </div>
 
+<p>
+    <ngb-alert [type]="alertType" (close)="alertStatus = false" *ngIf="alertStatus">{{ alertTxt }}</ngb-alert>
+</p>
+
 <table class="table table-striped">
     <thead>
     <tr>
-        <th scope="col">#</th>
-        <th scope="col">ชื่อผู้ใช้งาน</th>
+        <th scope="col" style="width: 80%; text-align: left;">ชื่อผู้ใช้งาน</th>
         <th scope="col" style="width: 10%;"></th>
     </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let user of dataDisplay; let i = index">
-            <th width="10%" scope="row">{{ i + 1 }}</th>
-            <td>{{ user.username }}</td>
-            <td>
-                <button type="button" class="btn btn-danger btn-sm pull-right" (click)="removeUser(user)"><i class="fa fa-trash"></i></button>
+        <tr *ngFor="let user of dataDisplay | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
+            <td style="text-align: left;">{{ user.username }}</td>
+            <td class="pull-right">
+                <button type="button" class="btn btn-warning btn-sm" (click)="onEditUser(user)"><i class="fa fa-edit"></i></button>
+                <button type="button" class="btn btn-danger btn-sm" (click)="removeUser(user)"><i class="fa fa-trash"></i></button>
             </td>
         </tr>
     </tbody>
@@ -32,9 +35,9 @@
     <ngb-pagination [collectionSize]="dataSize" [(page)]="page" [pageSize]="pageSize"></ngb-pagination>
     
     <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
-        <option [ngValue]="5">5 หน้า</option>
-        <option [ngValue]="10">10 หน้า</option>
-        <option [ngValue]="15">15 หน้า</option>
+        <option [ngValue]="5">5 รายการ</option>
+        <option [ngValue]="10">10 รายการ</option>
+        <option [ngValue]="15">15 รายการ</option>
     </select>
 </div>
 
@@ -42,7 +45,7 @@
 <ng-template #modalUserReg let-modal>
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">กรอกข้อมูลผู้ใช้งาน</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="close" aria-label="Close" (click)="onResetUserForm()">
         <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -95,31 +98,11 @@
                     </div>
                 </div>
                 <br/>
-                <p>
-                    <ngb-alert [type]="'danger'" (close)="alertStatus = false" *ngIf="alertStatus">รหัสผ่านและยืนยันรหัสผ่านไม่เหมือนกัน !</ngb-alert>
-                </p>
-                <p>
-                    <ngb-alert [type]="'danger'" (close)="dupStatus = false" *ngIf="dupStatus">ชื่อผู้ใช้งานซ้ำ !</ngb-alert>
-                </p>
             </div>
         </form>
         
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-success btn-round" (click)="addUser()">บันทึก</button>
-    </div>
-</ng-template>
-
-<ng-template #modalUserComplted let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">แจ้งเตือน</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-        <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-      <div class="typography-line">
-        <h5>บันทึกสำเร็จ !</h5>
-      </div>
     </div>
 </ng-template>

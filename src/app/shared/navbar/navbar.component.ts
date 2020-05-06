@@ -3,10 +3,8 @@ import { Location, LocationStrategy, PathLocationStrategy } from '@angular/commo
 import { AuthService } from './../../provider/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from "@angular/router";
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { UserList } from './../../data-model/user.model';
+import { UserService } from './../../provider/user.service';
 
 @Component({
     selector: 'app-navbar',
@@ -22,20 +20,19 @@ export class NavbarComponent implements OnInit {
     private toggleButton: any;
     private sidebarVisible: boolean;
 
-    username: string;
-    password: string;
-    loginStatus: boolean;
-    alertStatus: boolean;
-
-    itemsRef: AngularFireList<any>;
-    items: Observable<any[]>;
+    public username: string;
+    public password: string;
+    public loginStatus: boolean;
+    public alertStatus: boolean;
+    public alertTxt: string;
+    public alertType: string;
 
     constructor(public location: Location, 
                 private element : ElementRef, 
                 private modalService: NgbModal, 
                 private authService: AuthService, 
                 private router: Router,
-                private db: AngularFireDatabase) {
+                private userService: UserService) {
 
         this.sidebarVisible = false;
         this.loginStatus = false;
@@ -86,36 +83,34 @@ export class NavbarComponent implements OnInit {
     }
 
     onLogin(){
-        this.itemsRef = this.db.list(`user-list`, ref => ref.orderByChild('uid_pwd').equalTo(this.username+"_"+this.password));
-        this.items = this.itemsRef.snapshotChanges().pipe(
-            map(changes => 
-              changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-            )
-        );
+        try {
+            this.userService.getByUsername(this.username).subscribe(
+                (data: UserList[]) => {
+                    if(data.length > 0){
 
-        this.items.subscribe(
-            (data: UserList[]) => {
-                if(data.length > 0){
-                    this.loginStatus = true;
-                    this.authService.onViewUid(this.username);
-        
-                    this.modalService.dismissAll();
-                    this.router.navigate(['admin-booking']);
-                } else {
-                    this.alertStatus = true;
+                        if(data[0].password == this.password){
+                            this.loginStatus = true;
+                            this.authService.storeUserSession(this.username);
+                
+                            this.modalService.dismissAll();
+                            this.router.navigate(['admin-booking']);
+                        } else {
+                            this.presentAlertMessage("danger", "รหัสผ่านไม่ถูกต้อง");
+                        }
+                        
+                    } else {
+                        this.presentAlertMessage("danger", "ไม่พบข้อมูลผู้ใช้งาน");
+                    }
                 }
-            }
-        );
-
-        this.hindAlertStatus();
+            );
+        } catch(error) {
+            // console.log(error);
+            this.presentAlertMessage("danger", "เกิดข้อผิดพลาดระหว่างการเชื่อมต่อฐานข้อมูล");
+        }
     }
 
     onLogout(){
         this.modalService.open(this.modalConfirm, { windowClass: 'modal-nav' });
-    }
-
-    hindAlertStatus(){
-        setTimeout(() => this.alertStatus = false, 3000);
     }
 
     onConfirmLogout(){
@@ -125,9 +120,17 @@ export class NavbarComponent implements OnInit {
         this.password = null;
 
         this.authService.removeUserSession();
-        this.authService.onViewUid(null);
+        this.authService.storeUserSession(null);
 
         this.modalService.dismissAll();
         this.router.navigate(['']);
+    }
+
+    presentAlertMessage(type: string, txt: string){
+        this.alertTxt = txt;
+        this.alertType = type;
+        this.alertStatus = true;
+    
+        setTimeout(() => this.alertStatus = false, 3000);
     }
 }

@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { InfoList } from './../../data-model/info.model';
+import { InfoService } from './../../provider/info.service';
 
 @Component({
     selector: 'app-components',
@@ -11,24 +9,20 @@ import { InfoList } from './../../data-model/info.model';
 
 export class ComponentsComponent implements OnInit {
 
-    itemsRefDisplay: AngularFireList<any>;
-    itemsDisplay: Observable<any[]>;
-    dataDisplay: InfoList[];
+    public dataDisplay: InfoList[];
+    public loading: boolean = false;
 
-    constructor(private db: AngularFireDatabase) {
-        // Set firebase
-        this.itemsRefDisplay = this.db.list(`info-list`);
-        this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
-            map(changes => 
-                changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-            )
-        );
+    constructor(private infoService: InfoService) {
+
     }
 
     ngOnInit() {
-        this.itemsDisplay.subscribe(
+        this.loading = true;
+
+        this.infoService.getAll().subscribe(
             (data: InfoList[]) => {
               this.dataDisplay = data;
+              this.loading = false;
             }
         );
     }

@@ -100,7 +100,7 @@ export class AdminInfoComponent implements OnInit {
     this.dataItem = {
       title: this.title,
       description: this.desc,
-      year_month_day: this.moment().format("DD/MM/YYYY")
+      createDate: this.moment().format("DD/MM/YYYY")
     };
 
     // Set firebase

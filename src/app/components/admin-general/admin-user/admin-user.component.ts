@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserList } from '../../../data-model/user.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UserService } from './../../../provider/user.service';
 
 @Component({
   selector: 'app-admin-user',
@@ -14,48 +14,36 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class AdminUserComponent implements OnInit {
 
   @ViewChild('modalUserReg', {static: true}) modalContent: TemplateRef<any>;
-  @ViewChild('modalUserComplted', {static: true}) modalSuccess: TemplateRef<any>;
 
-  page = 1;
-  pageSize = 10;
+  public page = 1;
+  public pageSize = 10;
 
   // Variable
-  username: string;
-  password: string;
-  rePassword: string;
-  alertStatus: boolean;
-  dupStatus: boolean;
-
-  // Firebase
-  itemsRefDisplay: AngularFireList<any>;
-  itemsDisplay: Observable<any[]>;
-  itemsRef: AngularFireList<any>;
-  items: Observable<any[]>;
+  public username: string;
+  public password: string;
+  public rePassword: string;
+  public alertStatus: boolean;
+  public alertTxt: string;
+  public alertType: string;
+  public mode: string;
 
   // Table
-  dataDisplay: UserList[];
-  dataSize: number = 0;
-  dataItem: UserList;
+  public dataDisplay: UserList[];
+  public dataSize: number = 0;
+  public dataItem: UserList;
 
   // Form group
-  userRegisterForm: FormGroup;
-  submitted = false;
+  public userRegisterForm: FormGroup;
+  public submitted = false;
 
-  constructor(private db: AngularFireDatabase, private modalService: NgbModal, private formBuilder: FormBuilder) {
-    // Set firebase
-    this.itemsRefDisplay = this.db.list(`user-list`);
-    this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-      )
-    );
-
+  constructor(private modalService: NgbModal, private formBuilder: FormBuilder, private userService: UserService) {
     this.alertStatus = false;
-    this.dupStatus = false;
+    this.dataItem = new UserList();
+    this.mode = "I";
   }
 
   ngOnInit() {
-    this.itemsDisplay.subscribe(
+    this.userService.getAll().subscribe(
       (data: UserList[]) => {
         this.dataDisplay = data;
         this.dataSize = data.length;
@@ -83,69 +71,74 @@ export class AdminUserComponent implements OnInit {
     }
 
     if(this.password == this.rePassword){
-      this.itemsRef = this.db.list(`user-list`, ref => ref.orderByChild('username').equalTo(this.username));
-      this.items = this.itemsRef.snapshotChanges().pipe(
-        map(changes => 
-          changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-        )
-      );
-
-      this.items.subscribe(
+      this.userService.getByUsername(this.username).subscribe(
         (data: UserList[]) => {
-          if(data.length > 0){
-            // For wait data
-            setTimeout(() => this.dupStatus = true, 1000);
+          if(data.length > 0 && this.mode == "I"){
+            this.presentAlertMessage("danger", "ชื่อผู้ใช้งานซ้ำ !");
+            this.onResetUserForm();
           } else {
-            this.dataItem = {
-              username: this.username,
-              password: this.password,
-              uid_pwd: this.username+"_"+this.password
-            };
+            // set data
+            this.dataItem.username = this.username;
+            this.dataItem.password = this.password;
 
-            this.itemsRef = this.db.list(`user-list`);
-            this.itemsRef.push(this.dataItem).then((value) => {
+            // send to service
+            if(this.mode == "I"){
+              this.userService.create(this.dataItem).then((value) => {
+                this.presentAlertMessage("success", "บันทึกสำเร็จ !");
+                this.onResetUserForm();
+              });
+            } else {
+              this.userService.update(this.dataItem);
+              this.presentAlertMessage("success", "อัพเดตสำเร็จ !");
               this.onResetUserForm();
-              this.modalService.dismissAll();
-
-              this.openModalCompleted();
-            });
+            }
+            
           }
         }
       );
-      
     } else {
-      this.alertStatus = true;
+      this.presentAlertMessage("danger", "รหัสผ่านและยืนยันรหัสผ่านไม่เหมือนกัน !");
+      this.modalService.dismissAll();
+      this.onResetUserForm();
     }
-
-    // Hind alert
-    this.hindAlertStatus();
   }
 
   onResetUserForm(){
     this.username = null;
     this.password = null;
     this.rePassword = null;
+    this.mode = "I";
+    this.dataItem = new UserList();
+
+    this.userRegisterForm.reset();
     this.submitted = false;
+    this.modalService.dismissAll();
   }
 
   openModal(): void {
     this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top' });
   }
 
-  openModalCompleted(): void {
-    this.modalService.open(this.modalSuccess, { windowClass: 'w3-animate-top' });
-  }
-
   removeUser(user: UserList){
-    this.itemsRef = this.db.list(`user-list`);
-    this.itemsRef.remove(user.key).then((value) => {
-      console.log(value);
-    });
+    this.userService.delete(user.key);
+    this.presentAlertMessage("success", "ลบผู้ใช้งานสำเร็จ !");
   }
 
-  hindAlertStatus(){
+  onEditUser(user: UserList){
+    this.dataItem.key = user.key;
+    this.username = user.username;
+    this.password = user.password;
+
+    this.mode = "U";
+    this.openModal();
+  }
+
+  presentAlertMessage(type: string, txt: string){
+    this.alertTxt = txt;
+    this.alertType = type;
+    this.alertStatus = true;
+
     setTimeout(() => this.alertStatus = false, 3000);
-    setTimeout(() => this.dupStatus = false, 3000);
   }
 
 }

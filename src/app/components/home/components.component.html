@@ -17,7 +17,7 @@
                         <div class="card-footer">
                           <hr>
                           <div class="stats">
-                            <i class="fa fa-calendar-o"></i> {{ item.year_month_day }}
+                            <i class="fa fa-calendar-o"></i> {{ item.createDate }}
                           </div>
                         </div>
                       </div>
@@ -28,3 +28,5 @@
         </div>
     </div>
 </div>
+
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
