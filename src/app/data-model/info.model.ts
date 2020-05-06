@@ -3,4 +3,8 @@ export class InfoList {
     title: string;
     description: string;
     createDate: string;
+
+    constructor(){
+    
+    }
 }

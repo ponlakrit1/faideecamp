@@ -341,7 +341,7 @@ export class UserRegComponent implements OnInit {
     this.notJoinDetail = {
       school: this.schoolDetail.name,
       cause: this.notJoinCause,
-      year: this.moment().format("YYYY")
+      createDate: this.moment().format("DD/MM/YYYY")
     }
     
     this.itemsRef = this.db.list(`notjoin-list`);

@@ -15,6 +15,8 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule  } from '@angular/fire/database';
 import { environment } from '../environments/environment.prod';
 import { NgxLoadingModule } from 'ngx-loading';
+import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
+import { ToolbarService, LinkService, ImageService, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
@@ -69,11 +71,13 @@ registerLocaleData(localeTh);
     RouterModule,
     FormsModule,
     ReactiveFormsModule,
-    NgxLoadingModule
+    NgxLoadingModule,
+    RichTextEditorAllModule
   ],
   providers: [
     AuthGuardService,
-    AuthService
+    AuthService,
+    ToolbarService, LinkService, ImageService, HtmlEditorService
   ],
   bootstrap: [AppComponent]
 })

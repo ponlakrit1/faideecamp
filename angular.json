@@ -32,7 +32,16 @@
               "src/assets/sass/paper-kit.scss",
               "src/assets/css/demo.css",
               "src/assets/css/nucleo-icons.css",
-              "node_modules/angular-calendar/css/angular-calendar.css"
+              "node_modules/angular-calendar/css/angular-calendar.css",
+              "node_modules/@syncfusion/ej2-base/styles/material.css",
+              "node_modules/@syncfusion/ej2-icons/styles/material.css",
+              "node_modules/@syncfusion/ej2-buttons/styles/material.css",
+              "node_modules/@syncfusion/ej2-splitbuttons/styles/material.css",
+              "node_modules/@syncfusion/ej2-inputs/styles/material.css",
+              "node_modules/@syncfusion/ej2-lists/styles/material.css",
+              "node_modules/@syncfusion/ej2-navigations/styles/material.css",
+              "node_modules/@syncfusion/ej2-popups/styles/material.css",
+              "node_modules/@syncfusion/ej2-richtexteditor/styles/material.css"
             ],
             "scripts": [
               "node_modules/popper.js/dist/umd/popper.js"
@@ -103,7 +112,16 @@
               "src/assets/sass/paper-kit.scss",
               "src/assets/css/demo.css",
               "src/assets/css/nucleo-icons.css",
-              "node_modules/angular-calendar/css/angular-calendar.css"
+              "node_modules/angular-calendar/css/angular-calendar.css",
+              "node_modules/@syncfusion/ej2-base/styles/material.css",
+              "node_modules/@syncfusion/ej2-icons/styles/material.css",
+              "node_modules/@syncfusion/ej2-buttons/styles/material.css",
+              "node_modules/@syncfusion/ej2-splitbuttons/styles/material.css",
+              "node_modules/@syncfusion/ej2-inputs/styles/material.css",
+              "node_modules/@syncfusion/ej2-lists/styles/material.css",
+              "node_modules/@syncfusion/ej2-navigations/styles/material.css",
+              "node_modules/@syncfusion/ej2-popups/styles/material.css",
+              "node_modules/@syncfusion/ej2-richtexteditor/styles/material.css"
             ],
             "scripts": [
               "node_modules/popper.js/dist/umd/popper.js"

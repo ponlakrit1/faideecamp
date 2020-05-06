@@ -23,7 +23,7 @@
     <tbody>
         <tr *ngFor="let user of dataDisplay | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
             <td style="text-align: left;">{{ user.username }}</td>
-            <td class="pull-right">
+            <td class="btn-group pull-right">
                 <button type="button" class="btn btn-warning btn-sm" (click)="onEditUser(user)"><i class="fa fa-edit"></i></button>
                 <button type="button" class="btn btn-danger btn-sm" (click)="removeUser(user)"><i class="fa fa-trash"></i></button>
             </td>
