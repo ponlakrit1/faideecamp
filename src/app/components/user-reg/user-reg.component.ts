@@ -6,9 +6,6 @@ import { CalendarEvent, CalendarView } from 'angular-calendar';
 import { BookingList } from './../../data-model/booking.model';
 import { SchoolList } from './../../data-model/school.model';
 import { NotJoinList } from './../../data-model/notjoin.model';
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NotJoinService } from './../../provider/not-join.service';
 import { BookingService } from './../../provider/booking.service';
@@ -42,7 +39,6 @@ declare var require: any
 export class UserRegComponent implements OnInit {
 
   @ViewChild('modalRegContent', {static: true}) modalContent: TemplateRef<any>;
-  @ViewChild('modalBookingComplted', {static: true}) modalSuccess: TemplateRef<any>;
 
   // Calendar
   view: CalendarView = CalendarView.Month;
@@ -57,25 +53,19 @@ export class UserRegComponent implements OnInit {
   refresh: Subject<any> = new Subject();
 
   // Variable
-  joinStatus: string = "";
-  couseType: string = "";
-  notJoinCause: string = "";
-  schoolAmount: string;
-  amountStatus: boolean;
+  public joinStatus: string = "";
+  public notJoinCause: string = "";
+  public amountStatus: boolean;
   public alertStatus: boolean;
   public alertTxt: string;
   public alertType: string;
   public loading: boolean = false;
+  public alertModalStatus: boolean;
+  public alertSaveStatus: boolean;
 
   // Modal
   notEnoughModalStatus: boolean;
   modalTxt: string;
-
-  // Firebase
-  itemsRefDisplay: AngularFireList<any>;
-  itemsDisplay: Observable<any[]>;
-  itemsRef: AngularFireList<any>;
-  items: Observable<any[]>;
 
   // Object
   dataDisplay: BookingList[];
@@ -88,8 +78,7 @@ export class UserRegComponent implements OnInit {
   submitted = false;
   submitModal = false;
 
-  constructor(private modalService: NgbModal, 
-              private db: AngularFireDatabase, 
+  constructor(private modalService: NgbModal,
               private formBuilder: FormBuilder, 
               private notJoinService: NotJoinService,
               private bookingService: BookingService,
@@ -98,25 +87,20 @@ export class UserRegComponent implements OnInit {
     this.dataDisplay = [];
     
     // get booking list
-    this.bookingService.getByMonthAndYear(this.moment().format("MM/YYYY")).subscribe(
-      (data: BookingList[]) => {
-        this.dataDisplay = data;
-
-        this.onRefreshEventCalendar();
-      }
-    );
+    this.closeOpenMonthViewDay();
 
     this.joinStatus = "Y";
-    this.couseType = "1";
     this.amountStatus = false;
-    this.schoolAmount = '30';
-    this.notEnoughModalStatus = false;
 
     this.notJoinDetail = new NotJoinList();
     this.schoolDetail = new SchoolList();
   }
 
   ngOnInit() {
+    this.schoolDetail.course = "1";
+    this.schoolDetail.amount = "30";
+    this.schoolDetail.acceptCont = "y";
+
     this.initSchoolFormGroup();
     this.initNotJoinFormGroup();
   }
@@ -133,7 +117,9 @@ export class UserRegComponent implements OnInit {
       teacherSubName: ['', Validators.required],
       teacherSubTel: ['', Validators.required],
       teacherSubLine: ['', Validators.required],
-      schoolAmount1: ['', Validators.required]
+      schoolAmount1: [''],
+      area: ['', Validators.required],
+      acceptCont: ['', Validators.required],
     });
   }
 
@@ -166,7 +152,7 @@ export class UserRegComponent implements OnInit {
       }
   
       // fetch data
-      this.checkBookingAmount(bookingKey);
+      this.checkBookingAmount(date);
       this.openModal();
     } else {
       console.log("No booking events");
@@ -192,13 +178,9 @@ export class UserRegComponent implements OnInit {
     this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top' });
   }
 
-  openModalSuccess(): void {
-    this.modalService.open(this.modalSuccess, { windowClass: 'w3-animate-top' });
-  }
-
   onChangeAmountStatus(num: string): void {
     if(num == '99'){
-      this.schoolAmount = '';
+      this.schoolDetail.amount = "";
       this.amountStatus = true;
     } else {
       this.amountStatus = false;
@@ -207,70 +189,54 @@ export class UserRegComponent implements OnInit {
 
   saveBooking(){
     // stop here if form is invalid
-    this.submitModal = true;
-    if (this.schoolBookingForm.invalid) {
-        return;
-    }
+    // this.submitModal = true;
+    // if (this.schoolBookingForm.invalid) {
+    //     return;
+    // }
 
     var eventTemp: BookingList;
     var calculateAmount: number = 0;
 
     // Get bookingList from event(click)
-    // for (let ev of this.dataDisplay) {
-    //   if(ev.day == String(this.eventSelected.start.getDate())){
-    //     eventTemp = ev;
-    //     // calculateAmount = eventTemp.amount - Number(this.schoolAmount);
-    //     break;
-    //   }
-    // }
-
-    // calculate amount
-    calculateAmount = Number(this.eventSelected.title) - Number(this.schoolAmount);
-
-    // Check student amount(Typing) - amount
-    if(calculateAmount >= 0){
-      eventTemp.amount = calculateAmount;
-
-      this.itemsRef = this.db.list(`booking-list`);
-      this.itemsRef.update(eventTemp.key, eventTemp).then((value) => {
-        console.log("update booking");
-      });
-
-      // Set school obj
-      // this.schoolDetail.year_month_day = eventTemp.year_month_day;
-      // this.schoolDetail.amount = this.schoolAmount;
-      // this.schoolDetail.year = eventTemp.year;
-      // this.schoolDetail.course = eventTemp.course;
-
-      this.itemsRef = this.db.list(`school-list`);
-      this.itemsRef.push(this.schoolDetail).then((value) => {
-        console.log("update school");
-
-        // After update data
-        this.onResetForm();
-        this.modalService.dismissAll();
-        this.openModalSuccess();
-      });
-
-    } else {
-      this.submitted = false;
-      this.notEnoughModalStatus = true;
-      setTimeout(() => this.notEnoughModalStatus = false, 3000);
+    for (let ev of this.dataDisplay) {
+      var res = ev.eventDate.split("/");
+      if(res[0] == String(this.eventSelected.start.getDate())){
+        eventTemp = ev;
+        break;
+      }
     }
 
-    this.onRefreshEventCalendar();
+    // get amount by eventDate
+    this.bookingService.getByEventDate(eventTemp.eventDate).subscribe(
+      (data: BookingList[]) => {
+        if(data.length > 0){
+          // set new amount
+          calculateAmount = Number(data[0].amount) - Number(this.schoolDetail.amount);
+          // console.log(calculateAmount);
+
+          if(calculateAmount >= 0){
+            eventTemp.amount = calculateAmount;
+            this.bookingService.update(eventTemp);
+
+            this.schoolDetail.eventDate = eventTemp.eventDate;
+            this.schoolDetail.year = eventTemp.year;
+
+            this.schoolService.create(this.schoolDetail);
+            // this.presentAlertMessage("success", "บันทึกสำเร็จ !");
+            this.presentAlertSaveMessage();
+            this.onResetForm();
+          } else {
+            this.presentAlertModalMessage();
+          }
+
+          this.onRefreshEventCalendar();
+        }
+      }
+    );
   }
 
-  async checkBookingAmount(key: string){
-    this.itemsRef = this.db.list(`booking-list`, ref => ref.orderByChild('key').equalTo(key));
-    this.items = this.itemsRef.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-      )
-    );
-
-    // get item
-    await this.items.subscribe(
+  checkBookingAmount(key: Date){
+    this.bookingService.getByEventDate(this.moment(key).format("D/M/YYYY")).subscribe(
       (data: BookingList[]) => {
         if(data.length > 0){
           // set new amount
@@ -285,13 +251,9 @@ export class UserRegComponent implements OnInit {
     let monthTemp = month + 1;
 
     if(monthTemp >= 13){
-      result = "01/"+(year + 1);
+      result = "1/"+(year + 1);
     } else {
-      if(monthTemp < 10){
-        result = "0"+monthTemp+"/"+year;
-      } else {
-        result = monthTemp+"/"+year;
-      }
+      result = monthTemp+"/"+year;
     }
 
     return result;
@@ -303,21 +265,19 @@ export class UserRegComponent implements OnInit {
     for(let temp of this.dataDisplay){
       let event: CalendarEvent;
 
-      if(temp.course == this.couseType){
-        let day = temp.eventDate.substring(0, 2); 
-        let month = temp.eventDate.substring(3, 5);
-        let year = temp.eventDate.substring(6, 10);
+      if(temp.course == this.schoolDetail.course){
+        var res = temp.eventDate.split("/");
 
         if(temp.amount <= 0){
           event = {
-            start: startOfDay(new Date(year+"-"+month+"-"+day)),
+            start: startOfDay(new Date(res[2]+"-"+res[1]+"-"+res[0])),
             title: `${temp.amount}`,
             cssClass: `${temp.key}`,
             color: colors.red
           };
         } else {
           event = {
-            start: startOfDay(new Date(year+"-"+month+"-"+day)),
+            start: startOfDay(new Date(res[2]+"-"+res[1]+"-"+res[0])),
             title: `${temp.amount}`,
             cssClass: `${temp.key}`,
             color: colors.green
@@ -335,35 +295,37 @@ export class UserRegComponent implements OnInit {
   }
 
   onResetForm(){
-    this.joinStatus = 'Y';
-    this.couseType = "1";
-    this.schoolAmount = '30';
-    this.notJoinCause = "";
-    
+    this.schoolDetail = new SchoolList();
     this.amountStatus = false;
     this.submitModal = false;
-    this.submitted = false;
-
-    this.schoolDetail = new SchoolList();
+    this.schoolDetail.course = "1";
+    this.schoolDetail.amount = "30";
+    this.schoolDetail.acceptCont = "y";
+    
     this.modalService.dismissAll();
+    window.scroll(0,0);
   }
 
   saveNotJoin(){
     // stop here if form is invalid
     this.submitted = true;
     if (this.notJoinForm.invalid) {
-        return;
+      return;
     }
 
     this.notJoinDetail = {
       school: this.schoolDetail.name,
       cause: this.notJoinCause,
-      createDate: this.moment().format("DD/MM/YYYY")
+      createDate: this.moment().format("D/M/YYYY")
     }
     
+    // service
     this.notJoinService.create(this.notJoinDetail);
     this.presentAlertMessage("success", "บันทึกสำเร็จ !");
-    this.onResetForm();
+    this.joinStatus = "Y";
+    this.notJoinCause = "";
+    this.submitted = false;
+    this.schoolDetail.name = "";
   }
 
   presentAlertMessage(type: string, txt: string){
@@ -372,6 +334,18 @@ export class UserRegComponent implements OnInit {
     this.alertStatus = true;
 
     setTimeout(() => this.alertStatus = false, 3000);
+  }
+
+  presentAlertModalMessage(){
+    this.alertModalStatus = true;
+
+    setTimeout(() => this.alertModalStatus = false, 3000);
+  }
+
+  presentAlertSaveMessage(){
+    this.alertSaveStatus = true;
+
+    setTimeout(() => this.alertSaveStatus = false, 3000);
   }
 
 }

@@ -71,14 +71,14 @@
                 <div class="col-12">
                   <div class="form-check-radio">
                     <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="couseType" id="opt-type1" value="1" [(ngModel)]="couseType" (change)="onRefreshEventCalendar()" formControlName="couseType">
+                      <input class="form-check-input" type="radio" name="couseType" id="opt-type1" value="1" [(ngModel)]="schoolDetail.course" (change)="onRefreshEventCalendar()" formControlName="couseType">
                         9 - 12 ปี
                       <span class="form-check-sign"></span>
                     </label>
                   </div>
                   <div class="form-check-radio">
                     <label class="form-check-label">
-                      <input class="form-check-input" type="radio" name="couseType" id="opt-type2" value="2" [(ngModel)]="couseType" (change)="onRefreshEventCalendar()" formControlName="couseType">
+                      <input class="form-check-input" type="radio" name="couseType" id="opt-type2" value="2" [(ngModel)]="schoolDetail.course" (change)="onRefreshEventCalendar()" formControlName="couseType">
                         13 - 15 ปี
                       <span class="form-check-sign"></span>
                     </label>
@@ -133,6 +133,12 @@
 
         <div class="row" *ngIf="joinStatus == 'Y'">
           <div class="col-12">
+
+            <br/>
+            <p>
+              <ngb-alert [type]="'success'" (close)="alertSaveStatus = false" *ngIf="alertSaveStatus">บันทึกสำเร็จ !</ngb-alert>
+            </p>
+            <br/>
 
             <div class="row text-center">
               <div class="col-md-4"></div>
@@ -344,24 +350,39 @@
         <br/>
         <div class="row">
           <div class="col-3">
+            เขตพื้นที่การศึกษา
+          </div>
+          <div class="col-9">
+            <input type="text" 
+                  class="form-control form-control-success" 
+                  id="txt-modal-area" 
+                  [(ngModel)]="schoolDetail.area" 
+                  name="schoolDetail-area"
+                  formControlName="area"
+                  [ngClass]="{ 'is-invalid': submitModal && f.area.errors }">
+          </div>
+        </div>
+        <br/>
+        <div class="row">
+          <div class="col-3">
             จำนวนนักเรียน :
           </div>
           <div class="col-9">
             <div class="form-check-radio">
               <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="schoolAmount1" id="opt-amount1" value="30" [(ngModel)]="schoolAmount" (change)="onChangeAmountStatus('30')" formControlName="schoolAmount1">
+                <input class="form-check-input" type="radio" name="schoolAmount1" id="opt-amount1" value="30" [(ngModel)]="schoolDetail.amount" (change)="onChangeAmountStatus('30')" formControlName="schoolAmount1">
                   30 คน
                 <span class="form-check-sign"></span>
               </label>
             </div>
             <div class="form-check-radio">
               <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="schoolAmount1" id="opt-amount4" value="60" [(ngModel)]="schoolAmount" (change)="onChangeAmountStatus('60')" formControlName="schoolAmount1">
+                <input class="form-check-input" type="radio" name="schoolAmount1" id="opt-amount4" value="60" [(ngModel)]="schoolDetail.amount" (change)="onChangeAmountStatus('60')" formControlName="schoolAmount1">
                   60 คน
                 <span class="form-check-sign"></span>
               </label>
             </div>
-            <!-- <div class="form-check-radio">
+            <div class="form-check-radio">
               <label class="form-check-label">
                 <input class="form-check-input" type="radio" name="schoolAmount1" id="opt-amount5" value="99" (change)="onChangeAmountStatus('99')">
                   อื่นๆ
@@ -372,21 +393,41 @@
                   class="form-control form-control-success" 
                   id="txt-modal-stu-amt" 
                   placeholder="จำนวนนักเรียน" 
-                  [(ngModel)]="schoolAmount" 
+                  [(ngModel)]="schoolDetail.amount" 
                   name="schoolDetail-amount"
                   formControlName="schoolAmount1"
                   [ngClass]="{ 'is-invalid': submitModal && f.schoolAmount1.errors }"
-                  *ngIf="amountStatus"> -->
+                  *ngIf="amountStatus">
           </div>
         </div>
-        <!-- <br/>
+
+        <br/>
+        <p>
+          <ngb-alert [type]="'warning'" (close)="alertModalStatus = false" *ngIf="alertModalStatus">จำนวนคงเหลือของกิจกรรม ไม่เพียงพอสำหรับจำนวนนักเรียน !</ngb-alert>
+        </p>
+        <br/>
+
         <div class="row">
-          <div class="col-12">
-            <h5>หมายเหตุ : กรุณาส่งรายชื่อนักเรียนที่จะเข้าร่วมค่ายทางไลน์กลุ่มประสาน</h5>
-            <h5 style="color: rgb(255, 0, 0)">* ภายใน 7 วัน</h5>
+          <div class="col-3" style="color: red;">
+            * ยินยอมทำโครงการต่อเนื่องหรือไม่ ?
+          </div>
+          <div class="col-9">
+            <div class="form-check-radio">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="acceptCont" id="opt-acceptCont1" value="y" [(ngModel)]="schoolDetail.acceptCont" formControlName="acceptCont">
+                  ยินยอม
+                <span class="form-check-sign"></span>
+              </label>
+            </div>
+            <div class="form-check-radio">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="acceptCont" id="opt-acceptCont2" value="n" [(ngModel)]="schoolDetail.acceptCont" formControlName="acceptCont">
+                  ไม่ยินยอม
+                <span class="form-check-sign"></span>
+              </label>
+            </div>
           </div>
         </div>
-        <br/> -->
 
       </div>
     </form>

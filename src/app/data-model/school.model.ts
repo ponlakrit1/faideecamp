@@ -11,6 +11,8 @@ export class SchoolList {
     teacherSubName: string;
     teacherSubTel: string;
     teacherSubLine: string;
+    area: string;
+    acceptCont: string;
     course: string;
     eventDate: string;
     year: string;

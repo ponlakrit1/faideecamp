@@ -1,11 +1,9 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
 import { SchoolList } from './../../data-model/school.model';
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { NgbModal, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { BookingList } from './../../data-model/booking.model';
-import 'rxjs/add/operator/toPromise';
+import { SchoolService } from './../../provider/school.service';
+import { BookingService } from './../../provider/booking.service';
 
 declare var require: any
 @Component({
@@ -25,75 +23,38 @@ export class AdminSchoolComponent implements OnInit {
   dataItem: SchoolList;
   bookingKey: BookingList;
 
-  itemsRefDisplay: AngularFireList<any>;
-  itemsDisplay: Observable<any[]>;
   dataDisplay: SchoolList[];
-  itemsRef: AngularFireList<any>;
-  items: Observable<any[]>;
   dataSize: number = 0;
 
-  constructor(private db: AngularFireDatabase, private modalService: NgbModal) {
-    // Set firebase
-    this.itemsRefDisplay = this.db.list(`school-list`, ref => ref.orderByChild('year').equalTo(this.moment().format("YYYY")));
-    this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-      )
-    );
+  private searchYear: number;
+
+  constructor(private modalService: NgbModal, private schoolService: SchoolService, private bookingService: BookingService) {
+    this.searchYear = this.moment().format("YYYY");
   }
 
   ngOnInit() {
-    this.itemsDisplay.subscribe(
-      (data: SchoolList[]) => {
-        this.dataDisplay = data;
-        this.dataSize = data.length;
-      }
-    );
+    this.searchByEventYear();
   }
 
   removeSchool(){
-    console.log("begin removeSchool()");
-
-    // calculate
-    this.bookingKey.amount = Number(this.bookingKey.amount) + Number(this.dataItem.amount);
-
-    // update booking
-    this.itemsRef = this.db.list(`booking-list`);
-    this.itemsRef.update(this.bookingKey.key, this.bookingKey).then((value) => {
-      console.log(value);
-    });
-
-    // update school
-    this.itemsRef = this.db.list(`school-list`);
-    this.itemsRef.remove(this.dataItem.key).then((value) => {
-      console.log(value);
-    });
-
-    this.modalService.dismissAll();
-  }
-
-  async findBookingList(key: string){
-    console.log("begin findBookingList()"+key);
-
-    // find booking
-    this.itemsRef = this.db.list(`booking-list`, ref => ref.orderByChild('year_month_day').equalTo(key));
-    this.items = this.itemsRef.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-      )
-    );
-
-    this.items.subscribe(
+    this.bookingService.getByEventDate(this.dataItem.eventDate).subscribe(
       (data: BookingList[]) => {
         if(data.length > 0){
           this.bookingKey = data[0];
-          console.log(this.bookingKey);
+
+          // calculate
+          this.bookingKey.amount = Number(this.bookingKey.amount) + Number(this.dataItem.amount);
+
+          this.bookingService.update(this.bookingKey);
+          this.schoolService.delete(this.dataItem.key);
         }
+
+        this.modalService.dismissAll();
       }
     );
   }
 
-  onRowSelected(data: SchoolList){
+  onViewSchool(data: SchoolList){
     this.dataItem = data;
     this.openModal();
   }
@@ -104,9 +65,22 @@ export class AdminSchoolComponent implements OnInit {
 
   openModalRemove(school: SchoolList): void {
     this.dataItem = school;
-    this.findBookingList(school.eventDate);
 
     this.modalService.open(this.modalRemove, { windowClass: 'w3-animate-top' });
+  }
+
+  searchByEventYear(){
+    this.schoolService.getByYear(String(this.searchYear)).subscribe(
+      (data: SchoolList[]) => {
+        if(data.length > 0){
+          this.dataDisplay = data;
+          this.dataSize = data.length;
+        } else {
+          this.dataDisplay = [];
+          this.dataSize = 0;
+        }
+      }
+    );
   }
 
 }

@@ -29,7 +29,7 @@ export class BookingService {
       map(changes => 
         changes.map(c => ({ key: c.key, ...c.payload.val() }))
       )
-    ).pipe(take(1));
+    );
   }
 
   getByYear(id: string) {
@@ -42,6 +42,14 @@ export class BookingService {
 
   getByEventDate(id: string) {
     return this.afs.list<BookingList>('booking-list', ref => ref.orderByChild('eventDate').equalTo(id)).snapshotChanges().pipe(
+      map(changes => 
+        changes.map(c => ({ key: c.key, ...c.payload.val() }))
+      )
+    ).pipe(take(1));
+  }
+
+  getByKey(id: string) {
+    return this.afs.list<BookingList>('booking-list', ref => ref.orderByChild('key').equalTo(id)).snapshotChanges().pipe(
       map(changes => 
         changes.map(c => ({ key: c.key, ...c.payload.val() }))
       )

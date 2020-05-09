@@ -24,6 +24,14 @@ export class SchoolService {
     return this.items;
   }
 
+  getByYear(id: string) {
+    return this.afs.list<SchoolList>('school-list', ref => ref.orderByChild('year').equalTo(id)).snapshotChanges().pipe(
+      map(changes => 
+        changes.map(c => ({ key: c.key, ...c.payload.val() }))
+      )
+    );
+  }
+
   create(item: SchoolList) {
     return this.itemsRef.push(item);
   }
