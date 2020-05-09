@@ -1,6 +1,4 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UserList } from '../../../data-model/user.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';

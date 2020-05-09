@@ -44,9 +44,9 @@
                     <ngb-pagination [collectionSize]="dataSize" [(page)]="page" [pageSize]="pageSize"></ngb-pagination>
                   
                     <select class="custom-select" style="width: auto" [(ngModel)]="pageSize">
-                        <option [ngValue]="5">5 หน้า</option>
-                        <option [ngValue]="10">10 หน้า</option>
-                        <option [ngValue]="15">15 หน้า</option>
+                        <option [ngValue]="5">5 รายการ</option>
+                        <option [ngValue]="10">10 รายการ</option>
+                        <option [ngValue]="15">15 รายการ</option>
                     </select>
                 </div>
 
@@ -82,7 +82,7 @@
             <br/>
             <div class="row">
                 <div class="col-4">วันที่จอง :</div>
-                <div class="col-8">{{ dataItem.year_month_day }}</div>
+                <div class="col-8">{{ dataItem.eventDate }}</div>
             </div>
             <br/>
             <div class="row">

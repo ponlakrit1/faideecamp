@@ -104,7 +104,7 @@ export class AdminSchoolComponent implements OnInit {
 
   openModalRemove(school: SchoolList): void {
     this.dataItem = school;
-    this.findBookingList(school.year_month_day);
+    this.findBookingList(school.eventDate);
 
     this.modalService.open(this.modalRemove, { windowClass: 'w3-animate-top' });
   }

@@ -10,6 +10,9 @@ import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NotJoinService } from './../../provider/not-join.service';
+import { BookingService } from './../../provider/booking.service';
+import { SchoolService } from './../../provider/school.service';
 
 /*
   CalendarEvent :
@@ -59,6 +62,10 @@ export class UserRegComponent implements OnInit {
   notJoinCause: string = "";
   schoolAmount: string;
   amountStatus: boolean;
+  public alertStatus: boolean;
+  public alertTxt: string;
+  public alertType: string;
+  public loading: boolean = false;
 
   // Modal
   notEnoughModalStatus: boolean;
@@ -81,25 +88,35 @@ export class UserRegComponent implements OnInit {
   submitted = false;
   submitModal = false;
 
-  constructor(private modalService: NgbModal, private db: AngularFireDatabase, private formBuilder: FormBuilder) {
-    // Set firebase
-    this.itemsRefDisplay = this.db.list(`booking-list`, ref => ref.orderByChild('year_month').equalTo(this.moment().format("YYYY_MM")));
-    this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-      )
+  constructor(private modalService: NgbModal, 
+              private db: AngularFireDatabase, 
+              private formBuilder: FormBuilder, 
+              private notJoinService: NotJoinService,
+              private bookingService: BookingService,
+              private schoolService: SchoolService) {
+                
+    this.dataDisplay = [];
+    
+    // get booking list
+    this.bookingService.getByMonthAndYear(this.moment().format("MM/YYYY")).subscribe(
+      (data: BookingList[]) => {
+        this.dataDisplay = data;
+
+        this.onRefreshEventCalendar();
+      }
     );
 
     this.joinStatus = "Y";
     this.couseType = "1";
-    this.schoolDetail = new SchoolList();
     this.amountStatus = false;
     this.schoolAmount = '30';
     this.notEnoughModalStatus = false;
+
+    this.notJoinDetail = new NotJoinList();
+    this.schoolDetail = new SchoolList();
   }
 
   ngOnInit() {
-    this.onRefreshEventCalendar();
     this.initSchoolFormGroup();
     this.initNotJoinFormGroup();
   }
@@ -162,14 +179,13 @@ export class UserRegComponent implements OnInit {
   }
 
   closeOpenMonthViewDay() {
-    this.itemsRefDisplay = this.db.list(`booking-list`, ref => ref.orderByChild('year_month').equalTo(this.paddingLeftNumber(this.viewDate.getFullYear(), this.viewDate.getMonth())));
-    this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-      )
-    );
+    this.bookingService.getByMonthAndYear(this.paddingLeftNumber(this.viewDate.getFullYear(), this.viewDate.getMonth())).subscribe(
+      (data: BookingList[]) => {
+        this.dataDisplay = data;
 
-    this.onRefreshEventCalendar();
+        this.onRefreshEventCalendar();
+      }
+    );
   }
 
   openModal(): void {
@@ -200,13 +216,13 @@ export class UserRegComponent implements OnInit {
     var calculateAmount: number = 0;
 
     // Get bookingList from event(click)
-    for (let ev of this.dataDisplay) {
-      if(ev.day == String(this.eventSelected.start.getDate())){
-        eventTemp = ev;
-        // calculateAmount = eventTemp.amount - Number(this.schoolAmount);
-        break;
-      }
-    }
+    // for (let ev of this.dataDisplay) {
+    //   if(ev.day == String(this.eventSelected.start.getDate())){
+    //     eventTemp = ev;
+    //     // calculateAmount = eventTemp.amount - Number(this.schoolAmount);
+    //     break;
+    //   }
+    // }
 
     // calculate amount
     calculateAmount = Number(this.eventSelected.title) - Number(this.schoolAmount);
@@ -221,17 +237,17 @@ export class UserRegComponent implements OnInit {
       });
 
       // Set school obj
-      this.schoolDetail.year_month_day = eventTemp.year_month_day;
-      this.schoolDetail.amount = this.schoolAmount;
-      this.schoolDetail.year = eventTemp.year;
-      this.schoolDetail.course = eventTemp.course;
+      // this.schoolDetail.year_month_day = eventTemp.year_month_day;
+      // this.schoolDetail.amount = this.schoolAmount;
+      // this.schoolDetail.year = eventTemp.year;
+      // this.schoolDetail.course = eventTemp.course;
 
       this.itemsRef = this.db.list(`school-list`);
       this.itemsRef.push(this.schoolDetail).then((value) => {
         console.log("update school");
 
         // After update data
-        this.onResetUserForm();
+        this.onResetForm();
         this.modalService.dismissAll();
         this.openModalSuccess();
       });
@@ -269,12 +285,12 @@ export class UserRegComponent implements OnInit {
     let monthTemp = month + 1;
 
     if(monthTemp >= 13){
-      result = (year + 1)+"_01";
+      result = "01/"+(year + 1);
     } else {
       if(monthTemp < 10){
-        result = year+"_0"+monthTemp;
+        result = "0"+monthTemp+"/"+year;
       } else {
-        result = year+"_"+monthTemp;
+        result = monthTemp+"/"+year;
       }
     }
 
@@ -284,51 +300,52 @@ export class UserRegComponent implements OnInit {
   onRefreshEventCalendar(){
     this.events = [];
 
-    this.itemsDisplay.subscribe(
-      (data: BookingList[]) => {
-        this.dataDisplay = data;
+    for(let temp of this.dataDisplay){
+      let event: CalendarEvent;
 
-        for(let temp of this.dataDisplay){
-          let event: CalendarEvent;
+      if(temp.course == this.couseType){
+        let day = temp.eventDate.substring(0, 2); 
+        let month = temp.eventDate.substring(3, 5);
+        let year = temp.eventDate.substring(6, 10);
 
-          if(temp.course == this.couseType){
-            if(temp.amount <= 0){
-              event = {
-                start: startOfDay(new Date(temp.year+"-"+temp.month+"-"+temp.day)),
-                title: `${temp.amount}`,
-                cssClass: `${temp.key}`,
-                color: colors.red
-              };
-            } else {
-              event = {
-                start: startOfDay(new Date(temp.year+"-"+temp.month+"-"+temp.day)),
-                title: `${temp.amount}`,
-                cssClass: `${temp.key}`,
-                color: colors.green
-              };
-            }
-          }
-
-          // Check event is not null
-          if(event != null){
-            this.events.push(event);
-          }
+        if(temp.amount <= 0){
+          event = {
+            start: startOfDay(new Date(year+"-"+month+"-"+day)),
+            title: `${temp.amount}`,
+            cssClass: `${temp.key}`,
+            color: colors.red
+          };
+        } else {
+          event = {
+            start: startOfDay(new Date(year+"-"+month+"-"+day)),
+            title: `${temp.amount}`,
+            cssClass: `${temp.key}`,
+            color: colors.green
+          };
         }
-
-        this.refresh.next();
-        
       }
-    );
+
+      // Check event is not null
+      if(event != null){
+        this.events.push(event);
+      }
+    }
+
+    this.refresh.next();
   }
 
-  onResetUserForm(){
+  onResetForm(){
+    this.joinStatus = 'Y';
     this.couseType = "1";
     this.schoolAmount = '30';
     this.notJoinCause = "";
+    
     this.amountStatus = false;
     this.submitModal = false;
     this.submitted = false;
+
     this.schoolDetail = new SchoolList();
+    this.modalService.dismissAll();
   }
 
   saveNotJoin(){
@@ -344,18 +361,17 @@ export class UserRegComponent implements OnInit {
       createDate: this.moment().format("DD/MM/YYYY")
     }
     
-    this.itemsRef = this.db.list(`notjoin-list`);
-    this.itemsRef.push(this.notJoinDetail).then((value) => {
-      // After update data
-      this.onResetUserForm();
-      this.modalService.dismissAll();
-      this.openModalSuccess();
-    });
+    this.notJoinService.create(this.notJoinDetail);
+    this.presentAlertMessage("success", "บันทึกสำเร็จ !");
+    this.onResetForm();
   }
 
-  closeModal(){
-    this.modalService.dismissAll();
-    this.onResetUserForm();
+  presentAlertMessage(type: string, txt: string){
+    this.alertTxt = txt;
+    this.alertType = type;
+    this.alertStatus = true;
+
+    setTimeout(() => this.alertStatus = false, 3000);
   }
 
 }

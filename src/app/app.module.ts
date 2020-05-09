@@ -17,6 +17,8 @@ import { environment } from '../environments/environment.prod';
 import { NgxLoadingModule } from 'ngx-loading';
 import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
 import { ToolbarService, LinkService, ImageService, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
+import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
+import { CustomDateParserFormatter } from "./provider/CustomDateParserFormatte";
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
@@ -77,7 +79,8 @@ registerLocaleData(localeTh);
   providers: [
     AuthGuardService,
     AuthService,
-    ToolbarService, LinkService, ImageService, HtmlEditorService
+    ToolbarService, LinkService, ImageService, HtmlEditorService,
+    { provide: NgbDateParserFormatter, useClass: CustomDateParserFormatter },
   ],
   bootstrap: [AppComponent]
 })

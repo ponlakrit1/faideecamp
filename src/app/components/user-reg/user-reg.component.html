@@ -3,6 +3,10 @@
   <div class="main">
     <div class="section">
       <div class="container">
+
+        <p>
+          <ngb-alert [type]="alertType" (close)="alertStatus = false" *ngIf="alertStatus">{{ alertTxt }}</ngb-alert>
+        </p>
         
         <div class="typography-line">
           <h3>รายละเอียด</h3>
@@ -192,7 +196,7 @@
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">กรอกรายละเอียด</h4>
     <h6 class="modal-title" id="modal-basic-title">จำนวนนักเรียนคงเหลือ {{eventSelected.title}} คน</h6>
-    <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+    <button type="button" class="close" aria-label="Close" (click)="onResetForm()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -384,10 +388,6 @@
         </div>
         <br/> -->
 
-        <p>
-          <ngb-alert [type]="'danger'" (close)="notEnoughModalStatus = false" *ngIf="notEnoughModalStatus">จำนวนนักเรียนคงเหลือ ไม่เพียงพอ !</ngb-alert>
-        </p>
-
       </div>
     </form>
   </div>
@@ -426,3 +426,5 @@
     </div>
   </div>
 </ng-template>
+
+<ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>

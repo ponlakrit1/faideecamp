@@ -1,10 +1,8 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { NgbModal, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { BookingList } from './../../data-model/booking.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { BookingService } from './../../provider/booking.service';
 
 declare var require: any
 @Component({
@@ -15,17 +13,10 @@ declare var require: any
 export class BookingComponent implements OnInit {
 
   @ViewChild('modalBooking', {static: true}) modalContent: TemplateRef<any>;
-  @ViewChild('modalAddBookingComplted', {static: true}) modalCompleted: TemplateRef<any>;
 
   page = 1;
   pageSize = 10;
   moment = require('moment');
-
-  // Firebase
-  itemsRef: AngularFireList<any>;
-  items: Observable<any[]>;
-  itemsRefDisplay: AngularFireList<any>;
-  itemsDisplay: Observable<any[]>;
 
   // Table
   dataDisplay: BookingList[];
@@ -33,36 +24,26 @@ export class BookingComponent implements OnInit {
   dataItem: BookingList;
 
   // Variable
-  course: string;
-  dateModel: NgbDateStruct;
-  description: string;
-  dupStatus: boolean;
+  public dateModel: NgbDateStruct;
+  private searchYear: number;
+  public alertStatus: boolean;
+  public alertTxt: string;
+  public alertType: string;
+  public mode: string;
 
   // Form group
   bookingForm: FormGroup;
   submitted = false;
 
-  constructor(private db: AngularFireDatabase, private modalService: NgbModal, private formBuilder: FormBuilder) {
-    // Set firebase
-    this.itemsRefDisplay = this.db.list(`booking-list`, ref => ref.orderByChild('year').equalTo(this.moment().format("YYYY")));
-    this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-      )
-    );
+  constructor(private bookingService: BookingService, private modalService: NgbModal, private formBuilder: FormBuilder) {
+    this.searchYear = this.moment().format("YYYY");
+    this.mode = "I";
 
-    this.course = "1";
-    this.dupStatus = false;
+    this.dataItem = new BookingList();
   }
 
   ngOnInit() {
-    this.itemsDisplay.subscribe(
-      (data: BookingList[]) => {
-        this.dataDisplay = data;
-        this.dataSize = data.length;
-      }
-    );
-
+    this.searchByEventYear();
     this.initBookingFormGroup();
   }
 
@@ -83,78 +64,127 @@ export class BookingComponent implements OnInit {
         return;
     }
 
-    // Set firebase
-    this.itemsRef = this.db.list(`booking-list`, ref => ref.orderByChild('year_month_day').equalTo(String(this.dateModel.year)+"_"+this.paddingLeftNumber(this.dateModel.month)+"_"+String(this.dateModel.day)));
-    this.items = this.itemsRef.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-      )
-    );
+    let eventDate = (this.dateModel.day)+"/"+(this.dateModel.month)+"/"+(this.dateModel.year);
+    let month_year = (this.dateModel.month)+"/"+(this.dateModel.year);
+    let year = String(this.dateModel.year);
 
-    this.items.subscribe(
+    this.bookingService.getByEventDate(eventDate).subscribe(
       (data: BookingList[]) => {
         if(data.length > 0){
-          setTimeout(() => this.dupStatus = true, 1000);
+          this.presentAlertMessage("warning", "วันที่จัดกิจกรรมซ้ำ !");
+          this.onResetForm();
         } else {
-          this.dataItem = {
-            year: String(this.dateModel.year),
-            month: this.paddingLeftNumber(this.dateModel.month),
-            day: String(this.dateModel.day),
-            year_month: String(this.dateModel.year)+"_"+(this.paddingLeftNumber(this.dateModel.month)),
-            year_month_day: String(this.dateModel.year)+"_"+(this.paddingLeftNumber(this.dateModel.month))+"_"+String(this.dateModel.day),
-            amount: 60,
-            course: this.course,
-            description: this.description
-          };
+          // this.dataItem = {
+          //   amount: 60,
+          //   course: this.course,
+          //   description: this.description,
+          //   year: String(this.dateModel.year),
+          //   month_year: String(this.dateModel.month)+"/"+(String(this.dateModel.year)),
+          //   eventDate: eventDate,
+          // };
 
-          // Set firebase
-          this.itemsRef = this.db.list(`booking-list`);
-          this.itemsRef.push(this.dataItem).then((value) => {
-            this.onResetUserForm();
-            this.modalService.dismissAll();
+          this.dataItem.amount = 60;
+          this.dataItem.year = year;
+          this.dataItem.month_year = month_year;
+          this.dataItem.eventDate = eventDate;
 
-            this.openModalSuccess();
+          this.bookingService.create(this.dataItem).then((value) => {
+            this.presentAlertMessage("success", "บันทึกสำเร็จ !");
+            this.onResetForm();
           });
         }
-    });
+      }
+    );
+  }
 
-    // Hind alert
-    this.hindAlertStatus();
+  editBooking(){
+    // stop here if form is invalid
+    this.submitted = true;
+    if (this.bookingForm.invalid) {
+        return;
+    }
+
+    let eventDate = (this.dateModel.day)+"/"+(this.dateModel.month)+"/"+(this.dateModel.year);
+    let month_year = (this.dateModel.month)+"/"+(this.dateModel.year);
+    let year = String(this.dateModel.year);
+
+    this.dataItem.year = year;
+    this.dataItem.month_year = month_year;
+    this.dataItem.eventDate = eventDate;
+
+    this.bookingService.update(this.dataItem);
+    this.presentAlertMessage("success", "อัพเดตสำเร็จ !");
+    this.onResetForm();
   }
 
   openModal(): void {
+    if(this.mode == "I"){
+      this.dataItem.course = "1";
+    }
+
     this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top' });
   }
 
-  openModalSuccess(): void {
-    this.modalService.open(this.modalCompleted, { windowClass: 'w3-animate-top' });
-  }
-
-  onResetUserForm(){
-    this.course = "1";
+  onResetForm(){
+    this.mode = "I";
     this.dateModel = null;
-    this.description = null;
-    this.dupStatus = null;
-    this.submitted = false;
-  }
 
-  hindAlertStatus(){
-    setTimeout(() => this.dupStatus = false, 3000);
+    this.submitted = false;
+    this.dataItem = new BookingList();
+    this.modalService.dismissAll();
   }
 
   removeBooking(booking: BookingList){
-    this.itemsRef = this.db.list(`booking-list`);
-    this.itemsRef.remove(booking.key).then((value) => {
-      console.log(value);
-    });
+    this.bookingService.delete(booking.key);
+    this.presentAlertMessage("success", "ลบสำเร็จ !");
   }
 
-  paddingLeftNumber(num: number): string{
-    if(num < 10){
-      return "0"+String(num);
-    } else {
-      return String(num);
-    }
+  onEditBooking(booking: BookingList){
+    this.mode = "U";
+
+    this.dataItem = {
+      key: booking.key,
+      amount: booking.amount,
+      course: booking.course,
+      description: booking.description,
+      year: booking.year,
+      month_year: booking.month_year,
+      eventDate: booking.eventDate,
+    };
+
+    var res = booking.eventDate.split("/");
+    this.dateModel = {
+      day: null,
+      month: null,
+      year: null
+    };
+    this.dateModel.day = Number(res[0]);
+    this.dateModel.month = Number(res[1]);
+    this.dateModel.year = Number(res[2]);
+
+    this.openModal();
+  }
+
+  presentAlertMessage(type: string, txt: string){
+    this.alertTxt = txt;
+    this.alertType = type;
+    this.alertStatus = true;
+
+    setTimeout(() => this.alertStatus = false, 3000);
+  }
+
+  searchByEventYear(){
+    this.bookingService.getByYear(String(this.searchYear)).subscribe(
+      (data: BookingList[]) => {
+        if(data.length > 0){
+          this.dataDisplay = data;
+          this.dataSize = data.length;
+        } else {
+          this.dataDisplay = [];
+          this.dataSize = 0;
+        }
+      }
+    );
   }
 
 }
