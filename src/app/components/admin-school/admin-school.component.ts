@@ -26,7 +26,10 @@ export class AdminSchoolComponent implements OnInit {
   dataDisplay: SchoolList[];
   dataSize: number = 0;
 
-  private searchYear: number;
+  public searchYear: number;
+  public alertStatus: boolean;
+  public alertTxt: string;
+  public alertType: string;
 
   constructor(private modalService: NgbModal, private schoolService: SchoolService, private bookingService: BookingService) {
     this.searchYear = this.moment().format("YYYY");
@@ -49,6 +52,7 @@ export class AdminSchoolComponent implements OnInit {
           this.schoolService.delete(this.dataItem.key);
         }
 
+        this.presentAlertMessage("success", "ลบสำเร็จ !");
         this.modalService.dismissAll();
       }
     );
@@ -81,6 +85,14 @@ export class AdminSchoolComponent implements OnInit {
         }
       }
     );
+  }
+
+  presentAlertMessage(type: string, txt: string){
+    this.alertTxt = txt;
+    this.alertType = type;
+    this.alertStatus = true;
+
+    setTimeout(() => this.alertStatus = false, 3000);
   }
 
 }

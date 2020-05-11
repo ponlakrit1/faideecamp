@@ -39,6 +39,7 @@ declare var require: any
 export class UserRegComponent implements OnInit {
 
   @ViewChild('modalRegContent', {static: true}) modalContent: TemplateRef<any>;
+  @ViewChild('modalBookingComplted', {static: true}) modalBookingComplted: TemplateRef<any>;
 
   // Calendar
   view: CalendarView = CalendarView.Month;
@@ -61,7 +62,6 @@ export class UserRegComponent implements OnInit {
   public alertType: string;
   public loading: boolean = false;
   public alertModalStatus: boolean;
-  public alertSaveStatus: boolean;
 
   // Modal
   notEnoughModalStatus: boolean;
@@ -189,10 +189,10 @@ export class UserRegComponent implements OnInit {
 
   saveBooking(){
     // stop here if form is invalid
-    // this.submitModal = true;
-    // if (this.schoolBookingForm.invalid) {
-    //     return;
-    // }
+    this.submitModal = true;
+    if (this.schoolBookingForm.invalid) {
+        return;
+    }
 
     var eventTemp: BookingList;
     var calculateAmount: number = 0;
@@ -223,7 +223,7 @@ export class UserRegComponent implements OnInit {
 
             this.schoolService.create(this.schoolDetail);
             // this.presentAlertMessage("success", "บันทึกสำเร็จ !");
-            this.presentAlertSaveMessage();
+            // this.presentAlertSaveMessage();
             this.onResetForm();
           } else {
             this.presentAlertModalMessage();
@@ -303,7 +303,7 @@ export class UserRegComponent implements OnInit {
     this.schoolDetail.acceptCont = "y";
     
     this.modalService.dismissAll();
-    window.scroll(0,0);
+    this.modalService.open(this.modalBookingComplted, { windowClass: 'w3-animate-top' });
   }
 
   saveNotJoin(){
@@ -340,12 +340,6 @@ export class UserRegComponent implements OnInit {
     this.alertModalStatus = true;
 
     setTimeout(() => this.alertModalStatus = false, 3000);
-  }
-
-  presentAlertSaveMessage(){
-    this.alertSaveStatus = true;
-
-    setTimeout(() => this.alertSaveStatus = false, 3000);
   }
 
 }

@@ -25,7 +25,7 @@ export class BookingComponent implements OnInit {
 
   // Variable
   public dateModel: NgbDateStruct;
-  private searchYear: number;
+  public searchYear: number;
   public alertStatus: boolean;
   public alertTxt: string;
   public alertType: string;
