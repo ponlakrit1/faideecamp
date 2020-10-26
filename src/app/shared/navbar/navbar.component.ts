@@ -104,7 +104,6 @@ export class NavbarComponent implements OnInit {
                 }
             );
         } catch(error) {
-            // console.log(error);
             this.presentAlertMessage("danger", "เกิดข้อผิดพลาดระหว่างการเชื่อมต่อฐานข้อมูล");
         }
     }

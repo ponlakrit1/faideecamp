@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { InfoList } from './../data-model/info.model';
@@ -8,14 +8,19 @@ import { InfoList } from './../data-model/info.model';
   providedIn: 'root'
 })
 export class InfoService {
-  private itemsRef: AngularFireList<InfoList>;
+
+  private dbPath = '/info-list';
+
+  private itemsRef: AngularFirestoreCollection<InfoList> = null;
   private items: Observable<InfoList[]>;
 
-  constructor(private afs: AngularFireDatabase) {
-    this.itemsRef = this.afs.list<InfoList>('info-list');
+  constructor(private db: AngularFirestore) {
+    this.itemsRef = this.db.collection(this.dbPath);
     this.items = this.itemsRef.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.key, ...c.payload.val() }))
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
       )
     );
   }
@@ -24,28 +29,40 @@ export class InfoService {
     return this.items;
   }
 
-  getByCreateDate(id: string) {
-    return this.afs.list<InfoList>('info-list', ref => ref.orderByChild('createDate').equalTo(id)).snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.key, ...c.payload.val() }))
+  getAllTakeOne(): Observable<InfoList[]> {
+    this.itemsRef = this.db.collection(this.dbPath);
+
+    return this.items = this.itemsRef.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
       )
     ).pipe(take(1));
   }
 
-  create(item: InfoList) {
-    return this.itemsRef.push(item);
+  getByCreateDate(id: string) {
+    this.itemsRef = this.db.collection(this.dbPath, ref => ref.where('createDate', '==', id));
+
+    return this.items = this.itemsRef.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
+      )
+    ).pipe(take(1));
   }
- 
-  update(item: InfoList) {
-    this.itemsRef.update(item.key, item).then((value) => {
-      return value;
-    });
+
+  create(items: InfoList): any {
+    return this.itemsRef.add({ ...items });
   }
- 
-  delete(id: string) {
-    this.itemsRef.remove(id).then((value) => {
-      return value;
-    });
+
+  update(id: string, data: any): Promise<void> {
+    return this.itemsRef.doc(id).update(data);
+  }
+
+  delete(id: string): Promise<void> {
+    return this.itemsRef.doc(id).delete();
   }
 
 }

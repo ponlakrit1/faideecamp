@@ -1,5 +1,5 @@
 export class InfoList {
-    key?: string;
+    id?: string;
     title: string;
     description: string;
     createDate: string;

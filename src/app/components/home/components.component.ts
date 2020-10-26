@@ -19,7 +19,7 @@ export class ComponentsComponent implements OnInit {
     ngOnInit() {
         this.loading = true;
 
-        this.infoService.getAll().subscribe(
+        this.infoService.getAllTakeOne().subscribe(
             (data: InfoList[]) => {
               this.dataDisplay = data;
               this.loading = false;

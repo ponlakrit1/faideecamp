@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-12">
         <div class="typography-line">
-            <h3>ตารางเหตุผลที่ไม่เข้าร่วม</h3>
+            <h3 style="text-align: left;">ตารางเหตุผลที่ไม่เข้าร่วม</h3>
         </div>
     </div>
 </div>
@@ -9,19 +9,17 @@
 <table class="table table-striped">
     <thead>
     <tr>
-        <th scope="col">#</th>
         <th scope="col">ชื่อโรงเรียน</th>
         <th scope="col">เหตุผล</th>
         <th scope="col" style="width: 10%;"></th>
     </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let notjoin of dataDisplay; let i = index">
-            <th scope="row">{{ i + 1 }}</th>
+        <tr *ngFor="let notjoin of dataDisplay | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
             <td>{{ notjoin.school}}</td>
             <td>{{ notjoin.cause }}</td>
             <td>
-                <button type="button" class="btn btn-danger btn-sm pull-right" (click)="removeNotjoin(notjoin)"><i class="fa fa-trash"></i></button>
+                <button type="button" class="btn btn-danger btn-sm pull-right" (click)="openConfirmDeleteModal(notjoin)"><i class="fa fa-trash"></i></button>
             </td>
         </tr>
     </tbody>
@@ -36,3 +34,38 @@
         <option [ngValue]="15">15 หน้า</option>
     </select>
 </div>
+
+<ng-template #modalCompleted let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">แจ้งเตือน</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+      <div class="typography-line">
+        <h5>บันทึกสำเร็จ !</h5>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success btn-round" (click)="modal.dismiss('Cross click')">ตกลง</button>
+    </div>
+</ng-template>
+
+<ng-template #modalConfirmDelete let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">แจ้งเตือน</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+      <div class="typography-line">
+        <h5>คุณต้องการลบรายการนี้หรือไม่ ?</h5>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success btn-round" (click)="removeNotjoin()">ตกลง</button>
+        <button type="button" class="btn btn-danger btn-round" (click)="modal.dismiss('Cross click')">ยกเลิก</button>
+    </div>
+</ng-template>

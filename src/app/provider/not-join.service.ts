@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { NotJoinList } from './../data-model/notjoin.model';
@@ -8,14 +8,19 @@ import { NotJoinList } from './../data-model/notjoin.model';
   providedIn: 'root'
 })
 export class NotJoinService {
-  private itemsRef: AngularFireList<NotJoinList>;
+
+  private dbPath = '/notjoin-list';
+
+  private itemsRef: AngularFirestoreCollection<NotJoinList> = null;
   private items: Observable<NotJoinList[]>;
 
-  constructor(private afs: AngularFireDatabase) {
-    this.itemsRef = this.afs.list<NotJoinList>('notjoin-list');
+  constructor(private db: AngularFirestore) {
+    this.itemsRef = this.db.collection(this.dbPath);
     this.items = this.itemsRef.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.key, ...c.payload.val() }))
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
       )
     );
   }
@@ -24,27 +29,39 @@ export class NotJoinService {
     return this.items;
   }
 
-  getByCreateDate(id: string) {
-    return this.afs.list<NotJoinList>('notjoin-list', ref => ref.orderByChild('createDate').equalTo(id)).snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.key, ...c.payload.val() }))
+  getAllTakeOne(): Observable<NotJoinList[]> {
+    this.itemsRef = this.db.collection(this.dbPath);
+
+    return this.items = this.itemsRef.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
       )
     ).pipe(take(1));
   }
 
-  create(item: NotJoinList) {
-    return this.itemsRef.push(item);
+  getByCreateDate(id: string) {
+    this.itemsRef = this.db.collection(this.dbPath, ref => ref.where('createDate', '==', id));
+
+    return this.items = this.itemsRef.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
+      )
+    ).pipe(take(1));
   }
- 
-  update(item: NotJoinList) {
-    this.itemsRef.update(item.key, item).then((value) => {
-      return value;
-    });
+
+  create(items: NotJoinList): any {
+    return this.itemsRef.add({ ...items });
   }
- 
-  delete(id: string) {
-    this.itemsRef.remove(id).then((value) => {
-      return value;
-    });
+
+  update(id: string, data: any): Promise<void> {
+    return this.itemsRef.doc(id).update(data);
+  }
+
+  delete(id: string): Promise<void> {
+    return this.itemsRef.doc(id).delete();
   }
 }

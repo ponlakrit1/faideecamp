@@ -40,6 +40,7 @@ export class UserRegComponent implements OnInit {
 
   @ViewChild('modalRegContent', {static: true}) modalContent: TemplateRef<any>;
   @ViewChild('modalBookingComplted', {static: true}) modalBookingComplted: TemplateRef<any>;
+  @ViewChild('modalCompleted', {static: true}) modalCompleted: TemplateRef<any>;
 
   // Calendar
   view: CalendarView = CalendarView.Month;
@@ -176,6 +177,10 @@ export class UserRegComponent implements OnInit {
 
   openModal(): void {
     this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top' });
+  }
+
+  openCompletedModal(): void {
+    this.modalService.open(this.modalCompleted, { windowClass: 'w3-animate-top' });
   }
 
   onChangeAmountStatus(num: string): void {
@@ -321,11 +326,12 @@ export class UserRegComponent implements OnInit {
     
     // service
     this.notJoinService.create(this.notJoinDetail);
-    this.presentAlertMessage("success", "บันทึกสำเร็จ !");
     this.joinStatus = "Y";
     this.notJoinCause = "";
     this.submitted = false;
     this.schoolDetail.name = "";
+
+    this.openCompletedModal();
   }
 
   presentAlertMessage(type: string, txt: string){

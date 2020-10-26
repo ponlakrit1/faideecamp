@@ -15,9 +15,11 @@ export class AdminInfoComponent implements OnInit {
 
   @ViewChild('alertMsg', null) rteObj: RichTextEditorComponent;
   @ViewChild('modalInfo', {static: true}) modalContent: TemplateRef<any>;
+  @ViewChild('modalCompleted', {static: true}) modalCompleted: TemplateRef<any>;
+  @ViewChild('modalConfirmDelete', {static: true}) modalConfirmDelete: TemplateRef<any>;
 
   page = 1;
-  pageSize = 10;
+  pageSize = 5;
   moment = require('moment');
 
   // Table
@@ -26,9 +28,6 @@ export class AdminInfoComponent implements OnInit {
   public dataItem: InfoList;
 
   // Variable
-  public alertStatus: boolean;
-  public alertTxt: string;
-  public alertType: string;
   public mode: string;
   public descriptionData: string;
   public loading: boolean = false;
@@ -44,14 +43,17 @@ export class AdminInfoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.infoService.getAll().subscribe(
+    this.initDataTable();
+    this.initInfoFormGroup();
+  }
+
+  initDataTable(){
+    this.infoService.getAllTakeOne().subscribe(
       (data: InfoList[]) => {
         this.dataDisplay = data;
         this.dataSize = data.length;
       }
     );
-
-    this.initInfoFormGroup();
   }
 
   initInfoFormGroup(){
@@ -67,18 +69,22 @@ export class AdminInfoComponent implements OnInit {
     this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top', size: 'xl' });
   }
 
+  openCompletedModal(): void {
+    this.modalService.open(this.modalCompleted, { windowClass: 'w3-animate-top' });
+  }
+
+  openConfirmDeleteModal(): void {
+    this.modalService.open(this.modalConfirmDelete, { windowClass: 'w3-animate-top' });
+  }
+
   removeInfo(info: InfoList){
-    this.infoService.delete(info.key);
-    this.presentAlertMessage("success", "ลบกิจกรรมสำเร็จ !");
+    this.dataItem = info;
+
+    this.openConfirmDeleteModal();
   }
 
   onEditInfo(info: InfoList){
-    this.dataItem = {
-      key: info.key,
-      title: info.title,
-      description: info.description,
-      createDate: info.createDate
-    }
+    this.dataItem = info;
 
     // set temp value
     this.loading = true;
@@ -100,23 +106,45 @@ export class AdminInfoComponent implements OnInit {
     // stop here if form is invalid
     this.submitted = true;
     if (this.InfoForm.invalid) {
-        return;
+      return;
     }
 
-    this.dataItem.createDate = this.moment().format("DD/MM/YYYY");
+    this.dataItem.createDate = this.moment().format("D/MM/YYYY");
     this.dataItem.description = this.descriptionData;
 
-    if(this.mode == "I"){
-      this.infoService.create(this.dataItem).then((value) => {
-        this.presentAlertMessage("success", "บันทึกสำเร็จ !");
-        this.onResetForm();
-      });
-    } else {
-      this.infoService.update(this.dataItem);
-      this.presentAlertMessage("success", "อัพเดตสำเร็จ !");
-      this.onResetForm();
+    this.modalService.dismissAll();
+
+    this.infoService.create(this.dataItem).then((value) => {
+      this.openCompletedModal();
+      this.initDataTable();
+    });
+  }
+
+  updateInfoData(){
+    // stop here if form is invalid
+    this.submitted = true;
+    if (this.InfoForm.invalid) {
+      return;
     }
+
+    this.dataItem.description = this.descriptionData;
+
+    this.modalService.dismissAll();
+
+    this.infoService.update(this.dataItem.id, this.dataItem).then((value) => {
+      this.openCompletedModal();
+      this.initDataTable();
+    });
+  }
+
+  deleteUser(){
+    this.modalService.dismissAll();
     
+    // send to service
+    this.infoService.delete(this.dataItem.id).then((value) => {
+      this.openCompletedModal();
+      this.initDataTable();
+    });
   }
 
   onResetForm(){
@@ -127,14 +155,6 @@ export class AdminInfoComponent implements OnInit {
     this.submitted = false;
     this.InfoForm.reset();
     this.modalService.dismissAll();
-  }
-
-  presentAlertMessage(type: string, txt: string){
-    this.alertTxt = txt;
-    this.alertType = type;
-    this.alertStatus = true;
-
-    setTimeout(() => this.alertStatus = false, 3000);
   }
 
 }

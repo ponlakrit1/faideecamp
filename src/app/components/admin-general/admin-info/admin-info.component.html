@@ -9,10 +9,6 @@
     </div>
 </div>
 
-<p>
-    <ngb-alert [type]="alertType" (close)="alertStatus = false" *ngIf="alertStatus">{{ alertTxt }}</ngb-alert>
-</p>
-
 <table class="table table-striped">
     <thead>
     <tr>
@@ -54,14 +50,14 @@
     </div>
     <div class="modal-body">
 
-        <form [formGroup]="InfoForm">
+        <form [formGroup]="InfoForm" style="margin-bottom: 0px !important;">
             <div class="form-group">
 
                 <div class="row">
-                    <div class="col-3">
+                    <div class="col-3 col-text-center">
                         หัวข้อ :
                     </div>
-                    <div class="col-9">
+                    <div class="col-9 col-text-center">
                         <input type="text" 
                                 class="form-control form-control-success" 
                                 id="txt-modal-title" 
@@ -92,6 +88,42 @@
         
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-success btn-round" (click)="addInfoData()">บันทึก</button>
+        <button type="button" class="btn btn-success btn-round" *ngIf="mode == 'I'" (click)="addInfoData()">บันทึก</button>
+        <button type="button" class="btn btn-success btn-round" *ngIf="mode == 'U'" (click)="updateInfoData()">บันทึก</button>
+    </div>
+</ng-template>
+
+<ng-template #modalCompleted let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">แจ้งเตือน</h4>
+        <button type="button" class="close" aria-label="Close" (click)="onResetForm()">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+      <div class="typography-line">
+        <h5>บันทึกสำเร็จ !</h5>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success btn-round" (click)="onResetForm()">ตกลง</button>
+    </div>
+</ng-template>
+
+<ng-template #modalConfirmDelete let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">แจ้งเตือน</h4>
+        <button type="button" class="close" aria-label="Close" (click)="onResetForm()">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+      <div class="typography-line">
+        <h5>คุณต้องการลบรายการนี้หรือไม่ ?</h5>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success btn-round" (click)="deleteUser()">ตกลง</button>
+        <button type="button" class="btn btn-danger btn-round" (click)="onResetForm()">ยกเลิก</button>
     </div>
 </ng-template>

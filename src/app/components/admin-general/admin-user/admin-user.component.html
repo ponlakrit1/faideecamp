@@ -12,13 +12,13 @@
 <table class="table table-striped">
     <thead>
     <tr>
-        <th scope="col" style="width: 80%; text-align: left;">ชื่อผู้ใช้งาน</th>
+        <th scope="col" style="width: 80%; text-align: left; padding-left: 50px;">ชื่อผู้ใช้งาน</th>
         <th scope="col" style="width: 10%;"></th>
     </tr>
     </thead>
     <tbody>
         <tr *ngFor="let user of dataDisplay | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
-            <td style="text-align: left;">{{ user.username }}</td>
+            <td style="text-align: left; padding-left: 50px;">{{ user.username }}</td>
             <td class="btn-group pull-right">
                 <button type="button" class="btn btn-warning btn-sm" (click)="onEditUser(user)"><i class="fa fa-edit"></i></button>
                 <button type="button" class="btn btn-danger btn-sm" (click)="removeUser(user)"><i class="fa fa-trash"></i></button>
