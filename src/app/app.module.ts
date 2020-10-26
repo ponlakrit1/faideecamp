@@ -12,7 +12,8 @@ import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AngularFireModule } from '@angular/fire';
-import { AngularFireDatabaseModule  } from '@angular/fire/database';
+import { AngularFireDatabaseModule } from '@angular/fire/database';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { environment } from '../environments/environment.prod';
 import { NgxLoadingModule } from 'ngx-loading';
 import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
@@ -70,6 +71,7 @@ registerLocaleData(localeTh);
     CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
     AngularFireModule.initializeApp(environment.firebase, 'faideecamp'),
     AngularFireDatabaseModule,
+    AngularFirestoreModule,
     RouterModule,
     FormsModule,
     ReactiveFormsModule,

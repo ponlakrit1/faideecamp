@@ -24,3 +24,7 @@ h3 {
         opacity:1
     }
 }
+
+button[aria-label="Close"]:focus {
+    outline: none;
+}

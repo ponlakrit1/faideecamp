@@ -225,6 +225,7 @@ export class UserRegComponent implements OnInit {
             // this.presentAlertMessage("success", "บันทึกสำเร็จ !");
             // this.presentAlertSaveMessage();
             this.onResetForm();
+            this.modalService.open(this.modalBookingComplted, { windowClass: 'w3-animate-top' });
           } else {
             this.presentAlertModalMessage();
           }
@@ -303,7 +304,6 @@ export class UserRegComponent implements OnInit {
     this.schoolDetail.acceptCont = "y";
     
     this.modalService.dismissAll();
-    this.modalService.open(this.modalBookingComplted, { windowClass: 'w3-animate-top' });
   }
 
   saveNotJoin(){

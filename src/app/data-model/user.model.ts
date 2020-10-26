@@ -1,5 +1,5 @@
 export class UserList {
-  key?: string;
+  id?: string;
   username: string;
   password: string;
 

@@ -9,10 +9,6 @@
     </div>
 </div>
 
-<p>
-    <ngb-alert [type]="alertType" (close)="alertStatus = false" *ngIf="alertStatus">{{ alertTxt }}</ngb-alert>
-</p>
-
 <table class="table table-striped">
     <thead>
     <tr>
@@ -42,7 +38,7 @@
 </div>
 
 
-<ng-template #modalUserReg let-modal>
+<ng-template #modalUserReg let-modal data-target="#modal">
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">กรอกข้อมูลผู้ใช้งาน</h4>
         <button type="button" class="close" aria-label="Close" (click)="onResetUserForm()">
@@ -51,16 +47,17 @@
     </div>
     <div class="modal-body">
 
-        <form [formGroup]="userRegisterForm">
+        <form [formGroup]="userRegisterForm" style="margin-bottom: 0px !important;">
             <div class="form-group">
                 <div class="row">
-                    <div class="col-4">
+                    <div class="col-4 col-text-center">
                         ชื่อผู้ใช้งาน :
                     </div>
                     <div class="col-8">
                         <input type="text" 
                                 class="form-control form-control-success" 
                                 id="txt-modal-uid" 
+                                [attr.disabled]="mode == 'U' ? true : null"
                                 [(ngModel)]="username" 
                                 autocomplete="false"
                                 formControlName="uid" 
@@ -69,7 +66,7 @@
                 </div>
                 <br/>
                 <div class="row">
-                    <div class="col-4">
+                    <div class="col-4 col-text-center">
                         รหัสผ่าน :
                     </div>
                     <div class="col-8">
@@ -84,7 +81,7 @@
                 </div>
                 <br/>
                 <div class="row">
-                    <div class="col-4">
+                    <div class="col-4 col-text-center">
                         ยืนยันรหัสผ่าน :
                     </div>
                     <div class="col-8">
@@ -100,9 +97,49 @@
                 <br/>
             </div>
         </form>
+
+        <p>
+            <ngb-alert [type]="alertType" (close)="alertStatus = false" *ngIf="alertStatus">{{ alertTxt }}</ngb-alert>
+        </p>
         
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-success btn-round" (click)="addUser()">บันทึก</button>
+        <button type="button" class="btn btn-success btn-round" *ngIf="mode == 'I'" (click)="addUser()">บันทึก</button>
+        <button type="button" class="btn btn-success btn-round" *ngIf="mode == 'U'" (click)="updateUser()">บันทึก</button>
+    </div>
+</ng-template>
+
+<ng-template #modalCompleted let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">แจ้งเตือน</h4>
+        <button type="button" class="close" aria-label="Close" (click)="onResetUserForm()">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+      <div class="typography-line">
+        <h5>บันทึกสำเร็จ !</h5>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success btn-round" (click)="onResetUserForm()">ตกลง</button>
+    </div>
+</ng-template>
+
+<ng-template #modalConfirmDelete let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">แจ้งเตือน</h4>
+        <button type="button" class="close" aria-label="Close" (click)="onResetUserForm()">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+      <div class="typography-line">
+        <h5>คุณต้องการลบรายการนี้หรือไม่ ?</h5>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success btn-round" (click)="deleteUser()">ตกลง</button>
+        <button type="button" class="btn btn-danger btn-round" (click)="onResetUserForm()">ยกเลิก</button>
     </div>
 </ng-template>
