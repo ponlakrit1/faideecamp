@@ -16,3 +16,12 @@
         opacity:1
     }
 }
+
+button[aria-label="Close"]:focus {
+    outline: none;
+}
+
+.col-text-center {
+    display: flex;
+    align-items: center;
+}

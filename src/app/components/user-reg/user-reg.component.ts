@@ -62,7 +62,6 @@ export class UserRegComponent implements OnInit {
   public alertTxt: string;
   public alertType: string;
   public loading: boolean = false;
-  public alertModalStatus: boolean;
 
   // Modal
   notEnoughModalStatus: boolean;
@@ -166,9 +165,9 @@ export class UserRegComponent implements OnInit {
   }
 
   closeOpenMonthViewDay() {
-    this.bookingService.getByMonthAndYear(this.paddingLeftNumber(this.viewDate.getFullYear(), this.viewDate.getMonth())).subscribe(
+    this.bookingService.getByMonthAndYear(String(this.viewDate.getMonth() + 1), String(this.viewDate.getFullYear())).subscribe(
       (data: BookingList[]) => {
-        this.dataDisplay = data;
+        this.dataDisplay = data;;
 
         this.onRefreshEventCalendar();
       }
@@ -196,15 +195,15 @@ export class UserRegComponent implements OnInit {
     // stop here if form is invalid
     this.submitModal = true;
     if (this.schoolBookingForm.invalid) {
-        return;
+      return;
     }
 
-    var eventTemp: BookingList;
-    var calculateAmount: number = 0;
+    let eventTemp: BookingList;
+    let calculateAmount: number = 0;
 
     // Get bookingList from event(click)
     for (let ev of this.dataDisplay) {
-      var res = ev.eventDate.split("/");
+      let res = ev.eventDate.split("/");
       if(res[0] == String(this.eventSelected.start.getDate())){
         eventTemp = ev;
         break;
@@ -217,28 +216,33 @@ export class UserRegComponent implements OnInit {
         if(data.length > 0){
           // set new amount
           calculateAmount = Number(data[0].amount) - Number(this.schoolDetail.amount);
-          // console.log(calculateAmount);
 
           if(calculateAmount >= 0){
+            // Update booking
             eventTemp.amount = calculateAmount;
-            this.bookingService.update(eventTemp);
+            this.bookingService.update(eventTemp.id, eventTemp);
 
             this.schoolDetail.eventDate = eventTemp.eventDate;
             this.schoolDetail.year = eventTemp.year;
 
-            this.schoolService.create(this.schoolDetail);
-            // this.presentAlertMessage("success", "บันทึกสำเร็จ !");
-            // this.presentAlertSaveMessage();
-            this.onResetForm();
-            this.modalService.open(this.modalBookingComplted, { windowClass: 'w3-animate-top' });
+            this.modalService.dismissAll();
+
+            // Create school list
+            this.schoolService.create(this.schoolDetail).then((value) => {
+              this.openBookingCompleteModal();
+            });
           } else {
-            this.presentAlertModalMessage();
+            this.presentAlertMessage("danger", "จำนวนคงเหลือของกิจกรรม ไม่เพียงพอสำหรับจำนวนนักเรียน !");
           }
 
           this.onRefreshEventCalendar();
         }
       }
     );
+  }
+
+  openBookingCompleteModal(): void {
+    this.modalService.open(this.modalBookingComplted, { windowClass: 'w3-animate-top' });
   }
 
   checkBookingAmount(key: Date){
@@ -250,19 +254,6 @@ export class UserRegComponent implements OnInit {
         }
       }
     );
-  }
-
-  paddingLeftNumber(year: number, month: number): string{
-    let result = "";
-    let monthTemp = month + 1;
-
-    if(monthTemp >= 13){
-      result = "1/"+(year + 1);
-    } else {
-      result = monthTemp+"/"+year;
-    }
-
-    return result;
   }
 
   onRefreshEventCalendar(){
@@ -278,14 +269,14 @@ export class UserRegComponent implements OnInit {
           event = {
             start: startOfDay(new Date(res[2]+"-"+res[1]+"-"+res[0])),
             title: `${temp.amount}`,
-            cssClass: `${temp.key}`,
+            cssClass: `${temp.id}`,
             color: colors.red
           };
         } else {
           event = {
             start: startOfDay(new Date(res[2]+"-"+res[1]+"-"+res[0])),
             title: `${temp.amount}`,
-            cssClass: `${temp.key}`,
+            cssClass: `${temp.id}`,
             color: colors.green
           };
         }
@@ -340,12 +331,6 @@ export class UserRegComponent implements OnInit {
     this.alertStatus = true;
 
     setTimeout(() => this.alertStatus = false, 3000);
-  }
-
-  presentAlertModalMessage(){
-    this.alertModalStatus = true;
-
-    setTimeout(() => this.alertModalStatus = false, 3000);
   }
 
 }

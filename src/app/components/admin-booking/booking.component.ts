@@ -13,6 +13,8 @@ declare var require: any
 export class BookingComponent implements OnInit {
 
   @ViewChild('modalBooking', {static: true}) modalContent: TemplateRef<any>;
+  @ViewChild('modalCompleted', {static: true}) modalCompleted: TemplateRef<any>;
+  @ViewChild('modalConfirmDelete', {static: true}) modalConfirmDelete: TemplateRef<any>;
 
   page = 1;
   pageSize = 10;
@@ -65,32 +67,24 @@ export class BookingComponent implements OnInit {
     }
 
     let eventDate = (this.dateModel.day)+"/"+(this.dateModel.month)+"/"+(this.dateModel.year);
-    let month_year = (this.dateModel.month)+"/"+(this.dateModel.year);
+    let month = String(this.dateModel.month);
     let year = String(this.dateModel.year);
 
     this.bookingService.getByEventDate(eventDate).subscribe(
       (data: BookingList[]) => {
         if(data.length > 0){
-          this.presentAlertMessage("warning", "วันที่จัดกิจกรรมซ้ำ !");
-          this.onResetForm();
+          this.presentAlertMessage("danger", "วันที่จัดกิจกรรมซ้ำ !");
         } else {
-          // this.dataItem = {
-          //   amount: 60,
-          //   course: this.course,
-          //   description: this.description,
-          //   year: String(this.dateModel.year),
-          //   month_year: String(this.dateModel.month)+"/"+(String(this.dateModel.year)),
-          //   eventDate: eventDate,
-          // };
-
           this.dataItem.amount = 60;
           this.dataItem.year = year;
-          this.dataItem.month_year = month_year;
+          this.dataItem.month = month;
           this.dataItem.eventDate = eventDate;
 
+          this.modalService.dismissAll();
+
           this.bookingService.create(this.dataItem).then((value) => {
-            this.presentAlertMessage("success", "บันทึกสำเร็จ !");
-            this.onResetForm();
+            this.openCompletedModal();
+            this.searchByEventYear();
           });
         }
       }
@@ -105,16 +99,19 @@ export class BookingComponent implements OnInit {
     }
 
     let eventDate = (this.dateModel.day)+"/"+(this.dateModel.month)+"/"+(this.dateModel.year);
-    let month_year = (this.dateModel.month)+"/"+(this.dateModel.year);
+    let month = String(this.dateModel.month);
     let year = String(this.dateModel.year);
 
     this.dataItem.year = year;
-    this.dataItem.month_year = month_year;
+    this.dataItem.month = month;
     this.dataItem.eventDate = eventDate;
 
-    this.bookingService.update(this.dataItem);
-    this.presentAlertMessage("success", "อัพเดตสำเร็จ !");
-    this.onResetForm();
+    this.modalService.dismissAll();
+
+    this.bookingService.update(this.dataItem.id, this.dataItem).then((value) => {
+      this.openCompletedModal();
+      this.searchByEventYear();
+    });
   }
 
   openModal(): void {
@@ -123,6 +120,14 @@ export class BookingComponent implements OnInit {
     }
 
     this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top' });
+  }
+
+  openCompletedModal(): void {
+    this.modalService.open(this.modalCompleted, { windowClass: 'w3-animate-top' });
+  }
+
+  openConfirmDeleteModal(): void {
+    this.modalService.open(this.modalConfirmDelete, { windowClass: 'w3-animate-top' });
   }
 
   onResetForm(){
@@ -135,22 +140,24 @@ export class BookingComponent implements OnInit {
   }
 
   removeBooking(booking: BookingList){
-    this.bookingService.delete(booking.key);
-    this.presentAlertMessage("success", "ลบสำเร็จ !");
+    this.dataItem = booking;
+
+    this.openConfirmDeleteModal();
+  }
+
+  deleteBooking(){
+    this.modalService.dismissAll();
+    
+    // send to service
+    this.bookingService.delete(this.dataItem.id).then((value) => {
+      this.openCompletedModal();
+      this.searchByEventYear();
+    });
   }
 
   onEditBooking(booking: BookingList){
     this.mode = "U";
-
-    this.dataItem = {
-      key: booking.key,
-      amount: booking.amount,
-      course: booking.course,
-      description: booking.description,
-      year: booking.year,
-      month_year: booking.month_year,
-      eventDate: booking.eventDate,
-    };
+    this.dataItem = booking;
 
     var res = booking.eventDate.split("/");
     this.dateModel = {

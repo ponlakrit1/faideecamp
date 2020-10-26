@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { SchoolList } from './../data-model/school.model';
@@ -8,14 +8,19 @@ import { SchoolList } from './../data-model/school.model';
   providedIn: 'root'
 })
 export class SchoolService {
-  private itemsRef: AngularFireList<SchoolList>;
+
+  private dbPath = '/school-list';
+
+  private itemsRef: AngularFirestoreCollection<SchoolList> = null;
   private items: Observable<SchoolList[]>;
 
-  constructor(private afs: AngularFireDatabase) {
-    this.itemsRef = this.afs.list<SchoolList>('school-list');
+  constructor(private db: AngularFirestore) {
+    this.itemsRef = this.db.collection(this.dbPath);
     this.items = this.itemsRef.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.key, ...c.payload.val() }))
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
       )
     );
   }
@@ -24,28 +29,40 @@ export class SchoolService {
     return this.items;
   }
 
-  getByYear(id: string) {
-    return this.afs.list<SchoolList>('school-list', ref => ref.orderByChild('year').equalTo(id)).snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.key, ...c.payload.val() }))
+  getAllTakeOne(): Observable<SchoolList[]> {
+    this.itemsRef = this.db.collection(this.dbPath);
+
+    return this.items = this.itemsRef.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
       )
-    );
+    ).pipe(take(1));
   }
 
-  create(item: SchoolList) {
-    return this.itemsRef.push(item);
+  getByYear(id: string) {
+    this.itemsRef = this.db.collection(this.dbPath, ref => ref.where('year', '==', id));
+
+    return this.items = this.itemsRef.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
+      )
+    ).pipe(take(1));
   }
- 
-  update(item: SchoolList) {
-    this.itemsRef.update(item.key, item).then((value) => {
-      return value;
-    });
+
+  create(items: SchoolList): any {
+    return this.itemsRef.add({ ...items });
   }
- 
-  delete(id: string) {
-    this.itemsRef.remove(id).then((value) => {
-      return value;
-    });
+
+  update(id: string, data: any): Promise<void> {
+    return this.itemsRef.doc(id).update(data);
+  }
+
+  delete(id: string): Promise<void> {
+    return this.itemsRef.doc(id).delete();
   }
 
 }

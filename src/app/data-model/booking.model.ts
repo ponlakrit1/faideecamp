@@ -1,9 +1,9 @@
 export class BookingList {
-    key?: string;
+    id?: string;
     amount: number;
     course: string;
     description: string;
-    month_year: string;
+    month: string;
     eventDate: any;
     year: string
 

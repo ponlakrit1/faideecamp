@@ -33,7 +33,6 @@
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                      <th scope="col">#</th>
                       <th scope="col">ชื่อโรงเรียน</th>
                       <th scope="col">หลักสูตร</th>
                       <th scope="col">จำนวน</th>
@@ -42,8 +41,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let school of dataDisplay; let i = index">
-                            <th scope="row">{{ i + 1 }}</th>
+                        <tr *ngFor="let school of dataDisplay | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
                             <td>{{ school.name}}</td>
                             <td>{{ school.course == '1' ? '9 - 12 ปี' : '13 - 15 ปี' }}</td>
                             <td>{{ school.amount }} คน</td>
@@ -128,6 +126,7 @@
                 <div class="col-4">ครูผู้ประสานงาน(รอง) :</div>
                 <div class="col-8">{{ dataItem.teacherSubName }} ({{ dataItem.teacherSubTel }})</div>
             </div>
+            <br/>
             <div class="row">
                 <div class="col-4">Line ID :</div>
                 <div class="col-8">{{ dataItem.teacherSubTel }}</div>
@@ -166,6 +165,23 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-success btn-round" (click)="removeSchool()">ตกลง</button>
-        <button type="button" class="btn btn-danger btn-round" (click)="modal.dismiss('Cross click')">ปิด</button>
+        <button type="button" class="btn btn-danger btn-round" (click)="modal.dismiss('Cross click')">ยกเลิก</button>
+    </div>
+</ng-template>
+
+<ng-template #modalCompleted let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">แจ้งเตือน</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+      <div class="typography-line">
+        <h5>บันทึกสำเร็จ !</h5>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success btn-round" (click)="modal.dismiss('Cross click')">ตกลง</button>
     </div>
 </ng-template>

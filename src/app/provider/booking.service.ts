@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { map, take } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { BookingList } from './../data-model/booking.model';
@@ -8,14 +8,19 @@ import { BookingList } from './../data-model/booking.model';
   providedIn: 'root'
 })
 export class BookingService {
-  private itemsRef: AngularFireList<BookingList>;
+
+  private dbPath = '/booking-list';
+
+  private itemsRef: AngularFirestoreCollection<BookingList> = null;
   private items: Observable<BookingList[]>;
 
-  constructor(private afs: AngularFireDatabase) {
-    this.itemsRef = this.afs.list<BookingList>('booking-list');
+  constructor(private db: AngularFirestore) {
+    this.itemsRef = this.db.collection(this.dbPath);
     this.items = this.itemsRef.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.key, ...c.payload.val() }))
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
       )
     );
   }
@@ -24,52 +29,64 @@ export class BookingService {
     return this.items;
   }
 
-  getByMonthAndYear(id: string) {
-    return this.afs.list<BookingList>('booking-list', ref => ref.orderByChild('month_year').equalTo(id)).snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.key, ...c.payload.val() }))
+  getAllTakeOne(): Observable<BookingList[]> {
+    this.itemsRef = this.db.collection(this.dbPath);
+
+    return this.items = this.itemsRef.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
       )
-    );
+    ).pipe(take(1));
+  }
+
+  getByMonthAndYear(month: string, year: string) {
+    this.itemsRef = this.db.collection(this.dbPath, ref => ref.where('month', '==', String(month)).where('year', '==', year));
+
+    return this.items = this.itemsRef.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
+      )
+    ).pipe(take(1));
   }
 
   getByYear(id: string) {
-    return this.afs.list<BookingList>('booking-list', ref => ref.orderByChild('year').equalTo(id)).snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.key, ...c.payload.val() }))
+    this.itemsRef = this.db.collection(this.dbPath, ref => ref.where('year', '==', id));
+
+    return this.items = this.itemsRef.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
       )
-    );
+    ).pipe(take(1));
   }
 
   getByEventDate(id: string) {
-    return this.afs.list<BookingList>('booking-list', ref => ref.orderByChild('eventDate').equalTo(id)).snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.key, ...c.payload.val() }))
+    this.itemsRef = this.db.collection(this.dbPath, ref => ref.where('eventDate', '==', id));
+
+    return this.items = this.itemsRef.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
       )
     ).pipe(take(1));
   }
 
-  getByKey(id: string) {
-    return this.afs.list<BookingList>('booking-list', ref => ref.orderByChild('key').equalTo(id)).snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.key, ...c.payload.val() }))
-      )
-    ).pipe(take(1));
+  create(items: BookingList): any {
+    return this.itemsRef.add({ ...items });
   }
 
-  create(item: BookingList) {
-    return this.itemsRef.push(item);
+  update(id: string, data: any): Promise<void> {
+    return this.itemsRef.doc(id).update(data);
   }
- 
-  update(item: BookingList) {
-    this.itemsRef.update(item.key, item).then((value) => {
-      return value;
-    });
-  }
- 
-  delete(id: string) {
-    this.itemsRef.remove(id).then((value) => {
-      return value;
-    });
+
+  delete(id: string): Promise<void> {
+    return this.itemsRef.doc(id).delete();
   }
 
 }

@@ -15,6 +15,7 @@ export class AdminSchoolComponent implements OnInit {
 
   @ViewChild('modalSchoolDetail', {static: true}) modalContent: TemplateRef<any>;
   @ViewChild('modalComfirmRemoveSchool', {static: true}) modalRemove: TemplateRef<any>;
+  @ViewChild('modalCompleted', {static: true}) modalCompleted: TemplateRef<any>;
 
   page = 1;
   pageSize = 10;
@@ -45,15 +46,18 @@ export class AdminSchoolComponent implements OnInit {
         if(data.length > 0){
           this.bookingKey = data[0];
 
-          // calculate
+          // Update booking
           this.bookingKey.amount = Number(this.bookingKey.amount) + Number(this.dataItem.amount);
+          this.bookingService.update(this.bookingKey.id, this.bookingKey);
 
-          this.bookingService.update(this.bookingKey);
-          this.schoolService.delete(this.dataItem.key);
+          this.modalService.dismissAll();
+
+          // Remove school
+          this.schoolService.delete(this.dataItem.id).then((value) => {
+            this.openCompletedModal();
+            this.searchByEventYear();
+          });
         }
-
-        this.presentAlertMessage("success", "ลบสำเร็จ !");
-        this.modalService.dismissAll();
       }
     );
   }
@@ -65,6 +69,10 @@ export class AdminSchoolComponent implements OnInit {
 
   openModal(): void {
     this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top', size: 'lg' });
+  }
+
+  openCompletedModal(): void {
+    this.modalService.open(this.modalCompleted, { windowClass: 'w3-animate-top' });
   }
 
   openModalRemove(school: SchoolList): void {

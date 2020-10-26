@@ -37,3 +37,12 @@ pre {
 .cell-h100 {
     height: 100% !important;
 }
+
+button[aria-label="Close"]:focus {
+    outline: none;
+}
+
+.col-text-center {
+    display: flex;
+    align-items: center;
+}
