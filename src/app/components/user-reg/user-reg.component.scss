@@ -36,6 +36,8 @@ pre {
 
 .cell-h100 {
     height: 100% !important;
+    min-height: 100px !important;
+    min-width: 158px !important;
 }
 
 button[aria-label="Close"]:focus {

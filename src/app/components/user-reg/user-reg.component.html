@@ -11,7 +11,7 @@
         <form [formGroup]="notJoinForm">
 
           <div class="row">
-            <div class="col-2">
+            <div class="col-2 col-text-center">
               <h5>ชื่อโรงเรียน :</h5>
             </div>
             <div class="col-10">
@@ -343,13 +343,26 @@
             เขตพื้นที่การศึกษา
           </div>
           <div class="col-9">
-            <input type="text" 
+            <!-- <input type="text" 
                   class="form-control form-control-success" 
                   id="txt-modal-area" 
                   [(ngModel)]="schoolDetail.area" 
                   name="schoolDetail-area"
                   formControlName="area"
-                  [ngClass]="{ 'is-invalid': submitModal && f.area.errors }">
+                  [ngClass]="{ 'is-invalid': submitModal && f.area.errors }"> -->
+            <select 
+              class="form-control form-control-success" 
+              id="txt-modal-area" 
+              name="schoolDetail-area" 
+              formControlName="area" 
+              [ngClass]="{ 'is-invalid': submitModal && f.area.errors }"
+              [(ngModel)]="schoolDetail.area" >
+              <option value="OBEC1">สำนักงานเขตพื้นที่การศึกษาเขต 1</option>
+              <option value="OBEC2">สำนักงานเขตพื้นที่การศึกษาเขต 2</option>
+              <option value="OBEC3">สำนักงานเขตพื้นที่การศึกษาเขต 3</option>
+              <option value="OBEC4">สำนักงานเขตพื้นที่การศึกษาเขต 4</option>
+              <option value="SPM36">สพม. 36</option>
+            </select>
           </div>
         </div>
         <br/>
@@ -365,13 +378,13 @@
                 <span class="form-check-sign"></span>
               </label>
             </div>
-            <div class="form-check-radio">
+            <!-- <div class="form-check-radio">
               <label class="form-check-label">
                 <input class="form-check-input" type="radio" name="schoolAmount1" id="opt-amount4" value="60" [(ngModel)]="schoolDetail.amount" (change)="onChangeAmountStatus('60')" formControlName="schoolAmount1">
                   60 คน
                 <span class="form-check-sign"></span>
               </label>
-            </div>
+            </div> -->
             <div class="form-check-radio">
               <label class="form-check-label">
                 <input class="form-check-input" type="radio" name="schoolAmount1" id="opt-amount5" value="99" (change)="onChangeAmountStatus('99')">
@@ -393,20 +406,20 @@
         <br/>
         <div class="row">
           <div class="col-3" style="color: red;">
-            * ยินยอมทำโครงการต่อเนื่องหรือไม่ ?
+            * การขยายผลโครงการต่อเนื่อง
           </div>
           <div class="col-9">
             <div class="form-check-radio">
               <label class="form-check-label">
                 <input class="form-check-input" type="radio" name="acceptCont" id="opt-acceptCont1" value="y" [(ngModel)]="schoolDetail.acceptCont" formControlName="acceptCont">
-                  ยินยอม
+                  ขยายผลในโรงเรียน
                 <span class="form-check-sign"></span>
               </label>
             </div>
             <div class="form-check-radio">
               <label class="form-check-label">
                 <input class="form-check-input" type="radio" name="acceptCont" id="opt-acceptCont2" value="n" [(ngModel)]="schoolDetail.acceptCont" formControlName="acceptCont">
-                  ไม่ยินยอม
+                  ขยายผลโรงเรียนใกล้เคียง
                 <span class="form-check-sign"></span>
               </label>
             </div>
@@ -436,7 +449,10 @@
   <div class="modal-body">
     <div class="typography-line">
       <h5>บันทึกสำเร็จ !</h5>
-      <h5 style="color: rgb(255, 0, 0)">* ทางเราจะส่งผลการลงทะเบียนผ่านอีเมล์ของโรงเรียน</h5>
+      <h5 style="color: rgb(255, 0, 0)">* แอดไลน์ 'ประสานโครงการปี64' เพื่อยืนยันการลงทะเบียน</h5>
+      <div style="display: flex; justify-content: center;">
+        <img src="assets/img/line-qr.jpg" width="200" height="200">
+      </div>
     </div>
   </div>
   <div class="modal-footer">
@@ -464,10 +480,12 @@
 <!-- Cel templete -->
 <ng-template #customCellTemplate let-day="day" let-locale="locale">
   <div class="cell-h100" *ngIf="day.events.length > 0">
-    <div class="cal-cell-top cell-h100" [style.background-color] = "day.badgeTotal > 0 && day.events[0].color.primary == '#00b300' ? '#77dd77' : '#ff6961'">
-      <span class="cal-day-number">{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span>
-      <span class="cal-day-badge" *ngIf="day.events[0].title != '0'">เหลือ {{day.events[0].title}} คน</span>
-    </div>
+    <angular-tooltip tooltip-text={{day.events[0].schoolText}} tooltip-effect="slide" tooltip-direction="bottom">
+      <div class="cal-cell-top cell-h100" [style.background-color] = "day.badgeTotal > 0 && day.events[0].color.primary == '#00b300' ? '#77dd77' : '#ff6961'">
+        <span class="cal-day-number">{{ day.date | calendarDate:'monthViewDayNumber':locale }}</span>
+        <span class="cal-day-badge" *ngIf="day.events[0].title != '0'">เหลือ {{day.events[0].title}} คน</span>
+      </div>
+    </angular-tooltip>
   </div>
 
   <div class="cell-h100" *ngIf="day.events.length == 0">
@@ -478,3 +496,7 @@
 </ng-template>
 
 <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
+
+<ng-template #HtmlContent>
+  <p>Hello i'm a <strong>bold</strong> text!</p>
+</ng-template>

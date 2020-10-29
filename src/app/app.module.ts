@@ -20,6 +20,7 @@ import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor'
 import { ToolbarService, LinkService, ImageService, HtmlEditorService } from '@syncfusion/ej2-angular-richtexteditor';
 import { NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { CustomDateParserFormatter } from "./provider/CustomDateParserFormatte";
+import { AngularTooltipModule } from '@gustafguner/angular-tooltip';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
@@ -76,7 +77,8 @@ registerLocaleData(localeTh);
     FormsModule,
     ReactiveFormsModule,
     NgxLoadingModule,
-    RichTextEditorAllModule
+    RichTextEditorAllModule,
+    AngularTooltipModule
   ],
   providers: [
     AuthGuardService,

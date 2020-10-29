@@ -53,6 +53,30 @@ export class SchoolService {
     ).pipe(take(1));
   }
 
+  getByYearAndSchoolArea(year: string, area: string) {
+    this.itemsRef = this.db.collection(this.dbPath, ref => ref.where('year', '==', year).where('area', '==', area));
+
+    return this.items = this.itemsRef.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
+      )
+    ).pipe(take(1));
+  }
+
+  getByEventDate(id: string) {
+    this.itemsRef = this.db.collection(this.dbPath, ref => ref.where('eventDate', '==', id));
+
+    return this.items = this.itemsRef.snapshotChanges().pipe(
+      map(changes =>
+        changes.map(c =>
+          ({ id: c.payload.doc.id, ...c.payload.doc.data() })
+        )
+      )
+    ).pipe(take(1));
+  }
+
   create(items: SchoolList): any {
     return this.itemsRef.add({ ...items });
   }

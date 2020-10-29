@@ -28,12 +28,14 @@ export class AdminSchoolComponent implements OnInit {
   dataSize: number = 0;
 
   public searchYear: number;
+  public areaText: string;
   public alertStatus: boolean;
   public alertTxt: string;
   public alertType: string;
 
   constructor(private modalService: NgbModal, private schoolService: SchoolService, private bookingService: BookingService) {
     this.searchYear = this.moment().format("YYYY");
+    this.areaText = "";
   }
 
   ngOnInit() {
@@ -82,17 +84,31 @@ export class AdminSchoolComponent implements OnInit {
   }
 
   searchByEventYear(){
-    this.schoolService.getByYear(String(this.searchYear)).subscribe(
-      (data: SchoolList[]) => {
-        if(data.length > 0){
-          this.dataDisplay = data;
-          this.dataSize = data.length;
-        } else {
-          this.dataDisplay = [];
-          this.dataSize = 0;
+    if(this.areaText == null || this.areaText == ""){
+      this.schoolService.getByYear(String(this.searchYear)).subscribe(
+        (data: SchoolList[]) => {
+          if(data.length > 0){
+            this.dataDisplay = data;
+            this.dataSize = data.length;
+          } else {
+            this.dataDisplay = [];
+            this.dataSize = 0;
+          }
         }
-      }
-    );
+      );
+    } else {
+      this.schoolService.getByYearAndSchoolArea(String(this.searchYear), this.areaText).subscribe(
+        (data: SchoolList[]) => {
+          if(data.length > 0){
+            this.dataDisplay = data;
+            this.dataSize = data.length;
+          } else {
+            this.dataDisplay = [];
+            this.dataSize = 0;
+          }
+        }
+      );
+    }
   }
 
   presentAlertMessage(type: string, txt: string){

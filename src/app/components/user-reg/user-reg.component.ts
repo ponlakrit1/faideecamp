@@ -167,7 +167,7 @@ export class UserRegComponent implements OnInit {
   closeOpenMonthViewDay() {
     this.bookingService.getByMonthAndYear(String(this.viewDate.getMonth() + 1), String(this.viewDate.getFullYear())).subscribe(
       (data: BookingList[]) => {
-        this.dataDisplay = data;;
+        this.dataDisplay = data;
 
         this.onRefreshEventCalendar();
       }
@@ -220,6 +220,10 @@ export class UserRegComponent implements OnInit {
           if(calculateAmount >= 0){
             // Update booking
             eventTemp.amount = calculateAmount;
+            if(eventTemp.eventText == null){
+              eventTemp.eventText = "";
+            }
+            eventTemp.eventText += " "+this.schoolDetail.name;
             this.bookingService.update(eventTemp.id, eventTemp);
 
             this.schoolDetail.eventDate = eventTemp.eventDate;
@@ -235,7 +239,8 @@ export class UserRegComponent implements OnInit {
             this.presentAlertMessage("danger", "จำนวนคงเหลือของกิจกรรม ไม่เพียงพอสำหรับจำนวนนักเรียน !");
           }
 
-          this.onRefreshEventCalendar();
+          // this.onRefreshEventCalendar();
+          this.closeOpenMonthViewDay();
         }
       }
     );
@@ -270,6 +275,7 @@ export class UserRegComponent implements OnInit {
             start: startOfDay(new Date(res[2]+"-"+res[1]+"-"+res[0])),
             title: `${temp.amount}`,
             cssClass: `${temp.id}`,
+            schoolText: temp.eventText,
             color: colors.red
           };
         } else {
@@ -277,6 +283,7 @@ export class UserRegComponent implements OnInit {
             start: startOfDay(new Date(res[2]+"-"+res[1]+"-"+res[0])),
             title: `${temp.amount}`,
             cssClass: `${temp.id}`,
+            schoolText: temp.eventText,
             color: colors.green
           };
         }

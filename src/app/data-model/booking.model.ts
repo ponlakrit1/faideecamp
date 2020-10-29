@@ -7,6 +7,8 @@ export class BookingList {
     eventDate: any;
     year: string
 
+    eventText: any;
+    
     constructor() {
         this.course = "";
     }

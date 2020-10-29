@@ -14,18 +14,39 @@
 
                 <div class="row">
                     <div class="col-2">
-                        <input type="number" 
+                        <div style="display:flex; flex-direction: row; justify-content: center; align-items: center">
+                            <span style="font-size: 18px;">ปี&nbsp;&nbsp;&nbsp;</span>
+                            <input type="number" 
+                                class="form-control form-control-success" 
+                                name="txt-year"
+                                id="txt-year" 
+                                [(ngModel)]="searchYear">
+                        </div>
+                    </div>
+                    <div class="col-2" style="display: flex; justify-content: center; align-items: center">
+                        <span style="font-size: 18px;">เขตพื้นที่การศึกษา&nbsp;&nbsp;&nbsp;</span>
+                    </div>
+                    <div class="col-4">
+                        <select 
                             class="form-control form-control-success" 
-                            id="txt-modal-desc" 
-                            [(ngModel)]="searchYear">
+                            id="txt-modal-area" 
+                            name="schoolDetail-area"
+                            [(ngModel)]="areaText" >
+                            <option selected value="">ทั้งหมด</option>
+                            <option value="OBEC1">สำนักงานเขตพื้นที่การศึกษาเขต 1</option>
+                            <option value="OBEC2">สำนักงานเขตพื้นที่การศึกษาเขต 2</option>
+                            <option value="OBEC3">สำนักงานเขตพื้นที่การศึกษาเขต 3</option>
+                            <option value="OBEC4">สำนักงานเขตพื้นที่การศึกษาเขต 4</option>
+                            <option value="SPM36">สพม. 36</option>
+                        </select>
                     </div>
                     <div class="col-2">
-                        <button type="button" class="btn btn-success btn-round pull-left" (click)="searchByEventYear()"><i class="fa fa-search"></i> ค้นหา</button>
                     </div>
-                    <div class="col-8">
+                    <div class="col-2">
+                        <button type="button" class="btn btn-success btn-round pull-right" (click)="searchByEventYear()"><i class="fa fa-search"></i> ค้นหา</button>
                     </div>
                 </div>
-
+                <br/>
                 <p>
                     <ngb-alert [type]="alertType" (close)="alertStatus = false" *ngIf="alertStatus">{{ alertTxt }}</ngb-alert>
                 </p>
@@ -134,14 +155,20 @@
             <br/>
             <div class="row">
                 <div class="col-4">สำนักงานเขต :</div>
-                <div class="col-8">{{ dataItem.area }}</div>
+                <div class="col-8">
+                    <span *ngIf="dataItem.area == 'OBEC1'">สำนักงานเขตพื้นที่การศึกษาเขต 1</span>
+                    <span *ngIf="dataItem.area == 'OBEC2'">สำนักงานเขตพื้นที่การศึกษาเขต 2</span>
+                    <span *ngIf="dataItem.area == 'OBEC3'">สำนักงานเขตพื้นที่การศึกษาเขต 3</span>
+                    <span *ngIf="dataItem.area == 'OBEC4'">สำนักงานเขตพื้นที่การศึกษาเขต 4</span>
+                    <span *ngIf="dataItem.area == 'SPM36'">สพม. 36</span>
+                </div>
             </div>
             <br/>
             <div class="row">
-                <div class="col-4">ยินยอมที่จะทำโครงการต่อเนื่อง :</div>
+                <div class="col-4">การขยายผลโครงการต่อเนื่อง :</div>
                 <div class="col-8">
-                    <span *ngIf="dataItem.acceptCont == 'y'">ยินยอม</span>
-                    <span *ngIf="dataItem.acceptCont == 'n'">ไม่ยินยอม</span>
+                    <span *ngIf="dataItem.acceptCont == 'y'">ขยายผลในโรงเรียน</span>
+                    <span *ngIf="dataItem.acceptCont == 'n'">ขยายผลโรงเรียนใกล้เคียง</span>
                 </div>
             </div>
             <br/>
