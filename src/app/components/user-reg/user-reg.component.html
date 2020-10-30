@@ -406,6 +406,40 @@
         <br/>
         <div class="row">
           <div class="col-3" style="color: red;">
+            * เคยเข้าร่วมกิจกรรมค่ายเด็กใฝ่ดีแล้ว
+          </div>
+          <div class="col-9">
+            <div class="form-check-radio">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="againFlag" id="opt-againFlag1" value="n" [(ngModel)]="schoolDetail.againFlag" formControlName="againFlag">
+                  ยังไม่เคย
+                <span class="form-check-sign"></span>
+              </label>
+            </div>
+            <div class="form-check-radio">
+              <label class="form-check-label">
+                <input class="form-check-input" type="radio" name="againFlag" id="opt-againFlag2" value="y" [(ngModel)]="schoolDetail.againFlag" formControlName="againFlag">
+                  เคย
+                <span class="form-check-sign"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-3 col-text-center"></div>
+          <div class="col-9">
+            <input type="text" 
+                  placeholder="หมายเหตุ: ทำไมถึงสนใจค่ายเด็กใฝ่ดี"
+                  class="form-control form-control-success" 
+                  id="txt-modal-school-againRemark" 
+                  [(ngModel)]="schoolDetail.againRemark" 
+                  name="schoolDetail-againRemark"
+                  formControlName="againRemark">
+          </div>
+        </div>
+        <br/>
+        <div class="row">
+          <div class="col-3" style="color: red;">
             * การขยายผลโครงการต่อเนื่อง
           </div>
           <div class="col-9">

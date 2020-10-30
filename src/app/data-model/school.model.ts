@@ -16,4 +16,7 @@ export class SchoolList {
     course: string;
     eventDate: string;
     year: string;
+
+    againFlag: string;
+    againReamrk: string;
 }

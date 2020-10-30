@@ -100,6 +100,7 @@ export class UserRegComponent implements OnInit {
     this.schoolDetail.course = "1";
     this.schoolDetail.amount = "30";
     this.schoolDetail.acceptCont = "y";
+    this.schoolDetail.againFlag = "n";
 
     this.initSchoolFormGroup();
     this.initNotJoinFormGroup();
@@ -120,6 +121,8 @@ export class UserRegComponent implements OnInit {
       schoolAmount1: [''],
       area: ['', Validators.required],
       acceptCont: ['', Validators.required],
+      againFlag: [''],
+      againRemark: [''],
     });
   }
 
@@ -313,6 +316,7 @@ export class UserRegComponent implements OnInit {
     this.schoolDetail.course = "1";
     this.schoolDetail.amount = "30";
     this.schoolDetail.acceptCont = "y";
+    this.schoolDetail.againFlag = "n";
     
     this.modalService.dismissAll();
   }

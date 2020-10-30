@@ -165,6 +165,19 @@
             </div>
             <br/>
             <div class="row">
+                <div class="col-4">เคยเข้าร่วมกิจกรรมค่ายเด็กใฝ่ดีแล้ว :</div>
+                <div class="col-8">
+                    <span *ngIf="dataItem.againFlag == 'y'">เคย</span>
+                    <span *ngIf="dataItem.againFlag == 'n'">ยังไม่เคย</span>
+                </div>
+            </div>
+            <br/>
+            <div class="row">
+                <div class="col-4">หมายเหตุ :</div>
+                <div class="col-8">{{ dataItem.againRemark }}</div>
+            </div>
+            <br/>
+            <div class="row">
                 <div class="col-4">การขยายผลโครงการต่อเนื่อง :</div>
                 <div class="col-8">
                     <span *ngIf="dataItem.acceptCont == 'y'">ขยายผลในโรงเรียน</span>
