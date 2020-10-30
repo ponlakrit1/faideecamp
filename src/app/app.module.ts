@@ -14,6 +14,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireStorageModule  } from '@angular/fire/storage';
 import { environment } from '../environments/environment.prod';
 import { NgxLoadingModule } from 'ngx-loading';
 import { RichTextEditorAllModule } from '@syncfusion/ej2-angular-richtexteditor';
@@ -78,7 +79,8 @@ registerLocaleData(localeTh);
     ReactiveFormsModule,
     NgxLoadingModule,
     RichTextEditorAllModule,
-    AngularTooltipModule
+    AngularTooltipModule,
+    AngularFireStorageModule
   ],
   providers: [
     AuthGuardService,

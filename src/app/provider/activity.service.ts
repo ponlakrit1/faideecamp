@@ -7,7 +7,7 @@ import { ActivityList } from '../data-model/activity.model';
 @Injectable({
   providedIn: 'root'
 })
-export class NotJoinService {
+export class ActivityService {
 
   private dbPath = '/activity-list';
 

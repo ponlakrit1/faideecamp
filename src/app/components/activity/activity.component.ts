@@ -3,6 +3,7 @@ import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ActivityList } from './../../data-model/activity.model';
+import { ActivityService } from './../../provider/activity.service';
 
 @Component({
   selector: 'app-activity',
@@ -11,26 +12,18 @@ import { ActivityList } from './../../data-model/activity.model';
 })
 export class ActivityComponent implements OnInit {
 
-  itemsRefDisplay: AngularFireList<any>;
-  itemsDisplay: Observable<any[]>;
   dataDisplay: ActivityList[];
 
-  constructor(private db: AngularFireDatabase) {
-    // Set firebase
-    this.itemsRefDisplay = this.db.list(`activity-list`);
-    this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
-        map(changes => 
-            changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-        )
+  constructor(private activityService: ActivityService) {
+    this.activityService.getAllTakeOne().subscribe(
+      (data: ActivityList[]) => {
+        this.dataDisplay = data;
+      }
     );
   }
 
   ngOnInit() {
-    this.itemsDisplay.subscribe(
-        (data: ActivityList[]) => {
-          this.dataDisplay = data;
-        }
-    );
+
   }
 
 }

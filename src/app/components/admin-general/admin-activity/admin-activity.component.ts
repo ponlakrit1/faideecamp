@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { AngularFireDatabase, AngularFireList } from '@angular/fire/database';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { NgbModal, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActivityList } from './../../../data-model/activity.model';
+import { v4 as uuidv4 } from 'uuid';
+import { AngularFireStorage, AngularFireUploadTask, AngularFireStorageReference } from '@angular/fire/storage';
+import { finalize } from 'rxjs/operators';
+import { ActivityService } from './../../../provider/activity.service';
 
 declare var require: any
 @Component({
@@ -14,7 +16,8 @@ declare var require: any
 export class AdminActivityComponent implements OnInit {
 
   @ViewChild('modalActivity', {static: true}) modalContent: TemplateRef<any>;
-  @ViewChild('modalActivityComplted', {static: true}) modalCompleted: TemplateRef<any>;
+  @ViewChild('modalCompleted', {static: true}) modalCompleted: TemplateRef<any>;
+  @ViewChild('modalConfirmDelete', {static: true}) modalConfirmDelete: TemplateRef<any>;
 
   page = 1;
   pageSize = 10;
@@ -22,30 +25,29 @@ export class AdminActivityComponent implements OnInit {
 
   dataItem: ActivityList;
 
-  itemsRef: AngularFireList<any>;
-  items: Observable<any[]>;
-  itemsRefDisplay: AngularFireList<any>;
-  itemsDisplay: Observable<any[]>;
   dataDisplay: ActivityList[];
   dataSize: number = 0;
 
   title: string;
   path: string[] = [];
+  submitted = false;
+  public loading: boolean = false;
 
-  constructor(private db: AngularFireDatabase, private modalService: NgbModal) {
-    // Set firebase
-    this.itemsRefDisplay = this.db.list(`activity-list`);
-    this.itemsDisplay = this.itemsRefDisplay.snapshotChanges().pipe(
-      map(changes => 
-        changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
-      )
-    );
+  selectedFile: File = null;
+  task: AngularFireUploadTask;
+  ref: AngularFireStorageReference;
+  downloadURL: Observable<string>;
 
+  constructor(private modalService: NgbModal, private storage: AngularFireStorage, private activityService: ActivityService) {
     this.addActPath();
   }
 
   ngOnInit() {
-    this.itemsDisplay.subscribe(
+    this.initDataTable();
+  }
+
+  initDataTable(){
+    this.activityService.getAllTakeOne().subscribe(
       (data: ActivityList[]) => {
         this.dataDisplay = data;
         this.dataSize = data.length;
@@ -57,37 +59,56 @@ export class AdminActivityComponent implements OnInit {
     this.modalService.open(this.modalContent, { windowClass: 'w3-animate-top' });
   }
 
-  openModalSuccess(): void {
-    this.modalService.open(this.modalCompleted, { windowClass: 'w3-animate-top' });
-  }
-
   removeAct(act: ActivityList){
-    this.itemsRef = this.db.list(`activity-list`);
-    this.itemsRef.remove(act.key).then((value) => {
-      console.log(value);
-    });
+    this.dataItem = act;
+
+    this.openConfirmDeleteModal();
   }
 
   addInfoData(){
+    this.submitted = true;
+    if(this.title == null || this.title == ""){
+      return;
+    }
+
+    this.path.pop();
+
     this.dataItem = {
       title: this.title,
       path: this.path
     };
 
-    // Set firebase
-    this.itemsRef = this.db.list(`activity-list`);
-    this.itemsRef.push(this.dataItem).then((value) => {
-      this.onResetUserForm();
-      this.modalService.dismissAll();
+    this.modalService.dismissAll();
 
-      this.openModalSuccess();
+    this.activityService.create(this.dataItem).then((value) => {
+      this.openCompletedModal();
+      this.initDataTable();
     });
   }
 
-  onResetUserForm(){
+  deleteActivity(){
+    this.modalService.dismissAll();
+    
+    // send to service
+    this.activityService.delete(this.dataItem.id).then((value) => {
+      this.openCompletedModal();
+      this.initDataTable();
+    });
+  }
+
+  openCompletedModal(): void {
+    this.modalService.open(this.modalCompleted, { windowClass: 'w3-animate-top' });
+  }
+
+  openConfirmDeleteModal(): void {
+    this.modalService.open(this.modalConfirmDelete, { windowClass: 'w3-animate-top' });
+  }
+
+  onResetForm(){
     this.title = null;
     this.path = [];
 
+    this.modalService.dismissAll();
     this.addActPath();
   }
 
@@ -95,13 +116,37 @@ export class AdminActivityComponent implements OnInit {
     this.path.push("");
   }
 
-  closeModal(){
-    this.modalService.dismissAll();
-    this.onResetUserForm();
-  }
+  upload(event){
+    this.loading = true;
 
-  removeActPath(i: number){
-    this.path.splice(i, 1);
+    try {
+      this.selectedFile = event.target.files[0];
+
+      const randomId = uuidv4();
+      this.ref = this.storage.ref(randomId);
+      this.ref.put(event.target.files[0]).snapshotChanges().pipe(
+        finalize(() => {
+          this.downloadURL = this.ref.getDownloadURL();
+          this.downloadURL.subscribe(url => {
+            if(url) {
+              this.path[this.path.length - 1] = url;
+              this.addActPath();
+            }
+            // console.log(this.urlTxt);
+          });
+        })
+      ).subscribe(url => {
+        if(url) {
+          // console.log(url);
+          this.loading = false;
+          this.selectedFile = null;
+        }
+      });
+    } catch(error) {
+      console.log("เกิดข้อผิดพลาด จากการอัพโหลดรูป");
+      this.loading = false;
+      this.selectedFile = null;
+    }
   }
 
 }

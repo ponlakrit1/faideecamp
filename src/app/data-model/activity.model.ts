@@ -1,5 +1,5 @@
 export class ActivityList {
-    key?: string;
+    id?: string;
     title: string;
     path: string[];
 }

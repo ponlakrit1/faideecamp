@@ -12,15 +12,13 @@
 <table class="table table-striped">
     <thead>
     <tr>
-      <th scope="col">#</th>
       <th scope="col">หัวข้อ</th>
       <th scope="col">จำนวนรูป</th>
       <th scope="col" style="width: 10%;"></th>
     </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let act of dataDisplay; let i = index">
-            <th scope="row">{{ i + 1 }}</th>
+        <tr *ngFor="let act of dataDisplay | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize">
             <td>{{ act.title }}</td>
             <td>{{ act.path.length }}</td>
             <td>
@@ -43,28 +41,43 @@
 <ng-template #modalActivity let-modal>
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">กรอกรายละเอียด</h4>
-        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+        <button type="button" class="close" aria-label="Close" (click)="onResetForm()">
         <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="modal-body">
-
         <div class="form-group">
-
             <div class="row">
                 <div class="col-3">
                     หัวข้อ :
                 </div>
                 <div class="col-9">
-                    <input type="text" class="form-control form-control-success" id="txt-modal-title" [(ngModel)]="title" autocomplete="false">
+                    <input 
+                        type="text" 
+                        class="form-control form-control-success" 
+                        id="txt-modal-title" 
+                        [(ngModel)]="title" 
+                        autocomplete="false"
+                        [ngClass]="{ 'is-invalid': submitted && (title == '' || title == null) }">
                 </div>
             </div>
             <br/>
+            <!-- <div class="row">
+                <div class="col-3">
+                    รูปที่ 1
+                </div>
+                <div class="col-9">
+                    <div style="text-overflow: ellipsis; overflow: hidden;">
+                        <span>test text</span>
+                        <br/>
+                    </div>
+                </div>
+            </div> -->
             <div class="row" *ngFor="let item of path; let i = index">
                 <div class="col-3">
-                    Path {{ i + 1 }} :
+                    รูปที่ {{ i + 1 }} :
                 </div>
-                <div class="col-7">
+                <!-- <div class="col-7">
                     <input type="text" class="form-control form-control-success" [(ngModel)]="path[i]" #name="ngModel" name="name{{i}}">
                 </div>
                 <div class="col-2">
@@ -81,10 +94,19 @@
                             *ngIf="(i + 1) == path.length">
                         <i class="fa fa-plus"></i>
                     </button>
+                </div> -->
+                <div class="col-9">
+                    <div *ngIf="(i + 1) != path.length" style="text-overflow: ellipsis; overflow: hidden;">
+                        <span>{{ item }}</span>
+                        <br/>
+                        <br/>
+                    </div>
+                    <input type="file" class="form-control-file" (change)="upload($event)" accept=".png,.jpg" *ngIf="(i + 1) == path.length" />
                 </div>
             </div>
-            
         </div>
+
+        <ngx-loading [show]="loading" [config]="{ backdropBorderRadius: '3px' }"></ngx-loading>
         
     </div>
     <div class="modal-footer">
@@ -92,10 +114,10 @@
     </div>
 </ng-template>
 
-<ng-template #modalActivityComplted let-modal>
+<ng-template #modalCompleted let-modal>
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">แจ้งเตือน</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+        <button type="button" class="close" aria-label="Close" (click)="onResetForm()">
         <span aria-hidden="true">&times;</span>
         </button>
     </div>
@@ -103,5 +125,26 @@
       <div class="typography-line">
         <h5>บันทึกสำเร็จ !</h5>
       </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success btn-round" (click)="onResetForm()">ตกลง</button>
+    </div>
+</ng-template>
+
+<ng-template #modalConfirmDelete let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">แจ้งเตือน</h4>
+        <button type="button" class="close" aria-label="Close" (click)="onResetForm()">
+        <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+      <div class="typography-line">
+        <h5>คุณต้องการลบรายการนี้หรือไม่ ?</h5>
+      </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-success btn-round" (click)="deleteActivity()">ตกลง</button>
+        <button type="button" class="btn btn-danger btn-round" (click)="onResetForm()">ยกเลิก</button>
     </div>
 </ng-template>
