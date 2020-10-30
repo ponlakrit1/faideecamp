@@ -58,6 +58,21 @@ export class AdminSchoolComponent implements OnInit {
           this.schoolService.delete(this.dataItem.id).then((value) => {
             this.openCompletedModal();
             this.searchByEventYear();
+
+            // Update booking event text
+            this.schoolService.getByEventDate(this.dataItem.eventDate).subscribe(
+              (data: SchoolList[]) => {
+                let tempText = "";
+                for(let item of data){
+                  tempText += " "+item.name;
+                }
+
+                console.log(tempText);
+
+                this.bookingKey.eventText = tempText;
+                this.bookingService.update(this.bookingKey.id, this.bookingKey);
+              }
+            );
           });
         }
       }

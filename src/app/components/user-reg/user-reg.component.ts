@@ -240,14 +240,22 @@ export class UserRegComponent implements OnInit {
           }
 
           // this.onRefreshEventCalendar();
-          this.closeOpenMonthViewDay();
+          // this.closeOpenMonthViewDay();
         }
       }
     );
   }
 
   openBookingCompleteModal(): void {
-    this.modalService.open(this.modalBookingComplted, { windowClass: 'w3-animate-top' });
+    this.modalService.open(this.modalBookingComplted, { windowClass: 'w3-animate-top' }).result.then((reason) => {
+      setTimeout(()=>{
+        window.location.reload();
+      }, 100);
+    }, (reason) => {
+      setTimeout(()=>{
+        window.location.reload();
+      }, 100);
+    });
   }
 
   checkBookingAmount(key: Date){
