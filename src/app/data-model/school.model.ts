@@ -18,5 +18,9 @@ export class SchoolList {
     year: string;
 
     againFlag: string;
-    againReamrk: string;
+    againRemark: string;
+
+    constructor(){
+        this.againRemark = "";
+    }
 }
