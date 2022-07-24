@@ -1,8 +1,23 @@
-**Description**
-- Editor : Nctine
-- Version : 1.0.0
-- Hosting : [Fai dee camp](https://faideecamp.firebaseapp.com/)
-- Credit : [Paper Kit 2 Angular - Free Bootstrap 4 UI Kit](https://demos.creative-tim.com/paper-kit-2-angular/)
+# faideecamp
 
-**Installation**
-> npm install
+Fai dee youth camp TH by Mae Fah Luang Foundation
+An application built with Angular, TypeScript, and SCSS.
+
+## Development server
+
+Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+
+## Code scaffolding
+
+Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+
+## Build
+
+Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+
+## Hosting
+
+[Fai dee camp](https://faideecamp.firebaseapp.com/)
+
+## Author
+Ponlakrit kaewmoon
